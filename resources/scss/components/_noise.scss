@@ -1,0 +1,40 @@
+.noise-10{
+    overflow: hidden;
+    background-color: #ffffff10 !important ;
+    background-image: url('../../assets/Noise10.webp') !important;
+    background-repeat: repeat;
+    background-position: 0,0;
+    background-size: 17.5rem 17.5rem;
+}
+.noise-20{
+    overflow: hidden;
+    background-color: #ffffff20 !important;
+    background-image: url('../../assets/Noise\ 20.webp') !important;
+    background-repeat: repeat;
+    background-position: 0,0;
+    background-size: 17.5rem 17.5rem;
+}
+
+
+.input-noise-10{
+    overflow: hidden;
+    background-color: #ffffff10;
+    background-image: url('../../assets/Noise10.webp');
+    background-repeat: repeat;
+    background-position: 0,0;
+    background-size: 17.5rem 17.5rem;
+}
+
+.input-noise-10:focus{
+    overflow: hidden;
+    background-color: #ffffff10 !important;
+    background-image: url('../../assets/Noise\ 20.webp') !important ;
+    background-repeat: repeat;
+    background-position: 0,0;
+    background-size: 17.5rem 17.5rem;
+}
+
+.bg-discord{
+    background: linear-gradient(90.02deg, rgba(72, 101, 196, 0.25) 0.02%, rgba(113, 134, 205, 0) 99.99%), url('../../assets/Noise10.webp');
+
+}

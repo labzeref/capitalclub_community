@@ -1,0 +1,456 @@
+.button {
+    position: relative;
+    height: 3rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 40px;
+    color: $secondary-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // gap: 0.7rem;
+    border: transparent;
+    outline: transparent;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    @include for_breakpoint(mobile) {
+        height: 2.5rem;
+        font-size: 14px;
+        font-weight: 700;
+    }
+    @include for_breakpoint(tablet) {
+        font-size: 14x;
+    }
+    @include for_breakpoint(laptop) {
+        font-size: 12px;
+    }
+
+    // &.icon {
+    //     .button_container {
+    //         padding: 0.75rem 2rem 0.75rem 1rem;
+    //     }
+    // }
+
+    &.icon_button {
+        .button_container {
+            padding: 0.85rem !important;
+        }
+    }
+
+    &.header_arrow {
+        height: 2.25rem;
+        width: 2.25rem;
+        .button_container {
+            padding: 0.5rem;
+        }
+    }
+
+    .button_container {
+        padding: 0.75rem 2.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.7rem;
+        cursor: pointer;
+        background: transparent;
+        @include for_breakpoint(mobile) {
+            padding: 0.625rem 1.5rem !important;
+        }
+        @include for_breakpoint(tablet) {
+            padding: 0.625rem 1.5rem !important;
+        }
+
+        svg {
+            opacity: 0.6;
+            height: 24px;
+            width: 24px;
+            @include for_breakpoint(mobile) {
+                height: 18px;
+                width: 18px;
+            }
+        }
+    }
+
+    &:hover {
+        .button_container {
+            svg {
+                opacity: 1;
+            }
+        }
+    }
+
+    &.primary {
+        // background-color: $btn-primary-bg;
+        background: $primary-color;
+        
+        &:hover {
+            background: rgba(126, 126, 126, 0.5) !important;
+            // border: 2px solid $primary-color;
+        }
+        &.disable{
+            background: rgba(126, 126, 126, 0.5) !important;
+            opacity: 0.5;
+        }
+    }
+
+    &.secondary {
+        color: $primary-color;
+        overflow: hidden;
+        box-shadow: inset 0 0 0 1px $primary-color;
+        // border: 1px solid $primary-color;
+        &:hover {
+            box-shadow: inset 0 0 0 2px $primary-color;
+            background-color: #292929 !important;
+            // border: 2px solid $primary-color;
+        }
+
+        &:after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 50%;
+            // background-color: $btn-secondary-bg;
+            background-color: $secondary-color;
+            // background-image: url("./../../assets/img/Noise20.webp");
+            background-repeat: repeat;
+            background-position: 0, 0;
+            background-size: 17.5rem 17.5rem;
+            display: inline-block;
+            z-index: -1;
+        }
+    }
+
+    &.discord {
+        box-shadow: inset 0 0 0 1px #7186cd1a;
+        justify-content: start !important ;
+        padding-left: 1rem;
+    }
+    &.delete {
+        background-color: rgba(255, 85, 85, 0.1);
+        box-shadow: inset 0 0 0 1px rgba(255, 85, 85, 0.4) !important;
+        background-image: url("./../../assets/img/Noise10.webp");
+        justify-content: start !important ;
+        padding: 0 2rem 0 2rem !important;
+    }
+
+    &.success {
+        color: $primary-color;
+        // overflow: hidden;
+        // box-shadow: inset 0 0 0 1px $btn-secondary-bg;
+        .button_container {
+            padding: 0.75rem 1.5rem !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.7rem;
+            cursor: pointer;
+            background: transparent;
+        }
+        &.filter-button {
+            width: 160px;
+            font-size: 12px;
+        }
+
+        &:hover {
+            // box-shadow: inset 0 0 0 1px $primary-color;
+            background-color: $btn-secondary-bg;
+            background-image: url("./../../assets/img/Noise20.webp");
+            background-repeat: repeat;
+            background-position: 0, 0;
+            border-bottom: 2px solid #fff;
+        }
+
+        &:after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 50%;
+            background-size: 17.5rem 17.5rem;
+            display: inline-block;
+            z-index: -1;
+            transition: all 0.5s ease;
+        }
+
+        &.active {
+            background-color: $btn-secondary-bg;
+            background-image: url("./../../assets/img/Noise10.webp");
+            background-repeat: repeat;
+            background-position: 0, 0;
+            border-bottom: 2px solid #fff;
+        }
+    }
+    //
+    //&.icon{
+    //    margin-top: auto !important;
+    //    margin-bottom: auto !important;
+    //    margin-right: 12px;
+    //    height: 12px;
+    //    width: auto;
+    //}
+    //
+    //&.sm{
+    //    padding: 0.625rem 1.5rem !important;
+    //    height: 2.5rem !important;
+    //    font-size: 1rem !important;
+    //}
+}
+.filter-button {
+    position: relative;
+    height: 2.5rem;
+    font-size: 1rem;
+    color: $secondary-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.7rem;
+    border: transparent;
+    outline: transparent;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.tabs {
+    position: relative;
+    padding: 0.75rem 2rem;
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    color: #656565;
+    font-size: 14px;
+    font-weight: 700;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    width: 150px;
+    justify-content: center;
+    &:hover {
+        color: white;
+    }
+    &.active {
+        color: #fff;
+    }
+    margin: 0 2px;
+    @include for_breakpoint(mobile) {
+        padding: 0.75rem 1rem;
+        width: 120px;
+        font-size: 12px;
+    }
+
+    &.active-tab {
+        position: absolute;
+        bottom: 0;
+        color: #fff;
+        width: 53px;
+        height: 3px;
+        border-radius: 2px 2px 0px 0px;
+        background-color: white;
+        margin-left: auto;
+        margin-right: auto;
+        transition: all ease-in-out 0.3s ;
+        @include for_breakpoint(mobile) {
+            width: 43px;
+        }
+    }
+    
+
+
+
+}
+
+.active-tab {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    color: #fff;
+    width: 53px;
+    height: 3px;
+    border-radius: 2px 2px 0px 0px;
+    background-color: white;
+    margin-left: auto;
+    margin-right: auto;
+    @include for_breakpoint(mobile) {
+        width: 43px;
+    }
+}
+ 
+.tabs:hover .active-tab{
+    display: block;
+}
+.active-tab-block{
+    display: block;
+}
+
+.payment-tab-shadow { 
+    position: absolute;
+    bottom: 0;
+    color: #fff;
+    width: 53px;
+    height: 3px;
+    border-radius: 2px 2px 0px 0px;
+    background-color: white;
+    margin-left: auto;
+    margin-right: auto;
+    @include for_breakpoint(mobile) {
+        width: 43px;
+    }
+}
+
+// .new-button-icon{
+//     padding: 8px;
+//     border-radius: 100px;
+//     transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
+//     &:hover{
+//         background-color: #141414;
+//         svg {
+//             opacity: 1;
+//         }
+        
+//     }
+//     &:focus{
+//         background-color: #1F1F1F;
+//     }
+//     &.primary {
+//         background-color: $btn-primary-bg;
+//         background: $primary-color;
+//         &:hover {
+//             background: rgba(126, 126, 126, 0.5) !important;
+//             // border: 2px solid $primary-color;
+//         }
+//     }
+// }
+
+
+
+.new-button-icon {
+    position: relative;
+    height: 2.5rem;
+    width: 2.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 100px;
+    color: $secondary-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // gap: 0.7rem;
+    border: transparent;
+    outline: transparent;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    @include for_breakpoint(mobile) {
+        height: 2rem;
+    width: 2rem;
+    }
+  
+    &:hover{
+             background-color: #141414;
+  }
+            &:focus{
+                background-color: #1F1F1F;
+            }
+  
+    &.icon_button {
+        .button_container {
+            padding: 0.85rem !important;
+        }
+    }
+
+    svg {
+        opacity: 1;
+        height: 24px;
+        width: 24px;
+        @include for_breakpoint(mobile) {
+            height: 16px;
+            width: 16px;
+        }
+    }
+
+    // .button_container {
+    //     padding: 0.75rem 2.5rem;
+    //     display: flex;
+    //     justify-content: center;
+    //     align-items: center;
+    //     gap: 0.7rem;
+    //     cursor: pointer;
+    //     background: transparent;
+    //     @include for_breakpoint(mobile) {
+    //         padding: 0.625rem 2rem !important;
+    //     }
+
+       
+    // }
+
+    &:hover {
+        .button_container {
+            svg {
+                opacity: 1;
+            }
+        }
+    }
+
+    &.primary {
+        // background-color: $btn-primary-bg;
+        background: $primary-color;
+        &:hover {
+            background: rgba(126, 126, 126, 0.5) !important;
+            // border: 2px solid $primary-color;
+        }
+    }
+
+    &.secondary {
+        color: $primary-color;
+        overflow: hidden;
+        // box-shadow: inset 0 0 0 1px $primary-color;
+        // border: 1px solid $primary-color;
+        &:hover {
+            // box-shadow: inset 0 0 0 2px $primary-color;
+            background-color: #292929 !important;
+            // border: 2px solid $primary-color;
+        }
+
+        &:after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 50%;
+            // background-color: $btn-secondary-bg;
+            background-color: $secondary-color;
+            // background-image: url("./../../assets/img/Noise20.webp");
+            background-repeat: repeat;
+            background-position: 0, 0;
+            background-size: 17.5rem 17.5rem;
+            display: inline-block;
+            z-index: -1;
+        }
+    }  
+}
+
+.reactions-tab{
+    
+    padding-bottom: 1.125rem;
+    display: flex;
+
+    &.active{
+        border-bottom: 1px solid white;
+    }
+
+    p{
+        
+        font-size: 1.3rem;
+        font-weight: 500;
+        @include for_breakpoint(mobile) {
+            padding-top: 2px;
+            font-size: 0.85rem;
+        font-weight: 400;
+        }
+    }
+}

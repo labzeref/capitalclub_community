@@ -1,0 +1,84 @@
+$primary-color: #ffffff;
+$secondary-color: #000000;
+$danger-color: rgb(255, 85, 85);
+$success-color: rgb(190, 249, 146);
+$warning-color: rgb(255, 238, 85);
+
+$body-bg: $secondary-color;
+$body-color: $primary-color;
+
+$btn-primary-bg: $primary-color;
+$btn-primary-color: $secondary-color;
+$btn-secondary-bg: rgba(255, 255, 255, 0.1);
+$btn-success-bg: rgba(190, 249, 146, 0.4);
+$btn-danger-bg: rgba(255, 85, 85, 0.4);
+$btn-warning-bg: rgba(255, 238, 85, 0.4);
+$btn-secondary-color: $primary-color;
+
+$course-color: #ba3e17;
+$card-background: #121212;
+$font-family: "CapitalSans";
+
+@font-face {
+    font-family: "CapitalSans";
+    font-weight: 400;
+    src: url("../assets/fonts/CapitalSans-Regular.woff2") format("woff2");
+    src: url("../assets/fonts/CapitalSans-Regular.woff") format("woff");
+}
+
+@font-face {
+    font-family: "CapitalSans";
+    font-weight: 500;
+    src: url("../assets/fonts/CapitalSans-Medium.woff2") format("woff2");
+    src: url("../assets/fonts/CapitalSans-Medium.woff") format("woff");
+}
+
+@font-face {
+    font-family: "CapitalSans";
+    font-weight: 600;
+    src: url("../assets/fonts/CapitalSans-Semibold.woff2") format("woff2");
+    src: url("../assets/fonts/CapitalSans-Semibold.woff") format("woff");
+}
+
+@font-face {
+    font-family: "CapitalSans";
+    font-weight: 700;
+    src: url("../assets/fonts/CapitalSans-Bold.woff2") format("woff2");
+    src: url("../assets/fonts/CapitalSans-Bold.woff") format("woff");
+}
+
+/* Media Queries */
+$media_queries: (
+    "mobile": unquote("only screen and (max-width: 667px)"),
+    "tablet":
+        unquote("only screen and (min-width: 668px) and (max-width: 998px)"),
+    "laptop":
+        unquote("only screen and (min-width: 999px) and (max-width: 1200px)"),
+    "desktop":
+        unquote("only screen and (min-width: 1201px) and (max-width: 2000px)"),
+    "tv": unquote("only screen and (min-width: 2000px)"),
+    "retina2":
+        unquote(
+            "only screen and (-webkit-min-device-pixel-ratio: 2) and (min-resolution: 192dpi)"
+        ),
+    "retina3":
+        unquote(
+            "only screen and (-webkit-min-device-pixel-ratio: 3) and (min-resolution: 288dpi)"
+        ),
+    "landscape": unquote("screen and (orientation:landscape) "),
+    "portrait": unquote("screen and (orientation:portrait) "),
+);
+@mixin for_breakpoint($breakpoints) {
+    $conditions: ();
+    @each $breakpoint in $breakpoints {
+        // If the key exists in the map
+        $conditions: append(
+            $conditions,
+            #{inspect(map-get($media_queries, $breakpoint))},
+            comma
+        );
+    }
+    @media #{$conditions} {
+        @content;
+    }
+}

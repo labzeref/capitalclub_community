@@ -1,0 +1,7 @@
+[
+    { "id": 1, "name": "thumbs-up", "emoji": "👍" },
+    { "id": 2, "name": "red-heart", "emoji": "❤️" },
+    { "id": 3, "name": "clapping-hands", "emoji": "👏" },
+    { "id": 4, "name": "light-bulb", "emoji": "💡" },
+    { "id": 5, "name": "smiling-face-with-sunglasses", "emoji": "😎" }
+  ]

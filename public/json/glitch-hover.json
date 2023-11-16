@@ -1,0 +1,27 @@
+{
+    "playMode": "hover",
+    "createContainers": true,
+    "hideOverflow": false,
+    "timing": {
+        "duration": 500,
+        "iterations": 1,
+        "easing": "ease-in"
+    },
+    "glitchTimeSpan": {
+        "start": 0,
+        "end": 1
+    },
+    "shake": {
+        "velocity": 50,
+        "amplitudeX": 0.15,
+        "amplitudeY": 0.1
+    },
+    "slice": {
+        "count": 100,
+        "velocity": 30,
+        "minHeight": 0.01,
+        "maxHeight": 0.05,
+        "hueRotate": false
+    },
+    "pulse": false
+}

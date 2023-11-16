@@ -1,0 +1,547 @@
+.main-header {
+    
+    background-color: $secondary-color;
+    .content {
+        z-index: 100;
+    }
+    
+    .shadow {
+        --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0%), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    }
+
+
+    .shadow {
+        z-index: 1;
+        position: absolute;
+        left: 0;
+        width: 100%;
+        pointer-events: none;
+        transition: height 0.1s ease-in-out;
+
+        &.top {
+            //background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+            background: linear-gradient(
+                180deg,
+                rgba(0, 0, 0, 0.6) 10%,
+                rgba(0, 0, 0, 0) 30%
+            );
+            top: 0;
+            height: 100%;
+        }
+        &.bottom {
+            background: linear-gradient(
+                0deg,
+                $body-bg 9.46%,
+                rgba(0, 0, 0, 0) 100%
+            );
+            bottom: -2px;
+            height: 150px;
+        }
+        &.left {
+            background: linear-gradient(
+                90deg,
+                $body-bg 30%,
+                rgba(0, 0, 0, 0) 100%
+            );
+            bottom: 0;
+            width: 50%;
+            height: 100%;
+            // left: 19%;
+            @include for_breakpoint(mobile) {
+               display: none;
+            }
+        }
+
+        &.none {
+            height: 0;
+        }
+    }
+
+    .header-image {
+        
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+       
+        // background-position: center;
+        // background-repeat: no-repeat;
+        // background-size: cover;
+        z-index: 0;
+
+        .overlay {
+            // height: 100%;
+            // width: 100%;
+            background: rgba(0, 0, 0, 0.1);
+        }
+    }
+}
+
+.academy-featured-img {
+    object-fit: cover;
+    object-position: center;
+    height: 416px !important;
+    width: 636px !important;
+}
+.course-card {
+    max-width: 306px;
+    @include for_breakpoint(mobile) {
+        max-width: 234px;
+    }
+    &.featured {
+        max-width: 636px;
+        @include for_breakpoint(mobile) {
+            max-width: 246px;
+        }
+        @include for_breakpoint(tablet) {
+            max-width: 488px;
+        }
+    }
+    .card-img {
+        object-fit: cover;
+        object-position: center;
+        height: 200px !important;
+        width: 306px !important;
+        position: relative;
+    }
+    .badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+}
+
+.live-badge {
+    width: 131px;
+    display: flex;
+    top: 8px;
+    left: 8px;
+font-size: 12px;
+    border-radius: 24px;
+    background-color: #B72E2E;
+    padding: 1px 8px;
+    @include for_breakpoint(mobile) {
+        font-size: 10px;
+        width: 108px;
+    }
+    .dot {
+
+        margin: 5px auto;
+        height: 6px;
+        width: 6px;
+        border-radius: 100%;
+        background-color: white;
+        @include for_breakpoint(mobile) {
+           display: none;
+        }
+    }
+}
+
+.danger-color {
+    color: #B72E2E;
+}
+
+.progress-card {
+    max-width: 312px;
+    @include for_breakpoint(mobile) {
+        max-width: 306px;
+    }
+
+    .card-img {
+        object-fit: cover;
+        object-position: center;
+        height: 217px !important;
+        width: 312px !important;
+        position: relative;
+    }
+}
+
+.academy-bg {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    z-index: -10;
+    display: flex;
+    justify-content: center;
+    &.light-spot {
+        width: 100%;
+        //left: 20%;
+        height: auto;
+        object-fit: cover;
+        object-position: center;
+    }
+}
+
+.Progress-Notes-card {
+    max-width: 306px;
+
+    .card-img {
+        object-fit: cover;
+        object-position: center;
+        height: 160px !important;
+        width: 306px !important;
+        position: relative;
+    }
+    .card-bg {
+        padding: 24px 16px 24px 16px;
+        background-image: url("../../assets/Noise200.webp");
+    }
+}
+
+.modal-card {
+    display: flex;
+    .modal-img {
+        width: 144px;
+        height: 96px;
+    }
+}
+
+.academy-top-inst-img {
+    background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0) 52.08%,
+            rgba(0, 0, 0, 0.5) 100%
+        ),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+    object-fit: cover;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    object-position: center;
+    height: 466px !important;
+    width: 306px !important;
+    @include for_breakpoint(mobile) {
+        height: 400px !important;
+        width: 282px !important;
+    }
+}
+// ****new large card ****
+
+.large-card-hover-div {
+    overflow: hidden;
+    transition: height 0.3s ease;
+}
+
+.large-card-detail-info {
+    overflow: hidden;
+    height: 0px;
+    transition: height 0.3s ease;
+}
+
+.academy-large-card {
+    // background: linear-gradient(
+    //         180deg,
+    //         rgba(0, 0, 0, 0) 52.08%,
+    //         rgba(0, 0, 0, 0.5) 100%
+    //     ),
+    //     linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+    object-fit: cover;
+    // background-repeat: no-repeat;
+    // background-size: cover;
+    // background-position: center top;
+    object-position: center;
+    padding-top: 40.25%;
+    border-radius: 18px;
+    width: 100% !important;
+    display: flex;
+    justify-content: center;
+    justify-items: end;
+
+    img{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%; 
+        object-fit: cover; 
+        z-index: 0;
+    }
+
+    @include for_breakpoint(mobile) {
+        height: 211px !important;
+    }
+
+    &:hover {
+        .large-card-detail-info {
+            height: 65px;
+            @include for_breakpoint(mobile) {
+                height: 40px;
+            }
+        }
+    }
+    .info-div {
+        display: none;
+        position: absolute;
+        text-align: center;
+
+        span {
+            font-size: 16px;
+            font-weight: 500;
+            @include for_breakpoint(mobile) {
+                font-size: 0.75rem;
+                font-weight: 400;
+            }
+        }
+        h2 {
+            font-weight: 700;
+            font-size: 3.125rem;
+            @include for_breakpoint(mobile) {
+                font-size: 1.125rem;
+                font-weight: 600;
+            }
+            @include for_breakpoint(tablet) {
+                font-size: 2rem;
+                font-weight: 600;
+            }
+        }
+        h3 {
+            font-weight: 500;
+            font-size: 2.188rem;
+            @include for_breakpoint(mobile) {
+                font-size: 1rem;
+                font-weight: 500;
+            }
+            @include for_breakpoint(tablet) {
+                font-size: 1.5rem;
+                font-weight: 600;
+            }
+        }
+        flex-direction: column;
+        display: flex;
+        justify-items: end;
+        @include for_breakpoint(mobile) {
+        }
+    }
+}
+
+.academy-small-card {
+    background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0) 52.08%,
+            rgba(0, 0, 0, 0.5) 100%
+        ),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+
+    object-fit: cover;
+    // background-repeat: no-repeat;
+    // background-size: cover;
+    // background-position: center top;
+    object-position: center;
+    // padding-top: 38.25%;
+    border-radius: 18px;
+    width: 100% !important;
+    // display: flex;
+    justify-content: center;
+    justify-items: end;
+    // min-width: 634px;
+    &:hover {
+        .large-card-detail-info {
+            height: 60px;
+            @include for_breakpoint(mobile) {
+                height: 40px;
+            }
+        }
+    }
+
+    &.isSlider{
+         width: 330px !important;
+         height: 315px !important;
+         img{
+            border-radius: 10px;
+            width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+         }
+         @include for_breakpoint(mobile) {
+             height: 181px !important;
+             width: 161px !important;
+         }
+    }
+
+    &.is-Live-Now{
+        object-fit: cover;
+        object-position: center;
+        height: 416px !important;
+        width: 636px !important;
+    }
+
+    &.feature-card {
+        height: 300px !important; 
+        @include for_breakpoint(mobile) {
+            height: 181px !important;
+        }
+        img{
+            border-radius: 10px;
+            width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+        }
+    }
+
+    &.new-course-card {
+        
+        height: 435px !important;
+        overflow: hidden;
+        @include for_breakpoint(tablet) {
+            height: 350px !important;
+        }
+        @include for_breakpoint(mobile) {
+            height: 181px !important;
+        }
+        img{
+            border-radius: 10px;
+            width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+        }
+    }
+    @include for_breakpoint(mobile) {
+        height: 181px !important;
+        min-width: 135px;
+    }
+    @include for_breakpoint(tablet) {
+        min-width: 210px;
+    }
+  
+    .info-div {
+        display: none;
+        text-align: center;
+        span {
+            font-size: 16px;
+            font-weight: 500;
+            @include for_breakpoint(mobile) {
+                font-size: 0.75rem;
+                font-weight: 400;
+            }
+        }
+        h2 {
+            font-weight: 700;
+            font-size: 2.188rem;
+            @include for_breakpoint(mobile) {
+                font-size: 0.875rem;
+                font-weight: 600;
+            }
+            @include for_breakpoint(tablet) {
+                font-size: 2rem;
+                font-weight: 600;
+            }
+        }
+        h3 {
+            font-weight: 500;
+            font-size: 1.563rem;
+            @include for_breakpoint(mobile) {
+                font-size: 0.75rem;
+                font-weight: 500;
+            }
+            @include for_breakpoint(tablet) {
+                font-size: 1.5rem;
+                font-weight: 600;
+            }
+        }
+        flex-direction: column;
+        display: flex;
+        justify-items: end;
+        @include for_breakpoint(mobile) {
+        }
+    }
+}
+
+
+
+.academy-small-card .academy-large-card ::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 52.08%, rgba(0, 0, 0, 0.5) 100%), linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+        z-index: 1;
+      }
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ***academy large card end ***
+
+.card-overlay{
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 52.08%, rgba(0, 0, 0, 0.5) 100%), linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+}
+
+.slider-Text {
+    font-size: 128px;
+    line-height: 140px;
+    opacity: 10%;
+    @include for_breakpoint(mobile) {
+        font-size: 34px;
+        line-height: 110%;
+    }
+    @include for_breakpoint(tablet) {
+        font-size: 64px;
+        line-height: 70px;
+    }
+}
+.slider-cat-img img {
+    width: auto !important;
+}
+
+.course-card-title {
+    text-transform: capitalize;
+    font-size: 24px;
+    font-weight: 500;
+    @include for_breakpoint(mobile) {
+        font-size: 14px;
+        font-weight: 700;
+    }
+}
+.course-card-instructor {
+    text-transform: capitalize;
+    font-size: 18px;
+    font-weight: 400;
+    @include for_breakpoint(mobile) {
+        font-size: 12px;
+        font-weight: 400;
+    }
+}
+.course-color {
+    color: $course-color;
+}
+
+ 
+
+.image-container {
+    position: relative;
+    width: 100%; /* Set the initial width of the container */
+  }
+  
+  .image-container::before {
+    content: "";
+    display: block;
+    padding-top: calc(80% / (min-aspect-ratio / max-aspect-ratio)); /* Set the aspect ratio limits and adjust padding-top as needed */
+    padding-bottom: 0; /* Set initial padding-bottom to 0 */
+  }
+  
+  .image-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the image covers the container while preserving aspect ratio */
+  }

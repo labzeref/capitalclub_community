@@ -1,0 +1,115 @@
+.input-text {
+    text-align: center;
+    // box-shadow: inset 0 0 0 1px $btn-secondary-bg !important;
+    border: none !important;
+    border-radius: 20px;
+    color: $primary-color !important;
+    outline: transparent !important;
+    padding: 1rem 1.5rem 13px 1.5rem !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+
+    overflow: hidden;
+    background-color: #1A1A1A !important;
+    // background-image: url("../../assets/Noise10.webp") !important;
+    background-repeat: repeat;
+    background-position: 0, 0;
+    background-size: 17.5rem 17.5rem;
+    @include for_breakpoint(mobile) {
+       padding: 10px 10px 10px 1.5rem !important;
+    }
+    &:focus,
+    &:active {
+        color: $primary-color !important;
+        border: none !important;
+        box-shadow: inset 0 0 0 1px #ffffff !important;
+        -webkit-box-shadow: inset 0 0 0 1px #ffffff !important;
+        outline: transparent !important;
+
+        overflow: hidden;
+        background-color: #ffffff10 !important;
+        // background-image: url("../../assets/Noise\ 20.webp") !important ;
+        background-repeat: repeat;
+        background-position: 0, 0;
+        background-size: 17.5rem 17.5rem;
+    }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active,
+    &:-internal-autofill-selected,
+    &:-internal-autofill-previewed {
+        transition: all 5000s ease-in-out 0s !important;
+    }
+
+    &.left-icon {
+        padding: 1rem 1.5rem 1rem 3rem !important;
+    }
+}
+
+//   focus:ring-transparent focus:border inset-border
+
+.myCheckbox:checked {
+    background-color: rgb(255, 255, 255); /* Change this to the desired background color */
+  }
+
+ .myCheckbox:checked::after {
+    content: "\2713"; /* Unicode character for checkmark */
+    display: block;
+    color: rgb(0, 0, 0); /* Change this to the desired checkmark color */
+    font-size: 16px; /* Adjust the font size as needed */
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+.checkbox-bg {
+    background-image: none;
+}
+
+.checkbox-bg:checked {
+    height: 20px;
+width: 20px;
+    background-image: url("../../assets/svg/checkbg.png") !important;
+}
+
+.filepond-container .filepond--drop-label{
+    position: relative;
+    z-index: 99999 !important;
+
+    border: 1px solid white;
+    border-radius: 10px;
+    background-color: #000 !important;
+    color: white !important;
+}
+.filepond--credits{
+    display: none !important;
+}
+
+#mySelect:focus {
+    outline: none;
+    border: none !important;
+    box-shadow: inset 0 0 0 0px #ffffff00 !important;
+    -webkit-box-shadow: inset 0 0 0 0px #ffffff00 !important;
+    outline: transparent !important;
+  }
+  #mySelect{
+    outline: none;
+    border: none !important;
+    box-shadow: inset 0 0 0 0px #ffffff00 !important;
+    -webkit-box-shadow: inset 0 0 0 0px #ffffff00 !important;
+    outline: transparent !important;
+  }
+  .search-input{
+    box-shadow: inset 0 0 0 1px #ffffff1a !important;
+  }
+  .search-input:focus{
+    outline: none;
+    border: none !important; 
+    -webkit-box-shadow: inset 0 0 0 0px #ffffff00 !important;
+    outline: transparent !important;
+    box-shadow: inset 0 0 0 1px #ffffff1a !important;
+  }
