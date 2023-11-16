@@ -1,51 +1,253 @@
-.profile{
+.profile {
     display: flex;
     align-items: center;
     gap: 16px;
 
-    &.profile-lg{
-        img{
+    &.profile-lg {
+        img {
             width: 3.5rem;
             height: 3.5rem;
             border-radius: 9999px;
             object-fit: cover;
             object-position: center;
         }
-        h4{
+
+        h4 {
             font-family: "CapitalSans";
             font-weight: 500;
             font-size: 1.5rem;
             line-height: 1.2;
             margin-bottom: 4px;
         }
-        p{
+
+        p {
             font-size: 1rem !important;
             font-weight: 400 !important;
             color: #9E9E9E;
         }
     }
 
-    &.profile-sm{
-        img{
+    &.profile-sm {
+        img {
             width: 2.5rem;
             height: 2.5rem;
             border-radius: 9999px;
             object-fit: cover;
             object-position: center;
         }
-        h4{
+
+        h4 {
             font-family: "CapitalSans";
             font-weight: 500 !important;
             font-size: 0.875rem !important;
             margin-bottom: 4px;
 
         }
-        p{
+
+        p {
             font-size: 0.75rem !important;
             font-weight: 400 !important;
             color: #9E9E9E !important;
         }
     }
 
-   
+
+}
+
+
+
+.page-paddeing {
+    padding-top: 2.3rem;
+
+    // @include for_breakpoint(xs-mobile) {
+    //     padding-top: 11;
+    // }
+
+    // @include for_breakpoint(sm-mobile) {
+    //     padding-top: 13px;
+    // }
+
+    @include for_breakpoint(tablet) {
+        padding-top: 24px;
+    }
+
+    @include for_breakpoint(mobile) {
+        padding-top: 19px;
+    }
+}
+
+.dp-card-paddeing {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+
+    @include for_breakpoint(xs-mobile) {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    @include for_breakpoint(sm-mobile) {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    @include for_breakpoint(md-mobile) {
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+
+    @include for_breakpoint(lg-mobile) {
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+}
+
+.profile-card-paddeing {
+    padding-top: 1.4375rem;
+    padding-bottom: 1.75rem;
+
+    @include for_breakpoint(xs-mobile) {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    @include for_breakpoint(sm-mobile) {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    @include for_breakpoint(md-mobile) {
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+
+    @include for_breakpoint(lg-mobile) {
+        padding-top: 1.4375remrem;
+        padding-bottom: 1.75rem;
+    }
+}
+
+
+.avatar {
+    height: 2.5rem;
+    width: 2.5rem;
+
+    @include for_breakpoint(xs-mobile) {
+        height: 1.5rem;
+        width: 1.5rem;
+    }
+
+    @include for_breakpoint(sm-mobile) {
+        height: 1.8rem;
+
+        width: 1.8rem;
+    }
+
+    @include for_breakpoint(md-mobile) {
+        height: 2rem;
+        width: 2rem;
+
+    }
+
+    @include for_breakpoint(lg-mobile) {
+        height: 2rem;
+        width: 2rem;
+    }
+}
+
+.glitch-id {
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding-top: 12px;
+    padding-bottom: 12px;
+
+    @include for_breakpoint(xs-mobile) {
+        font-size: 1rem;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    @include for_breakpoint(sm-mobile) {
+        font-size: 1.15rem;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    @include for_breakpoint(md-mobile) {
+        font-size: 1.25rem;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    @include for_breakpoint(lg-mobile) {
+        font-size: 1.5rem;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+}
+
+
+
+// *** progress page ***
+
+.notes-modal-heading{
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 28px;
+
+    @include for_breakpoint(xs-mobile) {
+       line-height: 14px !important;
+        font-size: 0.7rem;
+    }
+
+    @include for_breakpoint(sm-mobile) {
+        line-height: 16px !important;
+        font-size: 0.8rem;
+    }
+
+    @include for_breakpoint(md-mobile) {
+        line-height: 16px !important;
+        font-size: 0.8rem;
+    }
+
+    @include for_breakpoint(lg-mobile) {
+         line-height: 16px !important;
+        font-size: 1rem;
+    }
+    @include for_breakpoint(tablet) {
+        line-height: 18px !important;
+       font-size: 1rem;
+   }
+}
+
+
+.lesson-notes-wrapper{
+    background: #121212;
+box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.50);
+}
+
+.one-lesson-notes{
+    border-radius: 6px;
+    background: #141414;
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.80);
+}
+
+.glitch-transaction-text{
+    font-size: 45px;
+    @include for_breakpoint(mobile) {
+        font-size: 25px;
+   }
+   @include for_breakpoint(tablet) {
+        font-size: 35px;
+    }
+}
+
+.progress-headings{ 
+    text-align: left; 
+    font-size: 32px;
+    font-weight: 600;
+
+    @include for_breakpoint(mobile) {
+        font-size: 14px;
+        text-align: center;
+    }
 }

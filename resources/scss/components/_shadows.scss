@@ -20,7 +20,12 @@
     }
 
     &.none {
-        height: 0;
+        background: linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0) 40%,
+            rgba(255, 255, 255, 0) 100%
+        );
+        height: 50px;
     }
 
     z-index: 10000;
@@ -31,6 +36,117 @@
     pointer-events: none;
     transition: height 0.1s ease-in-out;
 }
+
+
+
+.interests-shadow {
+    z-index: 10000;
+    height: 50px;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    transition: height 0.5s;
+
+    &.top {
+        background: linear-gradient(
+            180deg,
+            rgba(13, 13, 13, 0.9) 30%,
+            rgba(13, 13, 13, 0) 100%
+        );
+        height: 120px;
+        border-radius: 15px;
+        top: 0;
+
+
+        &.shadow-off{
+            height: 0px;
+        }
+    }
+
+
+
+    &.module-top {
+        background: linear-gradient(
+            180deg,
+            rgba(19, 19, 19, 0.706) 30%,
+            rgba(13, 13, 13, 0) 100%
+        );
+        height: 60px;
+        border-radius: 6px;
+        top: 0;
+
+
+        &.shadow-off{
+            height: 0px;
+        }
+    }
+
+
+
+    &.bottom {
+        background: linear-gradient(
+            0deg,
+                rgba(13, 13, 13, 0.9) 30%,
+                rgba(13, 13, 13, 0) 100%
+        );
+        bottom: 0;
+        z-index: 10000;
+        height: 120px;
+        border-radius: 15px;
+
+        &.shadow-off{
+            height: 0px;
+        }
+    }
+
+
+
+    &.notes-bottom {
+        background: linear-gradient(
+            0deg,
+                rgba(13, 13, 13, 0.9) 30%,
+                rgba(13, 13, 13, 0) 100%
+        );
+        bottom: 0;
+        z-index: 10000;
+        height: 120px;
+        border-radius: 8px;
+
+        &.shadow-off{
+            height: 0px;
+        }
+    }
+
+
+    &.module-bottom {
+        background: linear-gradient(
+            0deg,
+                rgba(13, 13, 13, 0.661) 30%,
+                rgba(13, 13, 13, 0) 100%
+        );
+        bottom: 0;
+        z-index: 10000;
+        height: 60px;
+        border-radius: 6px;
+
+        &.shadow-off{
+            height: 0px;
+        }
+    }
+
+    &.none {
+        background: linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0) 40%,
+            rgba(255, 255, 255, 0) 100%
+        );
+        height: 50px;
+    }
+}
+
+
+
 
 .course-shadow {
     &.top {
@@ -64,7 +180,7 @@
 }
 
 .marquee-shadow {
-    z-index: 1;
+    z-index: 5;
     position: absolute;
     left: 0;
     width: 100%;
@@ -72,7 +188,6 @@
     transition: height 0.1s ease-in-out;
 
     &.top {
-        //background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
         background: linear-gradient(
             180deg,
             rgba(0, 0, 0, 0.6) 10%,
@@ -81,6 +196,7 @@
         top: 0;
         height: 100%;
     }
+
     &.bottom {
         background: linear-gradient(
             0deg,
@@ -91,8 +207,9 @@
         height: 150px;
     }
     &.left {
-        background: linear-gradient(90deg, $body-bg 10%, rgba(0, 0, 0, 0) 100%);
-        left: 0;
+        background: linear-gradient(90deg, $body-bg -0.96%, rgba(13, 13, 13, 0.00) 77.93%);
+
+        left: -2px;
         margin-right: auto;
         width: 10%;
         height: 100%;
@@ -100,13 +217,22 @@
     &.right {
         background: linear-gradient(
             270deg,
-            $body-bg 10%,
-            rgba(0, 0, 0, 0) 100%
+            $body-bg -0.96%,
+            rgba(13, 13, 13, 0.00) 77.93%
         );
-        right: 0;
+        right: -2px;
         width: 10%;
         margin-left: auto;
         height: 100%;
+    }
+    &.h-80{
+        height: 230px !important;
+        @include for_breakpoint(mobile) {
+            height: 107px !important;
+        }
+        @include for_breakpoint(tablet) {
+            height: 192px !important;
+        }
     }
 
     &.none {
@@ -157,10 +283,10 @@
 //   position: absolute;
     // height: 50px;
     // width: 35px;
-    // margin-left: 20px;  
+    // margin-left: 20px;
     border-radius: 10px;
     border-left: 3px solid transparent;
-    border-top: 3px solid transparent; 
+    border-top: 3px solid transparent;
     background-repeat: no-repeat;
     background-size: 120px 90px;
     background-clip: padding-box;
@@ -174,9 +300,9 @@
 }
 
 
-.post-side-shadow{ 
+.post-side-shadow{
         padding-left: 24px;
-    
+
         @include for_breakpoint(mobile) {
             padding-left: 10px;
         }
@@ -184,7 +310,7 @@
         // border-bottom: 2px solid transparent;
         // border-image: radial-gradient(90deg, rgba(222,218,218,1) 0%, rgba(14,14,14,1) 75%);;
         border-image: linear-gradient(to bottom, #181818, #eee, #181818) 1 100%;
-  
+
 }
 
 
@@ -318,7 +444,7 @@
     position: relative;
     padding: 15px 20px;
   }
-  
+
   .gradient-border-mask::before {
     content: "";
     position: absolute;
@@ -326,12 +452,16 @@
     left: 0;
     right: 0;
     bottom: 0;
-    border-radius: 1    0px; 
+    border-radius: 1    0px;
     border: 5px solid transparent;
     background: linear-gradient(134deg,rgb(199, 199, 199),rgb(0, 0, 0)) border-box;
     -webkit-mask:
-      linear-gradient(#fff 0 0) padding-box, 
+      linear-gradient(#fff 0 0) padding-box,
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
     mask-composite: exclude;
   }
+
+
+
+

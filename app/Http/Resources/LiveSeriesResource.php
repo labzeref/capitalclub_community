@@ -18,16 +18,22 @@ class LiveSeriesResource extends JsonResource
             'id' => $this->id,
             'default_instructor' => new InstructorCompactResource($this->whenLoaded('defaultInstructor')),
             'live_streams' => LiveStreamResource::collection($this->whenLoaded('liveStreams')),
-            'faqs' => FAQResource::collection($this->whenLoaded('faqs')),
             'title' => $this->title,
             'description' => $this->description,
-            'experience' => $this->experience,
             'thumbnail' => $this->whenLoaded(
                 'media',
                 fn () => [
                     'original' => new MediaResource($this->getFirstMedia('thumbnail')),
                     'medium' => new MediumMediaResource($this->getFirstMedia('thumbnail')),
                     'small' => new SmallMediaResource($this->getFirstMedia('thumbnail')),
+                ]
+            ),
+            'mobile_thumbnail' => $this->whenLoaded(
+                'media',
+                fn () => [
+                    'original' => new MediaResource($this->getFirstMedia('mobileThumbnail')),
+                    'medium' => new MediumMediaResource($this->getFirstMedia('mobileThumbnail')),
+                    'small' => new SmallMediaResource($this->getFirstMedia('mobileThumbnail')),
                 ]
             ),
         ];

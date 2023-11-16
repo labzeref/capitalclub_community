@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Rules\RecaptchaRule;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -11,15 +12,22 @@ use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
+    /**
+     * Rules for the validating the request
+     */
     public function rules(): array
     {
         return [
             'email' => 'required|string',
             'password' => 'required|string',
             'remember' => 'nullable|boolean',
+            'recaptcha' => ['nullable', new RecaptchaRule],
         ];
     }
 
+    /**
+     * Prepare the data for validation
+     */
     protected function prepareForValidation(): void
     {
         $this->merge([
@@ -27,6 +35,9 @@ class LoginRequest extends FormRequest
         ]);
     }
 
+    /**
+     * Authenticate the user
+     */
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
@@ -42,6 +53,9 @@ class LoginRequest extends FormRequest
         RateLimiter::clear($this->throttleKey());
     }
 
+    /**
+     * Ensure the rate limit
+     */
     public function ensureIsNotRateLimited(): void
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
@@ -60,6 +74,9 @@ class LoginRequest extends FormRequest
         ]);
     }
 
+    /**
+     * Get the throttle key
+     */
     public function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->input('email')).'|'.$this->ip());

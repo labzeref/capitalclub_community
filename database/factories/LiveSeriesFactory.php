@@ -13,14 +13,8 @@ class LiveSeriesFactory extends Factory
     public function definition(): array
     {
         return [
-            //            'instructor_id' => Instructor::inRandomOrder()->value('id'),
             'title' => fake()->jobTitle,
             'description' => fake()->text(250),
-            'experience' => [
-                ['title' => $this->faker->jobTitle, 'description' => $this->faker->text],
-                ['title' => $this->faker->jobTitle, 'description' => $this->faker->text],
-                ['title' => $this->faker->jobTitle, 'description' => $this->faker->text],
-            ],
         ];
     }
 

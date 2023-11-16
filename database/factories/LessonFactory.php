@@ -31,10 +31,9 @@ class LessonFactory extends Factory
                 'https://player.vimeo.com/video/107505406',
                 'https://player.vimeo.com/video/336108899',
             ]),
-            'duration' => null,
+            'duration' => $this->faker->numberBetween(200, 2000),
             'published_at' => now()->subDays(mt_rand(5, 10)),
-            'has_preview' => $this->faker->boolean(),
-            'vimeo_preview_url' => fn (array $attributes) => $attributes['has_preview']
+            'vimeo_preview_url' => fn (array $attributes) => $this->faker->boolean
                 ? $this->faker->randomElement([
                     'https://player.vimeo.com/video/95871796',
                     'https://player.vimeo.com/video/800523792',
@@ -50,12 +49,6 @@ class LessonFactory extends Factory
                     'https://player.vimeo.com/video/107505406',
                     'https://player.vimeo.com/video/336108899',
                 ])
-                : null,
-            'preview_start_time' => fn (array $attributes) => $attributes['has_preview']
-                ? $this->faker->time
-                : null,
-            'preview_end_time' => fn (array $attributes) => $attributes['has_preview']
-                ? $this->faker->time
                 : null,
             'passing_marks_percentage' => mt_rand(40, 70),
             'quiz_skipable' => $this->faker->boolean(),

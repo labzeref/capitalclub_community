@@ -9,10 +9,18 @@ use App\Http\Resources\User\UserResource;
 use App\Models\Course;
 use App\Models\Thread;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Inertia\Response;
+use Inertia\ResponseFactory;
 
 class ThreadController extends Controller
 {
+    /**
+     * Get the all threads
+     *
+     * @return JsonResponse
+     */
     public function index(Request $request, Course $course)
     {
         $user = _user();
@@ -41,6 +49,11 @@ class ThreadController extends Controller
         return $this->sendResponse($response);
     }
 
+    /**
+     * Show the threa view screen
+     *
+     * @return Response|ResponseFactory
+     */
     public function view(Thread $thread)
     {
         /**
@@ -60,11 +73,15 @@ class ThreadController extends Controller
         return inertia('Academy/Thread', compact(['thread', 'course', 'topRankMembers']));
     }
 
+    /**
+     * Create the thread
+     *
+     * @return JsonResponse
+     */
     public function store(ThreadsRequest $request, Course $course)
     {
         $user = _user();
         $thread = $course->threads()->create($request->validated() + ['user_id' => $user->id]);
-        logActivity(causedBy: $user, performedOn: $thread, log: 'You have created a thread.');
         $response = new ThreadResource($thread->load('user.badges')->loadCount(['comments', 'followers']));
 
         return $this->sendResponse($response, __('Thread created successfully.'));

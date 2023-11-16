@@ -8,6 +8,11 @@ use Illuminate\Validation\Rule;
 
 class SubmitQuizRequest extends FormRequest
 {
+    /**
+     * Rules for the request
+     *
+     * @return string[]
+     */
     public function rules(): array
     {
         $validQuizIds = $this->route('lesson')->quizzes()

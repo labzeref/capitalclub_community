@@ -24,12 +24,17 @@ class Handler extends ExceptionHandler
     {
         $response = parent::render($request, $e);
 
-        if (! app()->environment(['local', 'testing']) && in_array($response->status(), [500, 404, 419])) {
-
+        if (
+            !app()->environment(['local', 'testing']) &&
+            in_array($response->status(), [403, 404, 405, 419, 429, 500])
+        ) {
             return match ($response->status()) {
-                500 => inertia('Error/Error500'),
-                419 => inertia('Error/Error419'),
+                403 => inertia('Error/Error403'),
                 404 => inertia('Error/Error404'),
+                405 => inertia('Error/Error405'),
+                419 => inertia('Error/Error419'),
+                429 => inertia('Error/Error429'),
+                500 => inertia('Error/Error500'),
             };
         }
 

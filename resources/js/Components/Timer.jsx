@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 
-const Timer = ({time}) => {
-    // const [hours, setHours] = useState();
-    // const [minutes, setMinutes] = useState();
-    // const [seconds, setSeconds] = useState();
-
-    const [totalSeconds, setTotalSeconds] = useState(time);
+const Timer = ({ time }) => {
+  // const [hours, setHours] = useState();
+  // const [minutes, setMinutes] = useState();
+  // const [seconds, setSeconds] = useState();
+ 
+  const [totalSeconds, setTotalSeconds] = useState(time);
 
   useEffect(() => {
     const countdownInterval = setInterval(() => {
@@ -14,8 +14,11 @@ const Timer = ({time}) => {
 
     if (totalSeconds <= 0) {
       clearInterval(countdownInterval);
-      console.log("Countdown finished!");
+      // console.log("Countdown finished!");
+      window.location.reload();
     }
+
+ 
 
     return () => clearInterval(countdownInterval);
   }, [totalSeconds]);
@@ -24,33 +27,33 @@ const Timer = ({time}) => {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-     
+
   return (
-    <div className='flex gap-x-3'>
-                                         <div>
-                                            <p className="h-9 w-11 bg-[#ffffff1a] fs-x-large fw-regular text-center items-center justify-center flex rounded-[6px] ">
-                                                {hours}
-                                            </p>
-                                            <p className="fs-tiny fw-regular text-center mt-1 opacity-50">
-                                                Hours
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="h-9 w-11 bg-[#ffffff1a] fs-x-large fw-regular text-center items-center justify-center flex rounded-[6px] ">
-                                                {minutes}
-                                            </p>
-                                            <p className="fs-tiny fw-regular text-center mt-1 opacity-50">
-                                                Minutes
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="h-9 w-11  bg-[#ffffff1a] fs-x-large fw-regular text-center items-center justify-center flex rounded-[6px] ">
-                                                {seconds}
-                                            </p>
-                                            <p className="fs-tiny fw-regular text-center mt-1 opacity-50">
-                                                Seconds
-                                            </p>
-                                        </div>
+    <div className='flex justify-center'>
+      <div className="timer-shadow fw-bold  text-center">
+        <p className="timer-text">
+          {hours}
+        </p>
+        <p   className=" text-center text-[#d1d1d1] timer-subheading uppercase mt-1">
+          Hours
+        </p>
+      </div>
+      <div className="timer-shadow fw-bold  text-center">
+        <p className="timer-text">
+          {minutes}
+        </p>
+        <p className="text-center   text-[#d1d1d1] timer-subheading uppercase mt-1">
+          Minutes
+        </p>
+      </div>
+      <div className="timer-shadow fw-bold  text-center">
+        <p className="timer-text">
+          {seconds}
+        </p>
+        <p className="text-center text-[#d1d1d1] timer-subheading uppercase mt-1">
+          Seconds
+        </p>
+      </div>
     </div>
   )
 }

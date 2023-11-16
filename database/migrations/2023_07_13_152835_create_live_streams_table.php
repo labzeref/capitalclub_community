@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('video_url', 500)->nullable();
             $table->timestampTz('live_at')->nullable();
             $table->timestampTz('live_end_at')->nullable();
-            $table->boolean('bannered')->default(false);
-            $table->boolean('published')->default(false);
+            $table->boolean('featured')->default(false);
+            $table->date('published_at')->nullable();
             $table->boolean('chat_enabled')->default(false);
             $table->softDeletes();
             $table->timestamps();

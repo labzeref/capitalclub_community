@@ -4,7 +4,7 @@ import coursebg from "../../../assets/img/coursebg.jpg";
 import dissProfile from "../../../assets/img/discussion-profile-pic.jpg";
 import dissProfile2 from "../../../assets/img/DissProfilePic2.jpg";
 import cross from "../../../assets/svg/cross.svg";
-import  plus from "../../../assets/svg/faqplus.svg";
+import plus from "../../../assets/svg/faqplus.svg";
 import Lock from "../../../assets/svg/Lock.svg";
 import OwlCarousel from "react-owl-carousel";
 
@@ -15,6 +15,7 @@ import Button from "../../Components/Button";
 import { ReactComponent as Play } from "../../../assets/svg/Play.svg";
 import { ReactComponent as ArrowRight } from "../../../assets/svg/ArrowRight.svg";
 import { ReactComponent as ArrowLeft } from "../../../assets/svg/ArrowLeft.svg";
+import AcademyLargeCard from "@/Components/Course/AcademyLargeCard";
 
 // art and design
 import art1 from "../../../assets/img/art1.jpg";
@@ -37,11 +38,11 @@ import IconButton from "@/Components/IconButton";
 import TabButton from "@/Components/TabButton";
 import AcademySmallCard from "@/Components/Course/AcademySmallCard";
 
-const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
+const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuctors }) => {
     // console.log('liveTraining')
     // console.log(liveTraining)
     // console.log('liveStream')
-    console.log(liveStream)
+    // console.log(liveStream)
     // console.log('randomLives')
     // console.log(randomLives)
     // randomInstuctors live-training
@@ -71,17 +72,8 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
         });
     }
 
-    const [activeIndex, setActiveIndex] = useState(0);
 
-    const handleAccordionClick = (index) => {
-        setActiveIndex(index === activeIndex ? null : index);
-    };
 
-    const [activeIndexLive, setActiveIndexLive] = useState(0);
-
-    const handleAccordionClickLive = (index) => {
-        setActiveIndexLive(index === activeIndexLive ? null : index);
-    };
 
 
     // Top instructor slider buttons
@@ -103,11 +95,107 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
 
 
+
+
+
+
+    const [styleState, setStyleState] = useState({
+        options: {
+            loop: true,
+            margin: 24, 
+            autoplay: true,
+            autoplayHoverPause: true,
+            autoplayTimeout: 2500,
+            animateIn: "fadeIn",
+            animateOut: "fadeOut",
+            nav: false,
+            dots: false,
+            autoWidth: false,
+            responsiveClass: true,
+            responsive: {
+                0: {
+                    items: 2,
+                },
+                600: {
+                    items: 2,
+                },
+                1000: {
+                    items: 4,
+                }
+            }
+        }
+    })
+
+
+
+
+
+    const handleContextMenu = (e) => {
+        e.preventDefault(); 
+      };
+
     return (
-        <div data-aos="fade-in" data-aos-delay="100" data-aos-easing="ease" data-aos-duration="300">
-            <div className="">
+        <div onContextMenu={handleContextMenu} data-aos="fade-in" data-aos-delay="100" data-aos-easing="ease" data-aos-duration="300">
+
+
+
+
+            <div className="container mx-auto mt-[5rem] md:mt-[6rem] px-5 md:px-3">
+                <Link
+                    href={route(
+                        "live-stream.play",
+                        liveStream?.id
+                    )}
+                >
+                    <AcademyLargeCard
+                        className={"academy-large-card feature-card"}
+                        title={liveStream?.title}
+                        instructor={liveStream?.default_instructor?.full_name}
+                        duration={"5 hr 40 min"}
+                        lessons={liveStream?.lessons_count}
+                        desktop_image={liveStream?.live_series?.thumbnail}
+                        mobile_image={liveStream?.live_series?.mobile_thumbnail}
+                        badge={"primary"}
+                        badge_text={""}
+                        live={false} />
+                </Link>
+                <div className="container mx-auto px-5 lg:px-0  md:-mt-[7rem] -mt-[3rem] relative">
+
+                    <div className="max-w-2xl mx-auto">
+                        <div className="grid grid-cols-12">
+                            <div className="col-span-12  z-50">
+                                <div className="flex items-center gap-2 lg:gap-4  justify-center">
+                                    <Link href={route("live-stream.play", liveStream?.id)}>
+                                        <button className="button primary">
+                                            <div className="button_container glitch uppercase">
+                                                {liveStream?.status == 'was-live' ? 'watch video' : ' WATCH LIVE'}
+                                            </div>
+                                        </button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div className="hidden">
                 <div
-                    className="main-header relative bg-cover bg-center h-[695px] md:h-[700px] lg:h-[795px] flex items-center bg-no-repeat"
+                    className="main-header relative bg-cover bg-center  overflow-hidden h-[629px] lg:h-[700px] min-h-[612px] md:min-h-[712px] lg:min-h-[700px] xl:min-h-[700px] flex items-center bg-no-repeat"
                 // style="background-image: url('{{ asset('assets/course-main.png') }}');"
                 // style={{backgroundImage: `url(${ liveTraining ? liveTraining?.thumbnail?.original?.url : liveStream?.live_series?.thumbnail?.original?.url }) `}}
                 >  <div className="shadow top"></div>
@@ -124,7 +212,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
                         <div className="max-w-2xl mx-auto">
                             <div className="grid grid-cols-12">
                                 <div className="col-span-12  z-50">
-                                    <div className="text-center h-[670px] flex flex-col justify-end items-center">
+                                    <div className="text-center h-[600px] lg:h-[700px] min-h-[600px] md:min-h-[700px] flex flex-col justify-end items-center">
                                         {/* <div className="my-4">
                                             <LiveBadge LiveClass="static" />
                                         </div> */}
@@ -142,7 +230,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
                                                 </svg>
 
                                                 <p className="danger-color px-2 ">
-                                                    {" "}
+                                                     
                                                     Live
                                                 </p>
                                             </div>
@@ -170,7 +258,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
                                                 liveStream?.live_series?.description?.length > 110 ? liveStream?.live_series?.description?.substring(0, 110) + "..." : liveStream?.live_series?.description
 
                                             }
-                                            
+
                                         </p> */}
                                         <div className="flex items-center gap-4 flex-wrap justify-center">
                                             <button className="button primary">
@@ -213,169 +301,18 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
                     </div>
                 </div>
             </div>
-            <div>
-                {/*
-            <section className="paddingSectionLarge">
-                <div className="container mx-auto px-5 xl:px-0">
-                    <div className="grid grid-cols-12 gap-y-8 lg:gap-x-6">
-                        <div className="col-span-12">
-                            <div className="text-start">
-                                <h3>14 Lessons</h3>
-                            </div>
-                        </div>
-                        <div className="col-span-12 lg:col-span-8">
-                            <div className="text-start relative">
-                                <div className="text-start relative">
-                                    <style>
-                                        {`
-  .codegena {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 56.27198%;
-  }
 
-  .codegena iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-`}
-                                    </style>
-                                    <div className="codegena">
-                                        <iframe
-                                            width="500px"
-                                            height="294px"
-                                            src="https://player.vimeo.com/video/225434434?&title=0&byline=0&portrait=0"
-                                        ></iframe>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-span-12 lg:col-span-4">
-                            <div className="mb-4">
-                                <a href="#" className="flex items-center gap-4">
-                                    <div className="relative">
-                                        <img
-                                            src={dissProfile}
-                                            className="h-[86px] w-[150px] max-w-[150px] object-cover object-center"
-                                            alt=""
-                                        />
-                                        <span className="absolute top-1 left-1 bg-[#FFFFFF] rounded-3xl px-2 py-1 text-[10px] text-[#000000] font-normal">
-                                            Tralier
-                                        </span>
-                                        <span className="absolute right-1 bottom-1 bg-[#000000] rounded-3xl px-2 py-1 text-[10px] text-[#FFFFFF] font-normal">
-                                            11:45
-                                        </span>
-                                        <img
-                                            className="w-4 h-4 absolute left-1 bottom-2"
-                                            src="./assets/images/pause-btnn.svg"
-                                            alt=""
-                                        />
-                                    </div>
-                                    <div>
-                                        <h5>
-                                            1. Meet Your Instructor: Kelly
-                                            Wearstler
-                                        </h5>
-                                    </div>
-                                </a>
-                            </div>
-                            <div className="mb-4">
-                                <a href="#" className="flex items-center gap-4">
-                                    <div className="relative">
-                                        <img
-                                            src={dissProfile2}
-                                            className="h-[86px] w-[150px] max-w-[150px] object-cover object-center"
-                                            alt=""
-                                        />
-                                        <span className="absolute right-1 bottom-1 bg-[#000000] rounded-3xl px-2 py-1 text-[10px] text-[#FFFFFF] font-normal">
-                                            11:45
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <h5>2. Sources of Inspiration</h5>
-                                    </div>
-                                </a>
-                            </div>
-                            <div className="mb-4 opacity-50">
-                                <a href="#" className="flex items-center gap-4">
-                                    <div className="relative">
-                                        <img
-                                            src={dissProfile}
-                                            className="h-[86px] w-[150px] max-w-[150px] object-cover object-center"
-                                            alt=""
-                                        />
-                                        <img
-                                            className="absolute left-1 bottom-1"
-                                            src={Lock}
-                                            alt=""
-                                        />
-                                    </div>
-                                    <div>
-                                        <h5>3. Starting a Project</h5>
-                                    </div>
-                                </a>
-                            </div>
-                            <div className="mb-4 opacity-50">
-                                <a href="#" className="flex items-center gap-4">
-                                    <div className="relative">
-                                        <img
-                                            src={dissProfile2}
-                                            className="h-[86px] w-[150px] max-w-[150px] object-cover object-center"
-                                            alt=""
-                                        />
-                                        <img
-                                            className="absolute left-1 bottom-1"
-                                            src={Lock}
-                                            alt=""
-                                        />
-                                    </div>
-                                    <div>
-                                        <h5>4. Working With Space</h5>
-                                    </div>
-                                </a>
-                            </div>
-                            <div className="mb-4 opacity-50">
-                                <a href="#" className="flex items-center gap-4">
-                                    <div className="relative">
-                                        <img
-                                            src={dissProfile}
-                                            className="h-[86px] w-[150px] max-w-[150px] object-cover object-center"
-                                            alt=""
-                                        />
-                                        <img
-                                            className="absolute left-1 bottom-1"
-                                            src={Lock}
-                                            alt=""
-                                        />
-                                    </div>
-                                    <div>
-                                        <h5>
-                                            5. Meet Your Instructor: Kelly
-                                            Wearstler
-                                        </h5>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section> */}
-            </div>
 
 
             {/*tabs*/}
-            <section className="paddingSectionLarge">
+            <section className=" pt-11 md:pt-16 ">
                 <div className=""></div>
                 <div className="container mx-auto px-5 xl:px-0">
                     <div className="max-w-[57rem] mx-auto">
                         <div className="grid grid-cols-12">
                             <div className="col-span-12">
                                 <div
-                                    className="flex items-center justify-between overflow-x-scroll lg:overflow-x-hidden">
+                                    className="flex items-center justify-center overflow-x-scroll lg:overflow-x-hidden">
                                     {/* <Button className={` button success  active glitch `}>  </Button> */}
                                     <a
                                         href="#overview"
@@ -408,27 +345,6 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
                                         </TabButton>
 
                                     </a>
-                                    <a
-                                        href="#experience"
-                                        className=" px-4      glitch"
-                                    >
-                                        <TabButton>
-
-                                            Experience
-                                        </TabButton>
-
-                                    </a>
-                                    <a
-                                        href="#instructors"
-                                        className=" px-4     glitch"
-                                    >
-
-                                        <TabButton>
-
-                                            Instructors
-                                        </TabButton>
-
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -447,44 +363,26 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
                                     <p className="mb-4">
                                         {liveTraining ? liveTraining?.description : liveStream?.live_series?.description}
                                     </p>
-                                    {/* <p className="mb-4">
-                                        The Ultimate Drawing Course will show
-                                        you how to create advanced art that will
-                                        stand up as professional work. This
-                                        course will enhance or give you skills
-                                        in the world of drawing - or your money
-                                        back The course is your track to
-                                        obtaining drawing skills like you always
-                                        knew you should have! Whether for your
-                                        own projects or to draw for other
-                                        people.
-                                    </p> */}
-                                    {/* <p className="mb-4">
-                                        This course will take you from having
-                                        little knowledge in drawing to creating
-                                        advanced art and having a deep
-                                        understanding of drawing fundamentals.
-                                    </p> */}
                                 </div>
                                 <div className="text-start">
                                     <h5 className="mb-1 font-normal">
                                         <span className="opacity-50">
                                             Instructor(s):
-                                        </span>{" "}
+                                        </span>
                                         {liveTraining ? liveTraining?.default_instructor?.full_name : liveStream?.live_series?.default_instructor?.full_name}
                                     </h5>
                                     {/* <h5 className="mb-1 font-normal">
                                         <span className="opacity-50">
                                             Class Length:
-                                        </span>{" "}
+                                        </span> 
                                         35 video lessons (8 hours 1 minute)
                                     </h5> */}
-                                    <h5 className="mb-1 font-normal">
+                                    {liveStream?.live_series?.default_instructor?.category?.name && <h5 className="mb-1 font-normal">
                                         <span className="opacity-50">
                                             Category:
-                                        </span>{" "}
-                                        {liveTraining ? liveTraining?.default_instructor?.category?.name : liveStream?.live_series?.default_instructor?.category?.name}
-                                    </h5>
+                                        </span>
+                                        {liveStream?.live_series?.default_instructor?.category?.name}
+                                    </h5>}
                                 </div>
                             </div>
                         </div>
@@ -494,7 +392,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
 
 
             {/* session */}
-            { ( liveStream?.live_series?.live_streams?.length > 1 )  &&
+            {(liveStream?.live_series?.live_streams?.length > 1) &&
                 <section id="sessions" className="paddingSectionLarge">
                     <div className="container mx-auto px-5 lg:px-3">
                         <div className="">
@@ -624,51 +522,33 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
                                     </div>
                                     <div className="col-span-12 relative   lg:h-[350px]">
                                         <div className="  left-0  ">
-                                            <OwlCarousel
+                                            <OwlCarousel {...styleState?.options}
                                                 ref={seriesRef}
                                                 className="owl-theme relative"
 
-                                                loop
-                                                margin={10}
-                                                items={6}
-                                                autoplay={true}
-                                                autoplayHoverPause={true}
-                                                autoplayTimeout={7000}
-                                                animateIn={"fadeIn"}
-                                                animateOut={"fadeOut"}
-                                                nav={false}
-                                                dots={false}
-                                                autoWidth={true}
+
                                             >
                                                 {liveStream.live_series.live_streams.map((data, index) => (
-                                                    <Link  href={  route("live-stream.play", data?.id) }>
-                                                    <AcademySmallCard
-                                                        // href={ route("live-stream.play", data?.id)}
-                                                        className={"academy-small-card isSlider feature-card"}
-                                                        title={data?.sub_title}
-                                                        instructor={data?.live_series?.default_instructor?.full_name}
-                                                        duration={"5 hr 40 min"}
-                                                        lessons={3}
-                                                        original_image={liveStream.live_series?.thumbnail?.medium?.url}
-                                                        medium_image={liveStream.live_series?.thumbnail?.small?.url}
-                                                        badge={"primary"}
-                                                        badge_text={""}
-                                                        live={true}
-                                                        videoProgress={0}
-                                                    />
-                                                    </Link>
-                                                ))}
+                                                    <React.Fragment key={index + 3}>
 
-                                                {/* <AcademySmallCard
-                                                        className={'academy-small-card isSlider feature-card'}
-                                                        title={'Dishwasher'}
-                                                        instructor={'random'}
-                                                        duration={"5 hr 40 min"}
-                                                        lessons={3}
-                                                        medium_image={art2}
-                                                        badge={"primary"}
-                                                        badge_text={""}
-                                                        live={false} /> */}
+                                                        <AcademySmallCard
+                                                            // href={ route("live-stream.play", data?.id)}
+                                                            className={"academy-small-card isSlider feature-card"}
+                                                            title={data?.sub_title}
+                                                            instructor={data?.live_series?.default_instructor?.full_name}
+                                                            duration={"5 hr 40 min"}
+                                                            lessons={3}
+                                                            desktop_image={liveStream.live_series?.mobile_thumbnail}
+                                                            mobile_image={liveStream.live_series?.mobile_thumbnail}
+                                                            routeToPlay={route('live-stream.play', { course: data?.id })}
+                                                            badge={"primary"}
+                                                            badge_text={""}
+                                                            live={true}
+                                                            videoProgress={0}
+                                                        />
+                                                    </React.Fragment>
+
+                                                ))}
 
 
 
@@ -684,257 +564,185 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
 
 
             {/*Weekly sessions */}
-            <section id="session" className="paddingSectionLarge">
-                <div className="container mx-auto px-5 lg:px-3">
-                    <div className="">
-                        <div className="grid grid-cols-3 mb-8">
-                            <div className="col-span-12">
-                                <div className="text-start flex justify-between item-center">
-                                    <h3 className="font-medium">
-                                        Weekly session schedule
-                                    </h3>
-                                    <div className="flex items-center gap-3">
-                                        <div className="md:block hidden ">
-                                            <svg
-                                                onClick={() => {
-                                                    handleSliderPrev(weeklyRef)
-                                                }}
-                                                width="32"
-                                                height="32"
-                                                viewBox="0 0 32 32"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <g clipPath="url(#clip0_724_31297)">
-                                                    <path
-                                                        opacity="0.4"
-                                                        d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z"
-                                                        fill="white"
-                                                    />
-                                                    <path
-                                                        d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z"
-                                                        stroke="black"
-                                                        strokeWidth="1.2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                    <path
-                                                        d="M11 16H21"
-                                                        stroke="white"
-                                                        strokeOpacity="0.6"
-                                                        strokeWidth="1.2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                    <path
-                                                        d="M15 12L11 16L15 20"
-                                                        stroke="white"
-                                                        strokeOpacity="0.6"
-                                                        strokeWidth="1.2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                </g>
-                                                <defs>
-                                                    <clipPath id="clip0_724_31297">
-                                                        <rect
-                                                            width="32"
-                                                            height="32"
+            {randomLives?.length > 0 &&
+                <section id="session" className="paddingSectionLarge">
+                    <div className="container mx-auto px-5 lg:px-3">
+                        <div className="">
+                            <div className="grid grid-cols-3 mb-8">
+                                <div className="col-span-12">
+                                    <div className="text-start flex justify-between item-center">
+                                        <h3 className="font-medium">
+                                            Weekly session schedule
+                                        </h3>
+                                        <div className="flex items-center gap-3">
+                                            <div className="md:block hidden cursor-pointer ">
+                                                <svg
+                                                    onClick={() => {
+                                                        handleSliderPrev(weeklyRef)
+                                                    }}
+                                                    width="32"
+                                                    height="32"
+                                                    viewBox="0 0 32 32"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <g clipPath="url(#clip0_724_31297)">
+                                                        <path
+                                                            opacity="0.4"
+                                                            d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z"
                                                             fill="white"
                                                         />
-                                                    </clipPath>
-                                                </defs>
-                                            </svg>
-                                        </div>
-                                        <div className="md:block hidden">
-                                            <svg
-                                                onClick={() => {
-                                                    handleSliderNext(weeklyRef)
-                                                }}
-                                                width="32"
-                                                height="32"
-                                                viewBox="0 0 32 32"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <g clipPath="url(#clip0_724_31291)">
-                                                    <path
-                                                        opacity="0.4"
-                                                        d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z"
-                                                        fill="white"
-                                                    />
-                                                    <path
-                                                        d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z"
-                                                        stroke="white"
-                                                        strokeOpacity="0.6"
-                                                        strokeWidth="1.2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                    <path
-                                                        d="M11 16H21"
-                                                        stroke="white"
-                                                        strokeOpacity="0.6"
-                                                        strokeWidth="1.2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                    <path
-                                                        d="M17 12L21 16L17 20"
-                                                        stroke="white"
-                                                        strokeOpacity="0.6"
-                                                        strokeWidth="1.2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                </g>
-                                                <defs>
-                                                    <clipPath id="clip0_724_31291">
-                                                        <rect
-                                                            width="32"
-                                                            height="32"
+                                                        <path
+                                                            d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z"
+                                                            stroke="black"
+                                                            strokeWidth="1.2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                        <path
+                                                            d="M11 16H21"
+                                                            stroke="white"
+                                                            strokeOpacity="0.6"
+                                                            strokeWidth="1.2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                        <path
+                                                            d="M15 12L11 16L15 20"
+                                                            stroke="white"
+                                                            strokeOpacity="0.6"
+                                                            strokeWidth="1.2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                    </g>
+                                                    <defs>
+                                                        <clipPath id="clip0_724_31297">
+                                                            <rect
+                                                                width="32"
+                                                                height="32"
+                                                                fill="white"
+                                                            />
+                                                        </clipPath>
+                                                    </defs>
+                                                </svg>
+                                            </div>
+                                            <div className="md:block hidden cursor-pointer">
+                                                <svg
+                                                    onClick={() => {
+                                                        handleSliderNext(weeklyRef)
+                                                    }}
+                                                    width="32"
+                                                    height="32"
+                                                    viewBox="0 0 32 32"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                >
+                                                    <g clipPath="url(#clip0_724_31291)">
+                                                        <path
+                                                            opacity="0.4"
+                                                            d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z"
                                                             fill="white"
                                                         />
-                                                    </clipPath>
-                                                </defs>
-                                            </svg>
+                                                        <path
+                                                            d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z"
+                                                            stroke="white"
+                                                            strokeOpacity="0.6"
+                                                            strokeWidth="1.2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                        <path
+                                                            d="M11 16H21"
+                                                            stroke="white"
+                                                            strokeOpacity="0.6"
+                                                            strokeWidth="1.2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                        <path
+                                                            d="M17 12L21 16L17 20"
+                                                            stroke="white"
+                                                            strokeOpacity="0.6"
+                                                            strokeWidth="1.2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                    </g>
+                                                    <defs>
+                                                        <clipPath id="clip0_724_31291">
+                                                            <rect
+                                                                width="32"
+                                                                height="32"
+                                                                fill="white"
+                                                            />
+                                                        </clipPath>
+                                                    </defs>
+                                                </svg>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="flex justify-end">
-                    <div className="w-[97%] xl:w-[94%]  2xl:w-[80%]  ">
-                        <div className=" lg:ml-auto">
-                            <div className="grid grid-cols-12">
-                                <div className="col-span-0 md:col-span-0 lg:col-span-1 xl:col-span-2 2xl:col-span-4 ">
-                                </div>
-                                <div className="col-span-12 relative lg:h-[350px]">
-                                    <div className="  left-0  ">
-                                        <OwlCarousel
-                                            ref={weeklyRef}
-                                            className="owl-theme relative"
-                                            loop
-
-                                            margin={10}
-                                            items={6}
-                                            autoplay={true}
-                                            autoplayHoverPause={true}
-                                            autoplayTimeout={7000}
-                                            animateIn={"fadeIn"}
-                                            animateOut={"fadeOut"}
-                                            nav={false}
-                                            dots={false}
-                                            autoWidth={true}
-                                        >
-
-
-                                            <AcademySmallCard
-                                                className={"academy-small-card isSlider feature-card"}
-                                                title={' Water supplier '}
-                                                instructor={'Arkin Sorkin'}
-                                                duration={"5 hr 40 min"}
-                                                lessons={3}
-                                                original_image={art2}
-                                                medium_image={art1}
-                                                videoProgress={0}
-                                                badge={"primary"}
-                                                badge_text={""}
-                                                liveBadge={true}
-                                                upcomming={false}
-                                                live={true}
-                                            />
-
-
-
-
-
-
-                                            {/* <AcademySmallCard
-                                                        className={'academy-small-card isSlider course-card'}
-                                                        title={'Dishwasher'}
-                                                        instructor={'random'}
-                                                        duration={"5 hr 40 min"}
-                                                        lessons={3}
-                                                        original_image={art2}
-                                                        badge={"primary"}
-                                                        badge_text={""}
-                                                        liveBadge={true}
-                                                        upcomming={false}
-                                                        live={true}
-                                                        /> */}
-
-                                        </OwlCarousel>
+                    <div className="flex justify-end">
+                        <div className="w-[97%] xl:w-[94%]  2xl:w-[80%]  ">
+                            <div className=" lg:ml-auto">
+                                <div className="grid grid-cols-12">
+                                    <div className="col-span-0 md:col-span-0 lg:col-span-1 xl:col-span-2 2xl:col-span-4 ">
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                                    <div className="col-span-12 relative lg:h-[350px]">
+                                        <div className="  left-0  ">
+                                            <OwlCarousel {...styleState?.options}
+                                                ref={weeklyRef}
+                                                className="owl-theme relative"
+
+                                            >
 
 
-            {/*experience*/}
-            <section id="experience" className="paddingSectionLarge">
-                <div className="container mx-auto px-5 lg:px-3">
-                    <div className="">
-                        <div className="grid grid-cols-12">
-                            <div className="col-span-12">
-                                <div className="text-start mb-8">
-                                    <h3>Immersive Learning Experience </h3>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-12 lg:gap-x-6 gap-y-10 lg:gap-y-14">
-                            {liveTraining ? <>
+                                                {randomLives?.map((data, index) => (
 
-                                {liveTraining?.experience?.map((data, index) => (<div className="col-span-6 ">
-                                    <div className="text-start">
-                                        <span>
-                                            <img src={checkCircle} className="w-5 md:w-[1.688rem] h-5 md:h-[1.688rem]" />
-                                        </span>
-                                        <h4 className="my-2 md:my-4">{data?.title}</h4>
-                                        <p className="live-exprience-point ">
-                                            {data?.description}
-                                        </p>
-                                    </div>
-                                </div>
-                                ))}
-                            </>
-                                :
-                                <>
-                                    {liveStream?.live_series?.experience?.map((data, index) => (<div className="col-span-6 ">
-                                        <div className="text-start">
-                                            <span>
-                                                <img src={checkCircle} className="w-5 md:w-[1.688rem] h-5 md:h-[1.688rem]" />
-                                            </span>
-                                            <h4 className="my-2 md:my-4">{data?.title}</h4>
-                                            <p className="live-exprience-point ">
-                                                {data?.description}
-                                            </p>
+                                                    <React.Fragment key={index + 3}>
+
+                                                        <AcademySmallCard
+                                                            className={"academy-small-card isSlider feature-card"}
+                                                            title={data?.live_series?.title}
+                                                            instructor={'Arkin Sorkin'}
+                                                            duration={"5 hr 40 min"}
+                                                            lessons={3}
+                                                            desktop_image={data?.live_series?.mobile_thumbnail}
+                                                            mobile_image={data?.live_series?.mobile_thumbnail}
+                                                            routeToPlay={route('live-series.preview', data.id)}
+                                                            videoProgress={0}
+                                                            badge={"primary"}
+                                                            badge_text={""}
+                                                            liveBadge={data?.status == 'live'}
+                                                            upcomming={data?.status == 'upcoming'}
+                                                            live={data?.status == 'live'}
+                                                            wasLiveBadge={data?.status == 'was-live'}
+                                                        />
+                                                    </React.Fragment>
+                                                ))}
+                                            </OwlCarousel>
                                         </div>
                                     </div>
-                                    ))}
-
-                                </>
-
-                            }
-
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            }
+
 
             {/* industry experts*/}
-            <section id="instructors" className="paddingSectionLarge">
+            {/* <section id="instructors" className="paddingSectionLarge">
                 <div className="container mx-auto  px-5 lg:px-3">
                     <div className="grid grid-cols-12 mb-8">
                         <div className="col-span-12">
                             <div className="text-start flex justify-between item-center">
                                 <h3>Learn live with industry experts</h3>
-                                {/* slider buttons  */}
+
                                 <div className="flex items-center gap-3">
                                     <div className="md:block hidden ">
                                         <svg
@@ -1071,39 +879,22 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
                                                     dots={false}
                                                     autoWidth={true}
                                                 >
-                                                    <CourseInstructorCard
-                                                        className={"item"}
-                                                        title={"Christina Aguilera"}
-                                                        category={"Art & Design"}
-                                                        courses={4}
-                                                        image={top1}
-                                                        user_id={1}
-                                                    />
+
+
+
+                                                    {randomInstuctors?.map((data , index)=>(
 
                                                     <CourseInstructorCard
                                                         className={"item"}
-                                                        title={"George W. Bush"}
-                                                        category={"Food"}
-                                                        courses={4}
-                                                        image={top3}
-                                                        user_id={2}
+                                                        title={data?.title}
+                                                        category={data?.category?.name}
+                                                        image={data?.dp?.medium?.url}
+                                                        user_id={data?.id}
                                                     />
-                                                    <CourseInstructorCard
-                                                        className={"item"}
-                                                        title={"Christina Aguilera"}
-                                                        category={"Science & Tech"}
-                                                        courses={8}
-                                                        image={top4}
-                                                        user_id={3}
-                                                    />
-                                                    <CourseInstructorCard
-                                                        className={"item"}
-                                                        title={"George W. Bush"}
-                                                        category={"Science & Tech"}
-                                                        courses={2}
-                                                        image={top5}
-                                                        user_id={4}
-                                                    />
+
+                                                    ))}
+
+
                                                 </OwlCarousel>
                                             </div>
                                         </div>
@@ -1113,90 +904,8 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives }) => {
                         </div>
                     </div>
                 </div>
-            </section>
-            {/*faq's*/}
-            <section className="py-[1rem] md:py-[3rem]">
-                <div className="container mx-auto px-5 xl:px-0">
-                    <div className="max-w-2xl mx-auto">
-                        <div className="grid grid-col-12">
-                            <div className="col-span-12">
-                                <h3 className="mb-8 text-center">
-                                    Frequently asked question
-                                </h3>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-12 gap-y-2">
-                            {liveTraining &&
-                                <>
-                                    {liveTraining?.faqs?.map((data, index) => (
-                                        <div key={index + 1} className="col-span-12">
-                                            <div
-                                                className={`${activeIndex !== null && activeIndex === index
-                                                    ? "textarea-bg"
-                                                    : "intrestcheck"
-                                                    } pt-3 pb-4 px-4 border-[1px] border-[#ffffff1a] border-rounded-10 `}
+            </section> */}
 
-                                            >
-                                                <div className="flex items-center gap-4 h-auto">
-                                                    <img
-                                                        onClick={() => handleAccordionClick(index)}
-
-                                                        className={`w-6 h-6 cursor-pointer transition-all duration-300 transform ${activeIndex !== null && activeIndex === index ? "r 5" : ""
-                                                            }`}
-                                                        src={activeIndex !== null && activeIndex === index ? cross : plus}
-                                                        alt=""
-                                                    />
-                                                    <p>{data?.question}</p>
-                                                </div>
-                                                {activeIndex === index && (
-                                                    <div className="ml-10 opacity-60 h-auto mt-4" data-aos="fade-in" data-aos-delay="100" data-aos-easing="ease" data-aos-duration="300">
-                                                        <p className="fs-small mb-5">{data?.answer}</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </>}
-
-                            {liveStream &&
-                                <>
-                                    {liveStream?.live_series?.faqs?.map((data, index) => (
-                                        <div key={index + 1} className="col-span-12">
-                                            <div
-                                                className={`${activeIndex !== null && activeIndex === index
-                                                    ? "textarea-bg"
-                                                    : "intrestcheck"
-                                                    } pt-3 pb-4 px-4 border-[1px] border-[#ffffff1a] border-rounded-10 `}
-
-                                            >
-                                                <div className="flex items-center gap-4 h-auto">
-                                                    <img
-                                                        onClick={() => handleAccordionClick(index)}
-
-                                                        className={`w-6 h-6 cursor-pointer transition-all duration-300 transform ${activeIndex !== null && activeIndex === index ? "r 5" : ""
-                                                            }`}
-                                                        src={activeIndex !== null && activeIndex === index ? cross : plus}
-                                                        alt=""
-                                                    />
-                                                    <p>{data?.question}</p>
-                                                </div>
-                                                {activeIndex === index && (
-                                                    <div className="ml-10 opacity-60 h-auto mt-4" data-aos="fade-in" data-aos-delay="100" data-aos-easing="ease" data-aos-duration="300">
-                                                        <p className="fs-small mb-5">{data?.answer}</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </>}
-
-
-
-
-                        </div>
-                    </div>
-                </div>
-            </section>
         </div>
     );
 };

@@ -10,7 +10,7 @@ export default function TabButton({ className = '', activeBottom, disabled, icon
                 {/* {icon} */}
                 {children}
 
-                <div  className={`  ${activeBottom} active-tab   `}></div>
+                {/* <div  className={`  ${activeBottom} active-tab   `}></div> */}
             </button>
         </div>
     );

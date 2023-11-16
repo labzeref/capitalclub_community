@@ -1,12 +1,10 @@
 <?php
 
 use App\Http\Controllers\AcademyController;
-use App\Http\Controllers\Chat\ConversationController;
-use App\Http\Controllers\Chat\MessageController;
-use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseDiscussionController;
-use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\DiscordController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\InstructorProfileShowController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\LiveSeriesController;
@@ -14,14 +12,10 @@ use App\Http\Controllers\LiveStreamController;
 use App\Http\Controllers\LiveTrainingController;
 use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PostCommentController;
-use App\Http\Controllers\PostController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\SearchController;
-use App\Http\Controllers\SiteLockAuthenticateController;
 use App\Http\Controllers\StreamMessageController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ThreadCommentController;
@@ -29,42 +23,133 @@ use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ToggleBookmarkController;
 use App\Http\Controllers\ToggleFollowController;
 use App\Http\Controllers\ToggleReactionController;
-use App\Http\Controllers\UploadMediaController;
+use App\Http\Controllers\UnlockController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\WelcomeController;
+use App\Http\Middleware\SiteLockMiddleware;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
+/**
+ * Chargebee webhook calls
+ */
 Route::post('/webhook', WebhookController::class);
 
-Route::post('/site-lock', SiteLockAuthenticateController::class)->name('site-lock.authenticate');
+/**
+ * It will unlock site for users who have invitation code
+ */
+Route::get('/unlock/{encryptedData}', UnlockController::class)->name('unlock-site');
 
-Route::middleware('site-lock')->group(function () {
-    require __DIR__.'/auth.php';
+/**
+ * Legal pages
+ */
+Route::get('/terms-of-service', function () {
+    return redirect()->away('https://www.capital.club/terms-of-service');
+})->name('terms-and-conditions');
 
-    Route::middleware('guest')->group(function () {
-        Route::inertia('/', 'Welcome')->name('welcome');
-    });
+Route::get('privacy-policy', function () {
+    return redirect()->away('https://www.capital.club/privacy-policy');
+})->name('privacy-policy');
 
-    Route::middleware(['auth', 'destroyDeactivateUserSession'])->group(function () {
+/**
+ * All authentication pages
+ */
+require __DIR__ . '/auth.php';
 
-        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::middleware('guest')->group(function () {
+    /**
+     * This will be moved to the frontend server
+     */
+    Route::get('/', WelcomeController::class)->name('welcome')->middleware(\App\Http\Middleware\SiteLockMiddleware::class);
+});
 
-        Route::controller(SubscriptionController::class)->prefix('/payment')
-            ->name('subscription.')->group(function () {
-                Route::get('/', 'index')->name('index');
-                Route::post('/', 'store')->name('store');
+/**
+ * Post authentication pages and routes
+ */
+Route::middleware(['auth', 'auth.session', 'destroyDeactivateUserSession'])->group(function () {
+
+    Route::get('/get-auth-user', [UserController::class, 'getAuthUser'])->name('get-auth-user');
+    /**
+     * Game play routes
+     */
+//        Route::controller(GameController::class)->middleware('redirectToAcademyIfOpen')
+//            ->prefix('/game')->name('game.')->group(function () {
+//                Route::get('/play', [GameController::class, 'index'])->name('play');
+//                Route::get('/score', [GameController::class, 'storeScore'])->name('store-score');
+//            });
+
+    /**
+     * Subscription and chargebee routes
+     */
+    Route::middleware(SiteLockMiddleware::class)->controller(SubscriptionController::class)->prefix('/payment')
+        ->name('subscription.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/verify-coupon/{couponCode}', 'verifyCouponCode')->name('verify-coupon-code');
+            Route::get('/payment-intent/{couponCode?}', 'paymentIntent')->name('payment-intent');
+            Route::get('/status', 'status')->name('status');
+        });
+
+    /**
+     * Post subscription routes
+     */
+    Route::middleware('shouldHasSubscription')->group(function () {
+
+        /**
+         * Onboarding pages
+         */
+        Route::middleware('ShouldNotHasProfileCompleted')->controller(PreferenceController::class)
+            ->prefix('/onboarding')->name('preference.')->group(function () {
+                Route::get('/glitch-id', 'glitchId')->name('glitch-id');
+                Route::get('/short-intro', 'shortIntro')->name('short-intro');
+
+                Route::get('/', 'onboarding')->name('index');
+                Route::post('/', 'onboardingStore')->name('store');
+
+                Route::get('/transition', 'transition')->name('transition');
             });
 
-        Route::middleware('shouldHasSubscription')->group(function () {
-            Route::controller(UploadMediaController::class)->prefix('/filepond')->group(function () {
-                Route::post('/process', 'postUpload');
-                Route::patch('/process', 'patchUpload');
-                Route::delete('/process', 'revert');
-            });
+        /**
+         * Game page when academy locked
+         */
+//            Route::get('/onboarding/game', [PreferenceController::class, 'game'])->name('preference.game')
+//                ->middleware('redirectToAcademyIfOpen');
 
+        /**
+         * Post onboarding completion routes
+         */
+        Route::middleware(['ShouldHasProfileCompleted'])->group(function () {
+            /**
+             * Discord integration
+             */
+            Route::controller(DiscordController::class)->prefix('/discord')->name('discord.')
+                ->group(function () {
+                    Route::get('/setup', 'setup')->name('setup');
+
+                    Route::get('/handle-redirect', 'handleRedirect')->name('handle-redirect');
+
+                    Route::get('/oauth2/handle-token', 'handleToken')
+                        ->name('oauth2.handle-token');
+                });
+
+            /**
+             * Notification routes
+             */
+            Route::controller(NotificationController::class)->prefix('notifications')
+                ->name('notifications.')->group(function () {
+                    Route::get('/', 'index')->name('index');
+                    Route::post('/clear', 'clear')->name('clear');
+                    Route::post('/read-all', 'readAll')->name('read-all');
+                });
+
+            /**
+             * Progress
+             */
             Route::redirect('/profile', '/profile/progress')->name('profile');
 
+            /**
+             * Profile setting pages
+             */
             Route::controller(ProfileController::class)
                 ->prefix('/profile')->name('profile.')->group(function () {
 
@@ -80,33 +165,42 @@ Route::middleware('site-lock')->group(function () {
                     Route::post('/payment/create-portal-session', 'createPortalSession')
                         ->name('payment.create-portal-session');
 
-                    Route::inertia('/account', 'Profile/Account')->name('account');
+                    Route::inertia('/account', 'Profile/Security')->name('security');
                     Route::put('/account', 'updateAccount')->name('account.update');
 
                     Route::delete('/account', 'deactivateAccount')->name('account.deactivate');
-
-                    Route::get('/activity', 'activity')->name('activity');
-                    Route::get('/activity/list', 'activityList')->name('activity.list');
                 });
 
-            Route::controller(PreferenceController::class)
-                ->prefix('/preference')->name('preference.')->group(function () {
-                    Route::inertia('/glitch-id', 'Preference/GlitchId')->name('glitch-id');
-                });
+            /**
+             * User public profile
+             */
+            //                Route::controller(UserController::class)->prefix('/users/{user}')
+            //                    ->name('users.')->group(function () {
+            //                        Route::get('/profile', 'profile')->name('profile');
+            //                    });
 
-            Route::controller(UserController::class)->prefix('/users/{user}')
-                ->name('users.')->group(function () {
-                    Route::get('/profile', 'profile')->name('profile');
-                    Route::get('/message', 'message')->name('message');
-                });
-
+            /**
+             * Academy pages
+             */
             Route::prefix('/academy')->group(function () {
-                Route::get('/instructors/{instructor}', InstructorProfileShowController::class)
-                    ->name('instructors.show');
+                /**
+                 * Instructor profile page
+                 */
+                //                    Route::get('/instructors/{instructor}', InstructorProfileShowController::class)
+                //                        ->name('instructors.show');
 
+                /**
+                 * Main page
+                 */
                 Route::get('/', AcademyController::class)->name('academy');
 
+                /**
+                 * Course routes
+                 */
                 Route::prefix('/courses/{course}')->name('courses.')->group(function () {
+                    /**
+                     * Course pages
+                     */
                     Route::controller(CourseController::class)->group(function () {
                         Route::get('/preview', 'preview')->name('preview');
                         Route::get('/enrol', 'enrol')->name('enrol');
@@ -114,10 +208,16 @@ Route::middleware('site-lock')->group(function () {
                             ->middleware('shouldEnrolledInCourse');
                     });
 
-                    Route::get('/discussion', [CourseDiscussionController::class, 'index'])
-                        ->name('discussion');
+                    /**
+                     * Course discussion
+                     */
+                    //                        Route::get('/discussion', [CourseDiscussionController::class, 'index'])
+                    //                            ->name('discussion');
                 });
 
+                /**
+                 * Course threads
+                 */
                 Route::controller(ThreadController::class)->group(function () {
                     Route::middleware('shouldEnrolledInCourse')->prefix('/courses/{course}')
                         ->name('courses.')->group(function () {
@@ -125,14 +225,11 @@ Route::middleware('site-lock')->group(function () {
                             Route::post('/threads', 'store')->name('threads.store');
                         });
 
+                    /**
+                     * Thread view page
+                     */
                     Route::get('/threads/{thread}', 'view')->name('threads.view');
                 });
-
-                Route::controller(ToggleFollowController::class)->prefix('/toggle-follow')
-                    ->name('toggle-follow.')->group(function () {
-                        Route::post('/threads/{thread}', 'thread')->name('threads');
-                        Route::post('/users/{user}', 'user')->name('users');
-                    });
 
                 Route::controller(ThreadCommentController::class)->group(function () {
                     Route::get('/threads/{thread}/comments', 'index')->name('threads.comments');
@@ -142,105 +239,103 @@ Route::middleware('site-lock')->group(function () {
                 });
             });
 
+            /**
+             * Toggle follow
+             * This can follow toggle any modal
+             */
+            //                Route::controller(ToggleFollowController::class)->prefix('/toggle-follow')
+            //                    ->name('toggle-follow.')->group(function () {
+            //                        Route::post('/threads/{thread}', 'thread')->name('threads');
+            //                        Route::post('/users/{user}', 'user')->name('users');
+            //                    });
+
+            /**
+             * Toggle bookmark
+             * This can bookmark toggle any modal
+             */
             Route::controller(ToggleBookmarkController::class)
                 ->prefix('bookmark-toggle')->name('bookmark-toggle.')->group(function () {
                     Route::post('courses/{course}', 'course')->name('courses');
                     Route::post('lessons/{lesson}', 'lesson')->name('lessons');
-                    Route::post('posts/{post}', 'post')->name('posts');
                     Route::post('live-training/{liveTraining}', 'liveTraining')->name('live-training');
                     Route::post('live-stream/{liveStream}', 'liveStream')->name('live-stream');
                 });
 
+            /**
+             * Lesson routes
+             */
             Route::controller(LessonController::class)->middleware('shouldEnrolledInLesson')
                 ->prefix('/lessons/{lesson}')->name('lessons.')->group(function () {
                     Route::get('/play', 'play')->name('play');
                     Route::post('/note', 'storeNote')->name('notes.store');
-                    Route::get('/quiz', 'complete')->name('complete');
+                    Route::get('/complete', 'complete')->name('complete');
                     Route::get('/skip-quiz', 'skipQuiz')->name('skip-quiz');
                     Route::post('/submit-quiz', 'submitQuiz')->name('submit-quiz');
                     Route::post('/update-progress', 'updateProgress')->name('update-progress');
                 });
 
+            /**
+             * Lesson quiz result page
+             */
             Route::get('/quiz-result', [LessonController::class, 'quizResult'])->name('lesson.quiz-result');
 
+            /**
+             * Marketplace page
+             */
             Route::controller(MarketplaceController::class)->prefix('/marketplace')
                 ->name('marketplace.')->group(function () {
                     Route::get('/', 'index')->name('index');
-                    Route::get('/list', 'list')->name('list');
-                    Route::get('/{partner_profile}/profile', 'profile')->name('profile');
                 });
 
-            Route::get('/discussion', [DiscussionController::class, 'index'])->name('discussion');
+            /**
+             * Toggle reaction
+             * This can toggle reaction any modal
+             */
+            //                Route::controller(ToggleReactionController::class)->prefix('/toggle-reaction')
+            //                    ->name('toggle-reaction.')->group(function () {
+            //                        Route::post('/thread-comments/{threadComment}', 'threadComment')
+            //                            ->name('thread-comments');
+            //                    });
 
-            Route::apiResource('/posts', PostController::class)->except(['update']);
-            Route::get('/posts/{post}/reactions', [PostController::class, 'reactions'])->name('posts.reactions');
-
-            Route::post('/posts/{post}/select-choice', [PostController::class, 'selectChoice'])
-                ->name('posts.select-choice');
-
-            Route::controller(PostCommentController::class)->group(function () {
-                Route::get('posts/{post}/comments', 'index')->name('posts.comments');
-                Route::post('/post-comments', 'store')->name('post-comments.store');
-                Route::get('/post-comments/{postComment}/reactions', 'reactions')
-                    ->name('post-comments.reactions');
-            });
-
-            Route::controller(ToggleReactionController::class)->prefix('/toggle-reaction')
-                ->name('toggle-reaction.')->group(function () {
-                    Route::post('/posts/{post}', 'post')->name('posts');
-                    Route::post('/post-comments/{postComment}', 'postComment')
-                        ->name('post-comments');
-                    Route::post('/thread-comments/{threadComment}', 'threadComment')
-                        ->name('thread-comments');
-                    Route::post('/messages/{message}', 'message')
-                        ->name('message');
-                });
-
-            Route::get('/chat/{activeConversationId?}', ChatController::class)->name('chat.index');
-
-            Route::apiResource('/conversations', ConversationController::class)->except(['update', 'show']);
-            Route::post('/conversations/data', [ConversationController::class, 'conversation_data'])->name('conversation.data');
-            Route::apiResource('/conversations.messages', MessageController::class)->only(['index', 'store']);
-
-            Route::controller(SearchController::class)->group(function () {
-                Route::get('/search', 'index')->name('search.index');
-                Route::post('/search', 'data')->name('search.data');
-                Route::get('/search/instructors', 'instructors')->name('search.instructors');
-            });
-
-            Route::controller(ReportController::class)->group(function () {
-                Route::post('/posts/{post}/report', 'post')->name('posts.report');
-                Route::post('/post-comments/{postComment}/report', 'postComment')->name('post-comments.report');
-                Route::post('/stream-message/{streamMessage}/report', 'streamMessage')->name('stream-message.report');
-            });
+            /**
+             * Reporting pages
+             * Send remarks and complains
+             */
+            //                Route::controller(ReportController::class)->group(function () {
+            //                    Route::post('/stream-message/{streamMessage}/report', 'streamMessage')->name('stream-message.report');
+            //                });
 
             /**
              * live-training is stand-alone stream.
              */
-            Route::controller(LiveTrainingController::class)->group(function () {
-                Route::get('live-training/', 'index')->name('live-training.index');
-                Route::get('live-training/{liveTraining}/preview', 'preview')->name('live-training.preview');
-                Route::get('live-training/{liveTraining}/play', 'play')->name('live-training.play');
-            });
+            //                Route::controller(LiveTrainingController::class)->group(function () {
+            //                    Route::get('live-training/', 'index')->name('live-training.index');
+            //                    Route::get('live-training/{liveTraining}/preview', 'preview')->name('live-training.preview'); // only for safety error in front end
+            //                    Route::get('live-training/{liveTraining}/play', 'play')->name('live-training.play'); // only for safety error in front end
+            //                });
 
             /**
              * live-series have group of streams.
              */
-            Route::controller(LiveSeriesController::class)->group(function () {
-                Route::get('live-series/{liveSeries}/preview', 'preview')->name('live-series.preview');
-            });
+            //                Route::controller(LiveSeriesController::class)->group(function () {
+            //                    Route::get('live-series/{liveSeries}/preview', 'preview')->name('live-series.preview');
+            //                });
 
             /**
              * live-stream is a child stream of live-series (a group of series).
              */
-            Route::get('/live-stream/{liveStream}/', [LiveStreamController::class, 'play'])->name('live-stream.play');
+            //                Route::get('/live-stream/{liveStream}/', [LiveStreamController::class, 'play'])->name('live-stream.play');
 
-            Route::post('live-training/{liveTraining}/chat', [StreamMessageController::class, 'storeChatLiveTraining'])
-                ->name('live-training.chat');
+            //                Route::post('live-training/{liveTraining}/chat', [StreamMessageController::class, 'storeChatLiveTraining'])
+            //                    ->name('live-training.chat');
 
-            Route::post('live-stream/{liveStream}/chat', [StreamMessageController::class, 'storeChatLiveStream'])
-                ->name('live-stream.chat');
+            //                Route::post('live-stream/{liveStream}/chat', [StreamMessageController::class, 'storeChatLiveStream'])
+            //                    ->name('live-stream.chat');
 
+            /**
+             * Review
+             * Create feedback of any modal
+             */
             Route::controller(ReviewController::class)->prefix('/review')->name('review.')
                 ->group(function () {
                     Route::post('/courses/{course}', 'storeForCourse')->name('courses.store');
@@ -248,65 +343,22 @@ Route::middleware('site-lock')->group(function () {
         });
     });
 });
-
 /**
  * Not utilized routes
  */
-Route::get('/intrest1', function () {
-    return Inertia::render('Preference/Interests');
-})->name('test1');
-
-Route::get('/intrest2', function () {
-    return Inertia::render('Preference/Community');
-})->name('test2');
-
-Route::get('/intrest3', function () {
-    return Inertia::render('Preference/Upload');
-})->name('test3');
-
-Route::get('/interests', function () {
-    return Inertia::render('Interests/Interests');
-})->name('signup');
-
-Route::get('/academy/course/lesson/poll', function () {
-    return Inertia::render('Academy/Poll');
-});
-
-//Route::get('/activity', function () {
-//    return Inertia::render('Academy/LatestActivity');
-//});
-
-Route::get('/checkout', function () {
-    return Inertia::render('Auth/Checkout');
-});
-
-//Route::get('/payment', function () {
-//    return Inertia::render('Auth/Payment');
-//})->name('payment');
-
-// error pages
-
-Route::get('/404', function () {
-    return Inertia::render('Error/Error404');
-});
-Route::get('/419', function () {
-    return Inertia::render('Error/Error419');
-});
-Route::get('/500', function () {
-    return Inertia::render('Error/Error500');
-});
-Route::get('/password', function () {
-    return Inertia::render('Auth/LandingPassword');
-});
-
-//assets path
 Route::get('assets/{path}', function ($path) {
     return response()->file(public_path("assets/$path"));
 });
 
-//remove this or comment this after stagging
-Route::get('/environment', function () {
-    return Inertia::render('Environment');
-})->name('environment');
 
-Route::inertia('/profile/privacy', 'Profile/Privacy');
+Route::inertia('/error-404', 'Error/Error404')->name('error-404');
+
+Route::inertia('/error-419', 'Error/Error419')->name('error-419');
+
+Route::inertia('/error-500', 'Error/Error500')->name('error-500');
+
+Route::inertia('/error-403', 'Error/Error403')->name('error-403');
+
+Route::inertia('/error-429', 'Error/Error429')->name('error-429');
+
+Route::inertia('/error-405', 'Error/Error405')->name('error-405');

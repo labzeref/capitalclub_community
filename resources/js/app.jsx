@@ -9,10 +9,10 @@ import { PostsProvider } from "./Store/PostsProvider";
 
 
 const appName =
-    window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
+    window.document.getElementsByTagName("title")[0]?.innerText || "Captial Club";
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    title: (title) => `${title} ${title?'-':''} ${appName}`,
     resolve: (name) =>
         resolvePageComponent(
             `./Pages/${name}.jsx`,
@@ -20,9 +20,12 @@ createInertiaApp({
         ),
     setup({ el, App, props }) {
         const root = createRoot(el);
-
+        // const handleContextMenu = (e) => {
+        //     e.preventDefault(); 
+        //   };
+          
         root.render(
-            <div className="min-h-[85vh] ">
+            <div>
                 <PostsProvider>
                     <App {...props} />
                 </PostsProvider>
@@ -32,6 +35,6 @@ createInertiaApp({
         );
     },
     progress: {
-        color: "#ffffff",
+        color: "#fff",
     },
 });

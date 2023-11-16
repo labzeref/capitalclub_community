@@ -4,7 +4,7 @@ import Badge from "@/Components/Badge.jsx";
 import top1 from "../../../assets/img/top1.png";
 import { Link } from "@inertiajs/react";
 
-export default function CourseInstructorCard({ className = '', user_id, image, title, courses, category, ...props }) {
+export default function CourseInstructorCard({ className = '', user_id, image, title, courses='', category, ...props }) {
 
     return (
         <Link href={route('instructors.show', user_id)}>
@@ -12,7 +12,7 @@ export default function CourseInstructorCard({ className = '', user_id, image, t
                 {/* <div className="academy-top-inst-img top-instructor-overlay absolute top-0 left-0 w-full"></div> */}
                 <div className="h-[370px] md:h-[430px] flex flex-col justify-between">
                     <div className="  flex item-center z-50">
-                        <span className="mr-[10px]">
+                      {courses &&  <span className="mr-[10px]">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path fillRule="evenodd" clipRule="evenodd"
@@ -25,7 +25,8 @@ export default function CourseInstructorCard({ className = '', user_id, image, t
                                 <path d="M14 8H20" stroke="white" strokeWidth="1.2" strokeMiterlimit="10" />
                             </svg>
                         </span>
-                        <p>{courses} {courses > 1 ? 'Courses ': 'course' }</p>
+}
+                        <p>{courses} {courses > 1 ? 'Courses ': courses && 'Course' }</p>
                     </div>
                     <div className="z-50">
                         <h3 className="mb-1">{title}</h3>

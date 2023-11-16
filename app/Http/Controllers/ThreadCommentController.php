@@ -7,9 +7,15 @@ use App\Http\Resources\ReactionResource;
 use App\Http\Resources\ThreadCommentResource;
 use App\Models\Thread;
 use App\Models\ThreadComment;
+use Illuminate\Http\JsonResponse;
 
 class ThreadCommentController extends Controller
 {
+    /**
+     * Get the all comments of a thread
+     *
+     * @return JsonResponse
+     */
     public function index(Thread $thread)
     {
         $response = ThreadCommentResource::collection(
@@ -27,6 +33,11 @@ class ThreadCommentController extends Controller
         return $this->sendResponse($response);
     }
 
+    /**
+     * Store the comment for a thread
+     *
+     * @return JsonResponse
+     */
     public function store(ThreadCommentRequest $request)
     {
         $user = $request->user();
@@ -40,11 +51,7 @@ class ThreadCommentController extends Controller
 
         if ($request->parent_comment_id) {
             $comment->load(['user.badges', 'reactions'])->loadCount('reactions');
-            logActivity(
-                causedBy: $user,
-                performedOn: $comment,
-                log: "You have replyed on comment by <span class='activity-text'>{$comment->user->full_name}</span>."
-            );
+
         } else {
             $comment->load([
                 'user.badges',
@@ -52,11 +59,7 @@ class ThreadCommentController extends Controller
                 'replies' => fn ($query) => $query->with(['user.badges', 'reactions'])->withCount('reactions')->orderBy('id'),
             ])
                 ->loadCount('reactions');
-            logActivity(
-                causedBy: $user,
-                performedOn: $comment,
-                log: "You have commented on thread by <span class='activity-text'>{$comment->thread->user->full_name}</span>."
-            );
+
         }
 
         $response = new ThreadCommentResource($comment);
@@ -64,6 +67,11 @@ class ThreadCommentController extends Controller
         return $this->sendResponse($response);
     }
 
+    /**
+     * Store the reaction for thread comment
+     *
+     * @return JsonResponse
+     */
     public function reactions(ThreadComment $threadComment)
     {
         $reactions = $threadComment->reactions()->with('user')->get();

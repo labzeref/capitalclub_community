@@ -11,6 +11,9 @@ use Inertia\Response;
 
 class PasswordResetLinkController extends Controller
 {
+    /**
+     * Show the forget password screen
+     */
     public function create(): Response
     {
         return inertia('Auth/ForgotPassword', [
@@ -18,6 +21,9 @@ class PasswordResetLinkController extends Controller
         ]);
     }
 
+    /**
+     * Sends the forget password mail to user
+     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([

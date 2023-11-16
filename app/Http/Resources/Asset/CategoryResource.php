@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Asset;
 
 use App\Http\Resources\CourseResource;
-use App\Http\Resources\Media\MediaResource;
 use App\Models\Asset\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,11 +16,7 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'courses' => CourseResource::collection($this->whenLoaded('courses')),
             'name' => $this->name,
-            'featured' => $this->featured,
-            'icon' => $this->whenLoaded(
-                'media',
-                fn () => new MediaResource($this->getFirstMedia('icon'))
-            ),
+            'icon' => $this->svg,
         ];
     }
 }

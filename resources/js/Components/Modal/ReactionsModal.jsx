@@ -18,7 +18,7 @@ const ReactionsModal = ({ postId, openReactionModal, setOpenReactionModal ,type 
     useEffect(() => {
         AOS.init();
     }, [])
-console.log( 'postId',  postId)
+// console.log( 'postId',  postId)
     const [showModal, setShowModal] = useState(true);
     const [tabSwitch, setTabSwitch] = useState(0);
 
@@ -31,17 +31,17 @@ console.log( 'postId',  postId)
             if (type=='post') {
                 const response = await axios.get(route("posts.reactions", postId));
                 setAllReactions(response.data?.payload)
-                console.log("fetching all reaction successfully:", response.data?.payload);
+                // console.log("fetching all reaction successfully:", response.data?.payload);
                 setUserReactionData(response.data?.payload) 
             } else if(type=='threadComment') {
                 const response = await axios.get(route("thread-comments.reactions", postId));
                 setAllReactions(response.data?.payload)
-                console.log("fetching all reaction successfully:", response.data?.payload);
+                // console.log("fetching all reaction successfully:", response.data?.payload);
                 setUserReactionData(response.data?.payload) 
             }else if(type== 'postComment' ){
                 const response = await axios.get(route("post-comments.reactions", postId));
                 setAllReactions(response.data?.payload)
-                console.log("fetching all reaction successfully:", response.data?.payload);
+                // console.log("fetching all reaction successfully:", response.data?.payload);
                 setUserReactionData(response.data?.payload) 
             }
            

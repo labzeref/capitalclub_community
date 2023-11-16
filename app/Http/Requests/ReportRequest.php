@@ -11,6 +11,11 @@ class ReportRequest extends FormRequest
 {
     use ResponseMethods;
 
+    /**
+     * Rules for the request
+     *
+     * @return string[]
+     */
     public function rules(): array
     {
         return [
@@ -18,7 +23,10 @@ class ReportRequest extends FormRequest
         ];
     }
 
-    protected function failedValidation(Validator $validator)
+    /**
+     * Override the repose for json
+     */
+    protected function failedValidation(Validator $validator): mixed
     {
         throw new HttpResponseException(
             $this->sendResponse($validator->errors()->all(), '', 422)

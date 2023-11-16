@@ -81,6 +81,22 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'discord' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/discord/discord.log'),
+            'level' => 'info',
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
+        'active-campaign' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/active-campaign/active-campaign.log'),
+            'level' => 'info',
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

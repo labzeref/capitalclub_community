@@ -38,7 +38,8 @@ export default function RatingModal({ course_id, openModal }) {
             </svg>
         ,
         onChange: newValue => {
-            console.log(`Example 2: new value is ${newValue}`);
+            setStartRating(newValue)
+            // console.log(`Example 2: new value is ${newValue}`);
         }
     };
 
@@ -50,12 +51,12 @@ export default function RatingModal({ course_id, openModal }) {
                 feedback: feedbackData,
             });
             setShowModal(false)
-            console.log("Data posted successfully:", response.data);
+            // console.log("Data posted successfully:", response.data);
             ReactToast('success', response.data?.metadata?.message)
             // setPostData("");
         } catch (error) {
             // ReactToast('error', error?.response?.data?.metadata?.message);
-            setErrors(error?.response?.data?.message) 
+            setErrors(error?.response?.data?.message)
             console.error("Error while posting data:", error?.response?.data?.message);
         }
     };

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Lesson;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -13,10 +14,16 @@ class ShouldEnrolledInLessonMiddleware
         ? $request->route('lesson')->id
         : $request->route('lesson');
 
+        $course = Lesson::find($lessonId)->course;
+
+        if (! $course->strict) {
+            return $next($request);
+        }
+
         if (_user()->hasEnrolledInLesson($lessonId)) {
             return $next($request);
         }
 
-        return back()->with('info', __('You have to enrolled in the lesson first.'));
+        return to_route('courses.play', $course->id)->with('info', __('You have to enrolled in the lesson first.'));
     }
 }

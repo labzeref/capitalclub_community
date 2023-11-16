@@ -36,7 +36,7 @@ class LiveStreamFactory extends Factory
             'live_at' => $liveAt,
             'video_url' => $video_url,
             'live_end_at' => $liveEndAt,
-            'bannered' => $this->faker->boolean,
+            'featured' => $this->faker->boolean,
             'published' => true,
             'chat_enabled' => fake()->boolean,
         ];

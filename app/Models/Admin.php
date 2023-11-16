@@ -48,13 +48,13 @@ class Admin extends Authenticatable implements HasMedia
         $this->addMediaConversion('medium')
             ->performOnCollections('dp')
             ->width(600)
-            ->height(400)
+            ->keepOriginalImageFormat()
             ->nonQueued();
 
         $this->addMediaConversion('small')
             ->performOnCollections('dp')
             ->width(300)
-            ->height(200)
+            ->keepOriginalImageFormat()
             ->nonQueued();
     }
 }

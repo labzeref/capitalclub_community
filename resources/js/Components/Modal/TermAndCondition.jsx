@@ -24,32 +24,32 @@ export default function TermAndCondition() {
     const detail = [
         {
             id: 0,
-            
+
             value: "Acceptance of Terms: By using our services, you agree to abide by these terms and conditions.",
         },
         {
             id: 1,
-            
+
             value: "Use of Services: Our services are provided 'as is' and we reserve the right to modify or discontinue them at any time.",
         },
         {
             id: 2,
-             
+
             value: "Intellectual Property: All content provided through our services is our property and protected by intellectual property laws. You may not use or reproduce it without our consent.",
         },
         {
             id: 3,
-            
+
             value: "User Responsibilities: You are responsible for providing accurate information, maintaining the confidentiality of your account, and using our services for lawful purposes.",
         },
         {
             id: 4,
-            
+
             value: "Limitation of Liability: We are not liable for any damages arising from the use of our services. We do not guarantee the accuracy or availability of the services.",
         },
         {
             id: 5,
-             
+
             value: "Modifications: We may update these terms and conditions without prior notice. It is your responsibility to review them periodically.",
         },
     ];
@@ -74,7 +74,7 @@ export default function TermAndCondition() {
                             {/*content*/}
                             <div className="  border-rounded-10  shadow-lg md:px-[13px] relative flex flex-col w-full bg-black z-[99999] outline-none focus:outline-none  my-[4rem]">
                                 {/*header*/}
-                                
+
                                     <div className="flex items-start justify-between px-6 pt-6  ">
                                     <p className="fw-medium fs-x-large">
                                            Term and Condition
@@ -89,31 +89,19 @@ export default function TermAndCondition() {
                                             />
                                         </button>
                                     </div>
-                               
+
                                 {/*body*/}
                                 <div className="relative p-3 md:p-6 flex-auto">
-                                    
+
                                     <div className="max-w-[420px] md:max-w-[620px] lg:max-w-[830px] mx-auto paddingSectionXSmall">
-                                       {detail?.map((data , index)=>( 
+                                       {detail?.map((data , index)=>(
                                        <div className="flex gap-x-3">
                                          <p className=" py-2 flex fw-bold fs-regular">{index+1} </p>   <p className=" py-2 fw-regular fs-regular">{data?.value}</p>
                                         </div>
                                         ))}
                                     </div>
                                 </div>
-                                {/*footer*/}
-                                {/* <div className="flex items-center justify-center p-3  md:px-6 pb-6  md:space-x-3 space-y-3 md:space-y-0">
-                                   
 
-                                    <button onClick={()=>{setShowModal(false)}} className="button primary ">
-                                        <div className="button_container glitch uppercase">
-
-                                           Agree
-                                        </div>
-                                    </button>
-
-                                   
-                                </div> */}
                             </div>
                         </div>
 

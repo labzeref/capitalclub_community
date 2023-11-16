@@ -31,8 +31,8 @@ class UserFactory extends Factory
         ]);
     }
 
-    public function configure(): UserFactory
-    {
-        return $this->afterCreating(fn (User $user) => $user->addDummyMedia(public_path('/assets/img/user'), 'dp'));
-    }
+    //    public function configure(): UserFactory
+    //    {
+    //        return $this->afterCreating(fn (User $user) => $user->addDummyMedia(public_path('/assets/img/user'), 'dp'));
+    //    }
 }

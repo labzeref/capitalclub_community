@@ -107,8 +107,7 @@ const Thread = ({ thread, course, topRankMembers }) => {
 
     //*********** */ POST Thread Reply API's function *******
 
-    const [showReply, setShowReply] = useState(-1);
-    console.log('show reply ' , showReply)
+    const [showReply, setShowReply] = useState(-1); 
     const [threadReplyData, setThreadReplyData] = useState("");
     const handleThreadReply = async (comment_id, index) => {
         try {
@@ -140,8 +139,7 @@ const Thread = ({ thread, course, topRankMembers }) => {
         try {
             const response = await axios.post(route('toggle-reaction.thread-comments', postId), {
                 reaction: emoji?.name,
-            });
-            console.log('Emoji comment posted successfully:', response.data);
+            }); 
             setAllComments((prevPosts) => {
                 const updatedPosts = [...prevPosts];
                 updatedPosts[index] = response.data?.payload;
@@ -186,8 +184,7 @@ const Thread = ({ thread, course, topRankMembers }) => {
     const handleFollowThread = async (thread_id) => {
 
         try {
-            const response = await axios.post(route("toggle-follow.threads", thread_id));
-            console.log("Follow thread successfully:", response);
+            const response = await axios.post(route("toggle-follow.threads", thread_id)); 
             if (response?.status === 200) {
                 ReactToast('success', response?.data?.payload)
                 thread.has_followed = !thread.has_followed;
@@ -827,38 +824,7 @@ const Thread = ({ thread, course, topRankMembers }) => {
                         <div className="flex items-center justify-center md:pt-[4rem] ">
                             <button className="button secondary" onClick={() => loadMore()}>
                                 <div className="button_container glitch uppercase">
-                                    {/* <svg
-                                    width="20"
-                                    height="20"
-                                    viewBox="0 0 20 20"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <g clipPath="url(#clip0_829_47187)">
-                                        <path
-                                            opacity="0.2"
-                                            d="M10.2266 17.1602C14.3687 17.1602 17.7266 13.8023 17.7266 9.66016C17.7266 5.51802 14.3687 2.16016 10.2266 2.16016C6.08443 2.16016 2.72656 5.51802 2.72656 9.66016C2.72656 13.8023 6.08443 17.1602 10.2266 17.1602Z"
-                                            fill="white"
-                                        />
-                                        <path
-                                            d="M13.125 3.46484C14.4334 4.07505 15.5402 5.04627 16.3153 6.26423C17.0903 7.48219 17.5014 8.89619 17.5 10.3398C17.5 12.329 16.7098 14.2366 15.3033 15.6431C13.8968 17.0497 11.9891 17.8398 10 17.8398C8.01088 17.8398 6.10323 17.0497 4.6967 15.6431C3.29018 14.2366 2.5 12.329 2.5 10.3398C2.49865 8.89619 2.90969 7.48219 3.68475 6.26423C4.45982 5.04627 5.56665 4.07505 6.875 3.46484"
-                                            stroke="white"
-                                            strokeOpacity="0.6"
-                                            strokeWidth="1.2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </g>
-                                    <defs>
-                                        <clipPath id="clip0_829_47187">
-                                            <rect
-                                                width="20"
-                                                height="20"
-                                                fill="white"
-                                            />
-                                        </clipPath>
-                                    </defs>
-                                </svg> */}
+                                    
                                     Load more
                                 </div>
                             </button>

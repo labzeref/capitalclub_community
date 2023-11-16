@@ -6,52 +6,31 @@ namespace Database\Seeders;
 use Database\Seeders\Asset\CategorySeeder;
 use Database\Seeders\Asset\CountrySeeder;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        //        $this->emptyStorageDirectory();
-
         $this->call([
             /**
              * Independent Asset Seeder
              */
+            IndustrySeeder::class,
+//                        VideoAssetSeeder::class,
             CountrySeeder::class,
             CategorySeeder::class,
-            BadgeSeeder::class,
-            instructorSeeder::class,
+//            BadgeSeeder::class,
+            //            instructorSeeder::class,
 
             /**
              * Depended Model Seeder
              */
-            CourseSeeder::class,
+            AvatarSeeder::class,
             UserSeeder::class,
-            PartnerProfileSeeder::class,
-            LiveTrainingSeeder::class,
+            //            LiveTrainingSeeder::class,
+            CourseSeeder::class,
+            PremiumUserSeeder::class,
+            InvitationSeeder::class,
         ]);
-    }
-
-    private function emptyStorageDirectory(): void
-    {
-        $directory = public_path('/storage');
-
-        if (File::isDirectory($directory)) {
-            $files = File::allFiles($directory);
-            $excludedFileName = '.gitignore';
-
-            foreach ($files as $file) {
-                if ($file->getFilename() !== $excludedFileName) {
-                    File::delete($file->getPathname());
-                }
-            }
-
-            $directories = File::directories($directory);
-
-            foreach ($directories as $directory) {
-                File::deleteDirectory($directory);
-            }
-        }
     }
 }

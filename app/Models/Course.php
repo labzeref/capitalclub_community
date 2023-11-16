@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-use Laravel\Scout\Searchable;
 use Maize\Markable\Markable;
 use Maize\Markable\Models\Bookmark;
 use Spatie\MediaLibrary\HasMedia;
@@ -24,7 +23,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Course extends Model implements HasMedia
 {
-    use SoftDeletes, HasFactory, InteractsWithMedia, AddDummyImageTrait, Markable, Searchable, CascadeSoftDeletes;
+    use SoftDeletes, HasFactory, InteractsWithMedia, AddDummyImageTrait, Markable, CascadeSoftDeletes;
 
     protected $guarded = ['id'];
 
@@ -32,19 +31,21 @@ class Course extends Model implements HasMedia
 
     protected $casts = [
         'featured' => 'boolean',
-        'bannered' => 'boolean',
+        'strict' => 'boolean',
         'published_at' => 'datetime',
-        'experience' => 'json',
     ];
 
     protected static array $marks = [
         Bookmark::class,
     ];
 
-    protected array $cascadeDeletes = ['lessons', 'faqs', 'threads', 'reviews'];
+    protected array $cascadeDeletes = ['lessons', 'threads', 'reviews'];
 
     protected static function booted(): void
     {
+        /**
+         * Load only published courses
+         */
         static::addGlobalScope('published', fn (Builder $builder) => $builder->whereNotNull('published_at'));
     }
 
@@ -70,6 +71,8 @@ class Course extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('thumbnail')->singleFile();
+        $this->addMediaCollection('mobileThumbnail')->singleFile();
+        $this->addMediaCollection('poster')->singleFile();
     }
 
     public function registerAllMediaConversions(): void
@@ -77,13 +80,46 @@ class Course extends Model implements HasMedia
         $this->addMediaConversion('medium')
             ->performOnCollections('thumbnail')
             ->width(600)
-            ->height(400)
+            ->keepOriginalImageFormat()
             ->nonQueued();
 
         $this->addMediaConversion('small')
             ->performOnCollections('thumbnail')
             ->width(300)
-            ->height(200)
+            ->keepOriginalImageFormat()
+            ->nonQueued();
+
+        $this->addMediaConversion('blur')
+            ->performOnCollections('thumbnail')
+            ->blur(15) // Adjust the blur amount as needed
+            ->width(70)
+            ->keepOriginalImageFormat()
+            ->nonQueued();
+
+        $this->addMediaConversion('medium')
+            ->performOnCollections('mobileThumbnail')
+            ->width(600)
+            ->keepOriginalImageFormat()
+            ->nonQueued();
+
+        $this->addMediaConversion('small')
+            ->performOnCollections('mobileThumbnail')
+            ->width(300)
+            ->keepOriginalImageFormat()
+            ->nonQueued();
+
+        $this->addMediaConversion('blur')
+            ->performOnCollections('mobileThumbnail')
+            ->blur(15) // Adjust the blur amount as needed
+            ->width(70)
+            ->keepOriginalImageFormat()
+            ->nonQueued();
+
+        $this->addMediaConversion('blur')
+            ->performOnCollections('poster')
+            ->blur(15) // Adjust the blur amount as needed
+            ->width(70)
+            ->keepOriginalImageFormat()
             ->nonQueued();
     }
 
@@ -92,13 +128,7 @@ class Course extends Model implements HasMedia
         return [
             'title' => (string) $this->title,
             'summery' => (string) $this->summery,
-            'experience' => (array) $this->experience,
         ];
-    }
-
-    public function trailer(): HasOne
-    {
-        return $this->hasOne(Trailer::class);
     }
 
     /**
@@ -106,6 +136,11 @@ class Course extends Model implements HasMedia
      * | Relations
      * ---------------
      */
+    public function trailer(): HasOne
+    {
+        return $this->hasOne(Trailer::class);
+    }
+
     public function instructors(): MorphToMany
     {
         return $this->morphToMany(Instructor::class, 'instructorable');
@@ -124,11 +159,6 @@ class Course extends Model implements HasMedia
     public function lessons(): HasMany
     {
         return $this->hasMany(Lesson::class);
-    }
-
-    public function faqs(): MorphMany
-    {
-        return $this->morphMany(FAQ::class, 'faqable');
     }
 
     public function enrolledUsers(): BelongsToMany
@@ -154,10 +184,19 @@ class Course extends Model implements HasMedia
         return $this->morphMany(Review::class, 'reviewable');
     }
 
+    public function modules(): HasMany
+    {
+        return $this->hasMany(Module::class);
+    }
+
     /**
      * ---------------
      * | Methods
      * ---------------
+     */
+
+    /**
+     * Update the progress of course for the specific user in pivot table
      */
     public function updateProgressForUser(User $user): void
     {
@@ -167,10 +206,12 @@ class Course extends Model implements HasMedia
             ->wherePivot('completed', true)
             ->count();
 
-        $progress = round(($completedLessonsCount / $totalLessonCount) * 100);
+        $progress = (int) round(($completedLessonsCount / $totalLessonCount) * 100);
+
+        //        dd($progress);
 
         $this->enrolledUsers()->syncWithoutDetaching([$user->id => [
-            'progress' => round(($completedLessonsCount / $totalLessonCount) * 100),
+            'progress' => $progress,
         ]]);
 
         if ($progress == 100) {
@@ -180,8 +221,21 @@ class Course extends Model implements HasMedia
         }
     }
 
+    /**
+     * Tells that user has submitted his review or not for this course
+     */
     public function hasReviewForUser(int $userId): bool
     {
         return $this->reviews()->where('user_id', $userId)->exists();
+    }
+
+    /**
+     * Update the duration by sum of duration of all its lessons
+     *
+     * @return void
+     */
+    public function updateDuration(): void
+    {
+        $this->update(['duration' => $this->lessons()->sum('duration')]);
     }
 }

@@ -11,17 +11,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Instructor extends Model implements HasMedia
 {
-    use SoftDeletes, HasFactory, InteractsWithMedia, AddDummyImageTrait, Searchable;
+    use SoftDeletes, HasFactory, InteractsWithMedia, AddDummyImageTrait;
 
     protected $guarded = ['id'];
 
-    protected $with = ['category', 'media'];
+    protected $with = ['category', 'media', 'country'];
 
     protected $appends = ['full_name'];
 
@@ -42,13 +41,13 @@ class Instructor extends Model implements HasMedia
         $this->addMediaConversion('medium')
             ->performOnCollections('dp')
             ->width(600)
-            ->height(400)
+            ->keepOriginalImageFormat()
             ->nonQueued();
 
         $this->addMediaConversion('small')
             ->performOnCollections('dp')
             ->width(300)
-            ->height(200)
+            ->keepOriginalImageFormat()
             ->nonQueued();
     }
 
@@ -67,6 +66,11 @@ class Instructor extends Model implements HasMedia
      *  Relations
      * ------------------------
      */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'country_iso', 'iso');
+    }
+
     public function courses(): MorphToMany
     {
         return $this->morphedByMany(Course::class, 'instructorable');
@@ -85,5 +89,10 @@ class Instructor extends Model implements HasMedia
     public function socialMedia(): MorphOne
     {
         return $this->morphOne(SocialMedia::class, 'socialable');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

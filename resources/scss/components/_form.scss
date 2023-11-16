@@ -1,115 +1,555 @@
+$font-input-size: 12px !important;
+$font-vw-size:3vw !important;
+$font-input-family: "CapitalSans Medium", sans-serif !important;
+$input-height:40px !important;
+$input-vw-height:8vw !important;
+
+
+
 .input-text {
+    font-family: $font-input-family;
+    font-size: $font-input-size;
     text-align: center;
     // box-shadow: inset 0 0 0 1px $btn-secondary-bg !important;
     border: none !important;
     border-radius: 20px;
     color: $primary-color !important;
     outline: transparent !important;
-    padding: 1rem 1.5rem 13px 1.5rem !important;
-    font-size: 16px !important;
-    font-weight: 400 !important;
-
+    // padding: 1rem 1.5rem 13px 1.5rem !important;
+    // height: 2.5rem;
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    margin-bottom: 7.9px;
     overflow: hidden;
     background-color: #1A1A1A !important;
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.20);
     // background-image: url("../../assets/Noise10.webp") !important;
     background-repeat: repeat;
     background-position: 0, 0;
     background-size: 17.5rem 17.5rem;
-    @include for_breakpoint(mobile) {
-       padding: 10px 10px 10px 1.5rem !important;
-    }
-    &:focus,
-    &:active {
-        color: $primary-color !important;
-        border: none !important;
-        box-shadow: inset 0 0 0 1px #ffffff !important;
-        -webkit-box-shadow: inset 0 0 0 1px #ffffff !important;
-        outline: transparent !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    // @include for_breakpoint(mobile) {
+    //    padding: 7px 1.5rem 7px 1.5rem !important;
+    // }
 
-        overflow: hidden;
-        background-color: #ffffff10 !important;
-        // background-image: url("../../assets/Noise\ 20.webp") !important ;
-        background-repeat: repeat;
-        background-position: 0, 0;
-        background-size: 17.5rem 17.5rem;
+//     @include for_breakpoint(xs-mobile) {
+//       height: 1.1rem;
+//        font-size: 9px !important;
+//   }
+
+//   @include for_breakpoint(sm-mobile) {
+//     height: 1.25rem;
+//        font-size: 10px !important;
+//   }
+
+//   @include for_breakpoint(md-mobile) {
+//     height: 1.98rem;
+//        font-size: 10px !important;
+//   }
+
+//   @include for_breakpoint(lg-mobile) {
+//     height: 2rem;
+//     font-size: 10px !important;
+//   }
+    @include for_breakpoint(vw-mobile) {
+        height: $input-vw-height;
+        height: 10vmin;
+        margin-bottom: 1.4vw;
+        font-size: $font-vw-size;
+        font-size: 3vmin !important;
+    }
+    @include for_breakpoint(vw-laptop) {
+        height: $input-height;
+        margin-bottom: 7.9px !important;
+        font-family: $font-input-family;
+        font-size: $font-input-size;
     }
 
-    &:-webkit-autofill,
-    &:-webkit-autofill:hover,
-    &:-webkit-autofill:focus,
-    &:-webkit-autofill:active,
-    &:-internal-autofill-selected,
-    &:-internal-autofill-previewed {
-        transition: all 5000s ease-in-out 0s !important;
-    }
+&.margin-b-0{
+  @include for_breakpoint(tablet){
+    margin-bottom: 0 !important;
+  }
+}
 
-    &.left-icon {
-        padding: 1rem 1.5rem 1rem 3rem !important;
-    }
+  &:focus,
+  &:active {
+    color: $primary-color !important;
+    border: none !important;
+    box-shadow: inset 0 0 0 1px #ffffff !important;
+    -webkit-box-shadow: inset 0 0 0 1px #ffffff !important;
+    outline: transparent !important;
+
+    overflow: hidden;
+    background-color: #ffffff10 !important;
+    // background-image: url("../../assets/Noise\ 20.webp") !important ;
+    background-repeat: repeat;
+    background-position: 0, 0;
+    background-size: 17.5rem 17.5rem;
+  }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active,
+  &:-internal-autofill-selected,
+  &:-internal-autofill-previewed {
+    transition: all 5000s ease-in-out 0s !important;
+  }
+
+  &.left-icon {
+    padding: 1rem 1.5rem 1rem 3rem !important;
+  }
+  &.mb-0 {
+    margin-bottom: 0px !important;
+  }
+
+}
+
+input::placeholder {
+  color: #909090;
 }
 
 //   focus:ring-transparent focus:border inset-border
 
 .myCheckbox:checked {
-    background-color: rgb(255, 255, 255); /* Change this to the desired background color */
-  }
+  background-color: rgb(255, 255, 255);
+  /* Change this to the desired background color */
+}
 
- .myCheckbox:checked::after {
-    content: "\2713"; /* Unicode character for checkmark */
-    display: block;
-    color: rgb(0, 0, 0); /* Change this to the desired checkmark color */
-    font-size: 16px; /* Adjust the font size as needed */
-    text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+.myCheckbox:checked::after {
+  content: "\2713";
+  /* Unicode character for checkmark */
+  display: block;
+  color: rgb(0, 0, 0);
+  /* Change this to the desired checkmark color */
+  font-size: 16px;
+  /* Adjust the font size as needed */
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
 .checkbox-bg {
+
     background-image: none;
 }
 
+.checkbox-bg {
+  height: 14px;
+  width: 14px;
+
+  @include for_breakpoint(mobile) {
+    height: 8px;
+    width: 8px;
+  }
+}
+
 .checkbox-bg:checked {
-    height: 20px;
-width: 20px;
-    background-image: url("../../assets/svg/checkbg.png") !important;
+  /* Remove height and width properties here */
+  background-image: url("../../assets/img/checkboxbg.jpg") !important;
 }
 
-.filepond-container .filepond--drop-label{
-    position: relative;
-    z-index: 99999 !important;
 
-    border: 1px solid white;
-    border-radius: 10px;
-    background-color: #000 !important;
-    color: white !important;
+
+.filepond-container .filepond--drop-label {
+  position: relative;
+  z-index: 99999 !important;
+
+  border: 1px solid white;
+  border-radius: 10px;
+  background-color: #000 !important;
+  color: white !important;
 }
-.filepond--credits{
-    display: none !important;
+
+.filepond--credits {
+  display: none !important;
 }
 
 #mySelect:focus {
-    outline: none;
-    border: none !important;
-    box-shadow: inset 0 0 0 0px #ffffff00 !important;
-    -webkit-box-shadow: inset 0 0 0 0px #ffffff00 !important;
-    outline: transparent !important;
+  outline: none;
+  border: none !important;
+  box-shadow: inset 0 0 0 0px #ffffff00 !important;
+  -webkit-box-shadow: inset 0 0 0 0px #ffffff00 !important;
+  outline: transparent !important;
+}
+
+#mySelect {
+  outline: none;
+  border: none !important;
+  box-shadow: inset 0 0 0 0px #ffffff00 !important;
+  -webkit-box-shadow: inset 0 0 0 0px #ffffff00 !important;
+  outline: transparent !important;
+}
+
+.search-input {
+  box-shadow: inset 0 0 0 1px #ffffff1a !important;
+}
+
+
+
+select {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.input-shadow {
+  box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.50);
+}
+.dropdown-shadow{
+    box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.10);
+}
+.filter-drop{
+  filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.80));
+}
+
+.drop-down-bg {
+  border-radius: 17px;
+  background: rgba(0, 0, 0, 0.50);
+  backdrop-filter: blur(25px);
+}
+
+
+.CardInput {
+  font-size: 16px !important;
+}
+.CardInput{
+    font-size: 16px !important;
+    @include for_breakpoint(mobile) {
+      font-size: 12px !important;
   }
-  #mySelect{
-    outline: none;
-    border: none !important;
-    box-shadow: inset 0 0 0 0px #ffffff00 !important;
-    -webkit-box-shadow: inset 0 0 0 0px #ffffff00 !important;
-    outline: transparent !important;
+}
+
+
+  .CardIcon-fill {
+    fill: #909090 !important;
+    path{
+      fill: #909090 !important;
+    }
   }
-  .search-input{
-    box-shadow: inset 0 0 0 1px #ffffff1a !important;
+
+.register-tab{
+    font-family: 'CapitalSans Semibold', sans-serif !Important;
+    font-size: $font-input-size;
+    text-transform: uppercase;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    width: 100%;
+    padding-top:6px;
+    padding-bottom:4px;
+    border-radius:7px;
+
+    &:last-child{
+        margin-left: 3.95px;
+        @include for_breakpoint(vw-mobile) {
+            margin-left: 0.7vw;
+        }
+        @include for_breakpoint(vw-laptop) {
+            margin-left: 3.95px;
+
+        }
+    }
+    &:first-child{
+        margin-right: 3.95px;
+        @include for_breakpoint(vw-mobile) {
+            margin-right: 0.7vw;
+        }
+        @include for_breakpoint(vw-laptop) {
+            margin-right: 3.95px;
+
+        }
+    }
+
+
+    @include for_breakpoint(vw-mobile) {
+        font-size: $font-vw-size;
+        padding-top:1.2vw;
+        padding-bottom:0.8vw;
+        border-radius:1.4vw;
+        margin-bottom: 1.4vw;
+        font-size: 2.8vmin !important;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: $font-input-size;
+        padding-top:6px;
+        padding-bottom:4px;
+        border-radius:7px;
+        margin-bottom: 9px !important;
+
+    }
+
+}
+
+.register-input-heading{
+
+    font-family: 'CapitalSans Semibold', sans-serif;
+    font-size: $font-input-size;
+    text-align: center;
+    margin-bottom: 12px;
+
+    @include for_breakpoint(vw-mobile) {
+        font-size: $font-vw-size;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: $font-input-size;
+    }
+
+}
+
+.register-input-heading-2{
+    font-family: 'CapitalSans Semibold', sans-serif;
+    font-size: $font-input-size;
+    text-align: center;
+    margin-bottom: 12px;
+
+    @include for_breakpoint(vw-mobile) {
+        font-size: $font-vw-size;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: $font-input-size;
+    }
+}
+
+
+.register-country-height{
+    // height: 2.5rem;
+    //font-family: 'CapitalSans Semibold', sans-serif;
+    font-size: $font-input-size;
+    height: $input-height;
+    text-align:center !important;
+    text-align:-moz-center !important;
+    text-align:-webkit-center !important;
+    -webkit-appearance: none !important; /* turn off drop-down arrow*/
+    -moz-appearance: none !important;
+    display:flex;
+    justify-content:center;
+    // font-size: 11px;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    text-align-last:center !important;
+
+    //     @include for_breakpoint(xs-mobile) {
+    //       height: 16px;
+    //       font-size: 8px;
+    //       line-height: 0.5rem !important;
+    //   }
+
+    //   @include for_breakpoint(sm-mobile) {
+    //       height: 1.25rem;
+    //       font-size: 9px;
+    //   }
+
+    //   @include for_breakpoint(md-mobile) {
+    //       height: 2rem;
+    //       font-size: 9px;
+    //       padding-top: 3px !important;
+    //   }
+
+    //   @include for_breakpoint(lg-mobile) {
+    //     height: 2rem;
+    //     font-size: 11px;
+    //   }
+    //   @include for_breakpoint(tablet) {
+    //     font-size: 11px;
+    //   }
+    @include for_breakpoint(vw-mobile) {
+        height: $input-vw-height;
+        font-size: $font-vw-size;
+        font-size: 3vmin !important;
+    }
+    @include for_breakpoint(vw-laptop) {
+        height: $input-height;
+        font-size: $font-input-size;
+    }
+
+}
+.form-logo{
+    width: 200px;
+    @include for_breakpoint(vw-mobile) {
+        width: 40vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        width: 200px;
+    }
+}
+
+.phone-input{
+
+    font-size: $font-input-size;
+    box-shadow: rgb(78, 225, 38) !important;
+    border: 0px !important;
+    height: $input-height;
+    margin-bottom: 7.9px !important;
+
+    text-align: center !important;
+    background-color: #1a1a1a !important;
+    width: 100% !important;
+    border-radius: 20px !important;
+
+    @include for_breakpoint(vw-mobile) {
+        font-size: $font-vw-size;
+        height: $input-vw-height;
+        margin-bottom: 1.4vw !important;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: $font-input-size;
+        height: $input-height;
+        margin-bottom: 7.9px !important;
+    }
+
+}
+
+.iti input, .iti input[type=text], .iti input[type=tel]{
+
+    background-color: #1A1A1A !important;
+    box-shadow: none !important;
+    border: 0px !important;
+    margin-bottom: 7.9px !important;
+    padding-left: 0px !important;
+    border-radius: 20px !important;
+    line-height: 33px !important;
+
+
+    @include for_breakpoint(vw-mobile) {
+        font-size: $font-vw-size;
+        height: 7vw !important;
+        margin-bottom: 1.4vw !important;
+        padding-left: 0px !important;
+        font-size: 3vmin !important;
+        line-height: 3vmin !important;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: $font-input-size;
+        height: 35px !important;
+        margin-bottom: 7.9px !important;
+        padding-left: 0px !important;
+    }
+}
+
+.iti {
+    &.iti--allow-dropdown{
+        &.iti--show-flags{
+
+            padding-left: 0px !important;
+            text-align: center !important;
+            margin-bottom: 7.9px !important;
+            border-radius: 20px !important;
+
+
+            @include for_breakpoint(vw-mobile) {
+                padding-left: 0px !important;
+                font-size: $font-vw-size;
+                height: 7vw !important;
+                margin-bottom: 1.4vw !important;
+            }
+            @include for_breakpoint(vw-laptop) {
+                font-size: $font-input-size;
+                padding-left: 0px !important;
+                height: 35px !important;
+                margin-bottom: 7.9px !important;
+            }
+        }
+    }
+
+}
+
+.iti__flag{
+  border-radius: 20px !important;
+}
+
+.register-button {
+    font-family: "CapitalSans Semibold" ,sans-serif;
+    font-size: $font-input-size;
+    display: flex;
+    justify-content: center;
+    padding-top: 2px;
+    align-items: center;
+    cursor: pointer;
+    background: transparent;
+    height: 35px !important;
+    background: $primary-color;
+    color: $secondary-color;
+    &:disabled{
+        opacity: 0.3;
+    }
+
+    @include for_breakpoint(vw-mobile) {
+        font-size: $font-vw-size;
+        height: 7vw !important;
+        font-size: 3vmin !important;
+
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: $font-input-size;
+        height: 35px !important;
+    }
+
+    svg {
+        opacity: 0.6;
+        height: 24px;
+        width: 24px;
+        @include for_breakpoint(mobile) {
+            height: 18px;
+            width: 18px;
+        }
+    }
+}
+
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+// .interest-h{
+//   height: 500px;
+//   @include for_breakpoint(mobile) {
+//     height: 820px;
+
+// }
+// }
+
+
+.interest-h{
+  height: 464px;
+  overflow-y: scroll;
+  @include for_breakpoint(xs-mobile) {
+    height: 265px;
   }
-  .search-input:focus{
-    outline: none;
-    border: none !important; 
-    -webkit-box-shadow: inset 0 0 0 0px #ffffff00 !important;
-    outline: transparent !important;
-    box-shadow: inset 0 0 0 1px #ffffff1a !important;
+  @include for_breakpoint(sm-mobile) {
+    height: 315px;
+}
+@include for_breakpoint(md-mobile) {
+  height: 285px;
+}
+@include for_breakpoint(lg-mobile) {
+  height: 370px;
+}
+}
+
+// mt-[8vw] md:mt-[8rem]
+.padding-payout{
+  margin-top: 50px;
+  @include for_breakpoint(xs-mobile) {
+    margin-top: 15px;
   }
+  @include for_breakpoint(sm-mobile) {
+    margin-top: 25px;
+}
+@include for_breakpoint(md-mobile) {
+  margin-top: 30px;
+}
+@include for_breakpoint(lg-mobile) {
+  margin-top: 35px;
+}
+@include for_breakpoint(tablet) {
+  margin-top: 50px;
+}
+}

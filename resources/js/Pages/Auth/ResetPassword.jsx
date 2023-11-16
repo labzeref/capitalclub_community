@@ -16,58 +16,67 @@ const ResetPassword = ({ token, email }) => {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        console.log(data)
 
         post(route('password.store'));
     }
 
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+      };
+
     return (
-        <div className="mybg">
+        <div onContextMenu={handleContextMenu}>
             <Toast />
             <section>
-                <div className="px-5 xl:px-0">
-                    <div className="grid grid-cols-12">
-                        <div className="col-span-12 lg:col-span-5">
-                            <ToastContainer />
+                <div className="px-5 lg:px-0">
+                    <div
+                        className="">
+
+                        <div className=" md:w-[60%] max-w-[500px] xl:w-[30%] mx-auto">
+
+                            <Link href={route('welcome')} className="flex justify-center w-full ">
+                                <img
+                                    className="flex justify-center w-full mt-6  max-h-[40px] mx-[4rem] "
+                                    src={logo}
+                                    alt=""
+                                />
+                            </Link>
                             <form
                                 onSubmit={handleSubmit}
-                                className=" containerMedium px-6 pr-0 lg:pr-5 xl:pr-0 relative"
+                                className="containerMedium px-0   pr-0 lg:pr-5 xl:pr-0 relative"
                             >
-                                <div className="h-screen w-full px-0  lg:px-[4rem] items-start justify-center flex flex-col">
-                                <Link href={route('welcome')}>    <img
-                                        className="absolute top-6 px-[4rem] left-0 max-h-[40px]"
-                                        src={logo}
-                                        alt=""
-                                    />
-                                     </Link>
-                                    <h3 className="mb-4">Reset Password?</h3>
-                                    {/* <div className="flex items-center">
-                                        <p className="fs-regular fw-regular text-[#949494]">
-                                            Remember your password?
-                                        </p>
-                                        <Link
-                                            href={route('login')}
-                                        >
-                                            <p className="fs-regular fw-regular underline underline-offset-4 px-1">
-                                                Login
-                                            </p>
-                                        </Link>
-                                    </div> */}
+                                <div className="h-[100vh] max-vh-webkit w-full px-0    items-start justify-center flex flex-col">
+                                    <h3 className="mb-4 text-center w-full">Reset Password?</h3>
                                     <div className="pr-5 w-full">
                                         <div className="relative w-full mt-[1rem]">
+                                            <input type= "email"
+
+                                                   className="input-text   w-full "
+                                                   placeholder="Your Email"
+                                                   name="email"
+                                                   value={data.email}
+                                                   onChange={e => setData('email', e.target.value)} />
+                                            {errors?.email && (
+                                                <p className="fs-tiny fw-regular mt-3 ml-5 text-center danger-color ">
+                                                    {errors?.email}{" "}
+                                                </p>
+                                            )}
+
+                                        </div>
+                                        <div className="relative w-full mt-[1rem]">
                                             <input type= "password"
-                                            
-                                                className="input-text   w-full "
-                                                placeholder="New Password"
-                                                name="password"
-                                                value={data.password}
-                                                onChange={e => setData('password', e.target.value)} />
-                                                {errors?.password && (
+
+                                                   className="input-text   w-full "
+                                                   placeholder="New Password"
+                                                   name="password"
+                                                   value={data.password}
+                                                   onChange={e => setData('password', e.target.value)} />
+                                            {errors?.password && (
                                                 <p className="fs-tiny fw-regular mt-3 ml-5 text-center danger-color ">
                                                     {errors?.password}{" "}
                                                 </p>
                                             )}
-                                           
+
                                         </div>
                                         <div className="relative w-full mt-[1rem]">
                                             <input
@@ -80,7 +89,7 @@ const ResetPassword = ({ token, email }) => {
                                                 className=" w-full  input-text "
                                                 placeholder="Confirm New Password"
                                             />
-                                                    {errors?.password_confirmation && (
+                                            {errors?.password_confirmation && (
                                                 <p className="fs-tiny fw-regular mt-3 ml-5 text-center danger-color ">
                                                     {errors?.password_confirmation}{" "}
                                                 </p>
@@ -140,9 +149,10 @@ const ResetPassword = ({ token, email }) => {
                                                 Save
                                             </div>
                                         </button>
-                                        <button className="button secondary w-full mt-[1rem]">
-                                            <div className="button_container glitch uppercase">
-                                                {/* <svg
+                                        <Link href={route('login')}>
+                                            <button type='button' className="button secondary w-full mt-[1rem]">
+                                                <div className="button_container glitch uppercase">
+                                                    {/* <svg
                                                     width="24"
                                                     height="24"
                                                     viewBox="0 0 24 24"
@@ -190,24 +200,13 @@ const ResetPassword = ({ token, email }) => {
                                                         </clipPath>
                                                     </defs>
                                                 </svg> */}
-                                                CANCEL
-                                            </div>
-                                        </button>
+                                                    CANCEL
+                                                </div>
+                                            </button>
+                                        </Link>
                                     </div>
                                 </div>
                             </form>
-                        </div>
-                        <div className="col-span-12 lg:col-span-7 hidden lg:block">
-                            <div className="h-screen noise-20 items-center justify-center flex flex-col">
-                                <img
-                                    className="h-[290px] mb-10"
-                                    src={glitch}
-                                    alt=""
-                                />
-                                <h1>
-                                    <span className="font-medium">I am</span> glitch
-                                </h1>
-                            </div>
                         </div>
                     </div>
                 </div>

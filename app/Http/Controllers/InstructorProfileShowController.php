@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\Instructor\InstructorResource;
 use App\Models\Instructor;
+use Inertia\Response;
+use Inertia\ResponseFactory;
 
 class InstructorProfileShowController extends Controller
 {
+    /**
+     * Show the instructor profile screen
+     *
+     * @return Response|ResponseFactory
+     */
     public function __invoke(Instructor $instructor)
     {
         $instructor = new InstructorResource(
@@ -23,8 +30,11 @@ class InstructorProfileShowController extends Controller
 
         $relatedInstructors = InstructorResource::collection(
             Instructor::query()
-                ->withWhereHas(
-                    'category', fn ($query) => $query->where('id', $instructor->category->id)
+                ->when(
+                    $instructor->category,
+                    fn ($instructors) => $instructors->withWhereHas(
+                        'category', fn ($query) => $query->where('id', $instructor->category->id)
+                    )
                 )
                 ->withCount('courses')
                 ->get()

@@ -12,7 +12,7 @@ import { usePage } from "@inertiajs/react";
 export default function ShareModal({ id, type }) {
     const [showModal, setShowModal] = useState(false);
 
-    console.log(' navigator ************ ', navigator)
+    // console.log(' navigator ************ ', navigator)
 
     const { url } = usePage();
     const fullUrl = window.location.origin + url;
@@ -21,7 +21,7 @@ export default function ShareModal({ id, type }) {
         navigator?.clipboard?.writeText(fullUrl)
             .then(() => {
                 ReactToast('success', 'Link copied ')
-                console.log('Link copied to clipboard');
+                // console.log('Link copied to clipboard');
             })
             .catch((error) => {
                 console.error('Error copying link to clipboard:', error);

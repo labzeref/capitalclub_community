@@ -16,8 +16,8 @@ class InvoiceResource extends JsonResource
             'currency_code' => $this->currency_code,
             'amount_paid' => $this->amount_paid,
             'total' => $this->total,
-            'paid_at' => $this->paid_at->format('M d, Y'),
-            'date' => $this->date->format('M d, Y'),
+            'paid_at' => $this->paid_at->format('d/m/Y'),
+            'date' => $this->date->format('d/m/Y'),
             'status' => $this->status,
         ];
     }

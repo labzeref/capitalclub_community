@@ -26,7 +26,7 @@ export default function CommentReport({ id }) {
                 ReactToast('success', response?.data?.metadata?.message);
                 setPostData('')
                 setShowModal(false)
-                console.log("Data posted successfully:", response.data);
+                // console.log("Data posted successfully:", response.data);
           
 
             // setPostData("");
@@ -125,9 +125,7 @@ export default function CommentReport({ id }) {
                                 </div>
                                 {/*footer*/}
                                 <div className="md:flex items-center justify-center p-3  md:p-6  md:space-x-3 space-y-3 md:space-y-0">
-                                    {/* <Button   onClick={() => setShowModal(false)} icon={<Download/>} className={'primary mt-[10px]  uppercase w-full'}>
-                Download Receipt
-            </Button> */}
+ 
 
                                     <button onClick={() => { handleReport() }} className="button primary w-full">
                                         <div className="button_container glitch uppercase">

@@ -2,56 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\Asset\CategoryResource;
 use App\Http\Resources\CourseResource;
-use App\Http\Resources\Instructor\InstructorResource;
-use App\Models\Asset\Category;
 use App\Models\Course;
-use App\Models\Instructor;
+use Illuminate\Support\Facades\Cache;
+use Inertia\Inertia;
+use Inertia\Response;
+use Inertia\ResponseFactory;
 
 class AcademyController extends Controller
 {
+    /**
+     * Show the academy page
+     *
+     * @return Response
+     */
     public function __invoke()
     {
-        $mainCourses = CourseResource::collection(
-            Course::withCount('lessons')->inRandomOrder()->get()
-        );
-        $featuredCourses = CourseResource::collection(
-            Course::featured()->withCount('lessons')->get()
-        );
-        $topInstructors = InstructorResource::collection(
-            Instructor::withCount('courses')->get()
-        );
-
-        $newCourses = CourseResource::collection(
-            Course::hasNewLessons()->withCount('lessons')->get()
-        );
-
-        $categoryWiseCourses = CategoryResource::collection(
-            Category::featured()
-                ->with(['courses' => fn ($query) => $query->withCount('lessons')])
-                ->get()
-        );
-
-        $upcomingCourses = CourseResource::collection(
-            Course::upcoming()->withCount('lessons')->get()
-        );
+        $featuredCourses = CourseResource::collection(Course::featured()->get());
 
         $generalCourses = CourseResource::collection(
             Course::query()
+                ->where('title', '!=', 'DATA SETS')
+                ->where('title', '!=', 'MONEY TALKS')
+                ->where('title', '!=', 'ENTREPRENEUR FIT')
+                ->where('title', '!=', 'TIKTOK DROPSHIPPING BOOTCAMP')
                 ->withCount('lessons')
-                ->orderBy('title')
+                ->orderBy('id')
                 ->get()
         );
 
+        $tiktokDropShippingBootcamp = new CourseResource(
+            Course::query()
+                ->where('title', 'TIKTOK DROPSHIPPING BOOTCAMP')
+                ->with('lessons')
+                ->first()
+        );
+
+        $moneyTalkCourse = new CourseResource(
+            Course::where('title', 'MONEY TALKS')->with('lessons')->first()
+        );
+
+        $entrepreneurCourse = new CourseResource(
+            Course::where('title', 'ENTREPRENEUR FIT')->with('lessons')->first()
+        );
+
         return inertia('Academy/Academy', compact([
-            'categoryWiseCourses',
-            'mainCourses',
             'featuredCourses',
-            'topInstructors',
-            'newCourses',
-            'upcomingCourses',
             'generalCourses',
+            'moneyTalkCourse',
+            'entrepreneurCourse',
+            'tiktokDropShippingBootcamp',
         ]));
     }
 }

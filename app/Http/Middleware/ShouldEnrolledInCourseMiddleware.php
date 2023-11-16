@@ -18,6 +18,6 @@ class ShouldEnrolledInCourseMiddleware
         }
 
         return to_route('courses.preview', $courseId)
-            ->with('info', __('You have to enrolled in the course first.'));
+            ->with('info', __('You have to enroll in the course first.'));
     }
 }

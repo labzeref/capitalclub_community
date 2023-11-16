@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy } from "react";
 
-import { useForm, usePage } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import { Link } from "@inertiajs/react";
 import profilepic from "../../../assets/img/profilepic.png";
 // import coursemain from "../../../assets/img/coursemain.jpg";
@@ -8,12 +8,13 @@ import Button from "../../Components/Button";
 import dissProfile from "../../../assets/img/discussion-profile-pic.jpg";
 import dissProfile2 from "../../../assets/img/DissProfilePic2.jpg";
 import Lock from "../../../assets/svg/Lock.svg";
+import closeStudyMood from "../../../assets/img/close-study-mood.png";
 import { ReactComponent as ShareFat } from "../../../assets/svg/ShareFat.svg";
 import { ReactComponent as Notebook } from "../../../assets/svg/Notebook.svg";
 import { ReactComponent as Chats } from "../../../assets/svg/Chats.svg";
 import { ReactComponent as BookMark } from "../../../assets/svg/Bookmark.svg";
-import { ReactComponent as Export } from "../../../assets/svg/Export.svg";
-import { ReactComponent as Check } from "../../../assets/svg/Check.svg";
+import { ReactComponent as Star } from "../../../assets/svg/star.svg";
+import { ReactComponent as FillStar } from "../../../assets/svg/fillStar.svg";
 import Notes from "./Notes";
 import SessionLayout from "@/Layouts/SessionLayout";
 import AOS from 'aos';
@@ -23,51 +24,44 @@ import { ReactComponent as ArrowRight } from "../../../assets/svg/ArrowRight.svg
 import { ReactComponent as ArrowLeft } from "../../../assets/svg/ArrowLeft.svg";
 import ShareModal from "@/Components/Modal/ShareModal";
 import IconButton from "@/Components/IconButton";
+import { AnimatePresence, motion, useDragControls } from "framer-motion"
+// import CC_LOTTIE from "@/Components/CC_LOTTIE.json";  
+import CC_LOTTIE from "@/Components/CC_LOTTIE_V01.json"; 
+
+
+
+
 import axios from "axios";
 import RatingModal from "@/Components/Modal/RatingModal";
-import VimeoVideoPlayer from "@/Components/VimeoVideoPlayer";
+const VimeoVideoPlayer = lazy(() => import('@/Components/VimeoVideoPlayer'));
+import logo from "../../../assets/logo.svg";
+import Layout from "@/Layouts/Layout";
+import Resources from "@/Components/Modal/Resources";
 // import Layout from '@/Layouts/Layout'
+import { PostsContext } from '../../Store/PostsProvider';
+import { useContext } from "react";
+import AcademyButton from "@/Components/AcademyButton";
+import Lottie from "react-lottie-player";
+import { Suspense } from "react";
+import Xmark from "@/Components/Xmark";
+import LessonLayout from "@/Layouts/LessonLayout";
+const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
+    const controls = useDragControls()
+    // console.log('course')
+    // console.log(course)
+    // console.log('modules', modules)
+    const { toggleStudyMode, setCourseId, setStudyMoodOn, studyMoodOn, isPlayPage, setIsPlayPage } = useContext(PostsContext);
 
-const Lesson = ({ course, lesson, takeReview }) => {
 
-    // console.log("takeReview", takeReview);
+    // console.log('current lesson', lesson)
+
+
+    const [openStudyNotes, setOpenStudyNotes] = useState(false)
+
     useEffect(() => {
         AOS.init();
+
     }, [])
-
-    // footer lesson slider
-
-    const catRef = useRef(null);
-
-    const handleSliderNext = (ref) => {
-        ref.current.next();
-    };
-
-    const handleSliderPrev = (ref) => {
-        ref.current.prev();
-    };
-
-
-    // const handleChangeLesson = async (id) => {
-    //     try {
-    //         const response = await axios.get(route("lessons.play",id));
-    //         setSingleUserMessages(response.data?.payload?.data)
-    //         console.log("Lesson change successfully:", response.data?.payload );
-    //     } catch (error) {
-    //         console.error("Error while changing lesson   :", error);
-    //     }
-    // };
-
-
-
-
-    // const { auth } = usePage().props;
-    // console.log(' props lesson  ****************......:'  , lesson)
-    // console.log("course");
-    // console.log(course);
-
-    const [currentLessonIndex, setCurrentLessonIndex] = useState(-1);
-    const [currentLessonNotes, setCurrentLessonNotes] = useState({});
 
     const getLastUnlockedVideoUrl = () => {
         const unlockedLessons = course?.lessons?.filter(
@@ -78,7 +72,7 @@ const Lesson = ({ course, lesson, takeReview }) => {
         return lastUnlockedLesson?.vimeo_url || "";
     };
 
-    const [nowPlaying, setNowPlaying] = useState(lesson?.vimeo_url);
+
     const [currentVideoId, setCurrentVideoId] = useState(null);
     const [currentVideoIndex, setCurrentVideoIndex] = useState(null);
     // console.log('current Video Index   ********', currentVideoIndex)
@@ -93,6 +87,7 @@ const Lesson = ({ course, lesson, takeReview }) => {
             setCurrentVideoId(course.lessons[lastUnlockedLessonIndex].id);
             setCurrentVideoIndex(lastUnlockedLessonIndex);
         }
+        setCourseId(route('courses.preview', { course: course.id, byPass: 'false' }))
     }, []);
 
     const handleLessonClick = (lesson, index) => {
@@ -103,19 +98,14 @@ const Lesson = ({ course, lesson, takeReview }) => {
         }
     };
 
-    // console.log("currentVideoId ....", currentVideoId);
 
-    // console.log("currentVideoIndex...", currentVideoIndex);
 
-    const { post , processing } = useForm();
+    const [lessonBookmark, setLessonBookmark] = useState(lesson?.bookmarked)
+    const { post, processing } = useForm();
     const handleBookmarkToggle = () => {
-        console.log("boookmark id ....:", lesson?.id);
-   let timeOut=  setTimeout(()=>{
-        post(route("bookmark-toggle.lessons", lesson?.id), {
-            preserveScroll: true,
+        setLessonBookmark(!lessonBookmark)
+        axios.post(route("bookmark-toggle.lessons", lesson?.id)).then(() => {
         });
-clearTimeout(timeOut)
-    },2000)
 
     };
 
@@ -134,376 +124,617 @@ clearTimeout(timeOut)
 
     };
 
-    // console.log('shadow is .....:', isTopShadowVisible)
+    const lessonContainerRef = useRef(null);
+    const lessonHeight = 100; // Adjust this based on your actual content
+    const currentLessonId = lesson?.id;
 
-    const handleRoute = (id) => {
-        post(route("instructors.show", id));
+    useEffect(() => {
+        if (lessonContainerRef.current) {
+            const currentLessonIndex = course?.lessons.findIndex(lesson => lesson.id === currentLessonId);
+
+            if (currentLessonIndex !== -1) {
+                const scrollToPosition = currentLessonIndex * lessonHeight;
+                lessonContainerRef.current.scrollTop = scrollToPosition;
+            }
+        }
+    }, [currentLessonId]);
+
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const [currentModuleID, setcurrentModuleID] = useState(
+        modules.findIndex(module => module.id === lesson?.module?.id)
+    );
+
+    const [selectedIndex, setSelectedIndex] = useState(
+        modules.findIndex(module => module.id === lesson?.module?.id)
+    );
+
+    // ****handle modules****
+
+    const [selectedModuleId, setSelectedModuleId] = useState(lesson?.module?.id);
+    const [filteredLesson, setFilteredLesson] = useState([]);
+    const [liberaryShow, setLiberaryShow] = useState(false);
+    const [isFading, setIsFading] = useState(false);
+
+
+    useEffect(() => {
+
+        setIsFading(true);
+        setTimeout(() => {
+            const filterdLessonModule = course?.lessons?.filter((lesson) => lesson?.module?.id == selectedModuleId)
+            setFilteredLesson(filterdLessonModule)
+
+            setIsFading(false);
+        }, 500);
+
+    }, [selectedModuleId])
+
+
+
+
+    const toggleDropdown = () => {
+        setIsOpen(!isOpen);
     };
-    // console.log('********course.....:', course?.lessons[currentVideoIndex]?.completed)
 
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
+
+
+
+
+
+
+    const [showTopShadow, setShowTopShadow] = useState(false);
+    const [showBottomShadow, setShowBottomShadow] = useState(true);
+
+    const handleScrollModules = (event) => {
+        const { scrollTop, scrollHeight, clientHeight } = event.target;
+
+        // Calculate the remaining space at the top and bottom
+        const remainingTopSpace = scrollTop;
+        const remainingBottomSpace = scrollHeight - scrollTop - clientHeight;
+
+        // Set the state to show/hide the top and bottom shadows based on the remaining space
+        setShowTopShadow(remainingTopSpace >= 5);
+        setShowBottomShadow(remainingBottomSpace >= 5);
+    };
+
+    const [lottieDelayAnimation, setLottieDelayAnimation] = useState(false);
+
+    const lottieFunciton = () => {
+
+
+        setTimeout(() => {
+            setIsPlayPage(false)
+        }, 800);
+
+        setLottieDelayAnimation(true)
+    }
+
+    const [videoReady, setVideoReady] = useState(false);
+
+
+    const handleContextMenu = (e) => {
+        e.preventDefault(); 
+      };
  
- 
-
-      const regex = /vimeo\.com\/video\/(\d+)/;
-      const match = lesson?.vimeo_url.match(regex);
-      const vimeoVideoId = match ? match[1] : null;
-
-
-console.log('vimeo link id : ' , vimeoVideoId)
 
     return (
-        <div className="">
-            <section className="pt-[8rem] pb-[3rem] ">
-                <div data-aos="fade-in" data-aos-delay="100" data-aos-easing="ease" data-aos-duration="300" className="container mx-auto px-5 xl:px-0">
-                    <div className="grid grid-cols-12">
-                        <div className="col-span-12">
+        <>
+            <Head>
+                <title>{lesson?.title}</title>
+            </Head>
 
-                            <div className="lg:flex items-center  lg:justify-between   gap-y-2">
-                                <h1 className="uppercase mb-2">
-                                    {course?.title}
-                                </h1>
-                                <div className=" flex justify-end w-full lg:w-[40%]">
-                                    {lesson?.completed ?
-                                        <>
-                                            <Link href={route("lessons.complete",lesson?.id)}  >
-                                                <Button
+            <div className={studyMoodOn && 'w-full fixed top-20'}>
+                <div style={
+                    studyMoodOn ?
+                        { opacity: 1, top: 0, left: 0, background: '#0D0D0D', position: 'fixed', width: '100vw', height: '100vh', zIndex: '1100', transition: 'opacity 0.5s ease-in-out' }
+                        :
+                        { opacity: 0, top: 0, left: 0, background: '#0D0D0D', position: 'fixed', width: '100vw', height: '100vh', zIndex: '1100', transition: 'opacity 0.5s ease-in-out', pointerEvents: 'none' }
+                }></div>
 
-                                                    className={
-                                                        "secondary   uppercase mx-2 "
-                                                    }
-                                                >
-                                                    {/* <div className="h-7 w-7 left-[4.5rem] -top-3  rounded-full backdrop-blur-xl bg-[#202020] mark-shadow-light   absolute -z-[9999] "></div> */}
-                                                    Retake Quiz
+
+                <div className={`show-with-events ${!isPlayPage && 'hide-no-events'}`} style={
+                    { top: 0, left: 0, background: '#0D0D0D', position: 'fixed', width: '100vw', height: '100vh', zIndex: '1100' }}>
+                    <div className={lottieDelayAnimation && 'payment-video-div'}>
+                        <Lottie
+                            loop={false}
+                            animationData={CC_LOTTIE}
+                            play
+                            height='100px'
+                            className='play-page-animation'
+                            onComplete={lottieFunciton}
+                        />
+                    </div>
+                </div>
+
+                <AnimatePresence>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <section className="relative z-10">
+                            <div className="container lg:px-3 mx-auto px-4 min-h-[91vh] md:min-h-[66vh] ">
+                                {/* <div className="grid grid-cols-12">
+                            <div className="col-span-12">
+
+                                <div className="lg:flex items-center  lg:justify-between   gap-y-2">
+                                    <h1 className=" test-vw uppercase mb-2 md:w-[70%]">
+                                        {course?.title}
+                                    </h1>
+
+                                    <div className="hidden lg:block">
+                                        <div className=" flex justify-end w-full lg:w-[50%]"></div>
+                                        {lesson?.completed ?
+                                            <>
+                                                <Link href={route("lessons.complete", lesson?.id)}  >
+                                                    <Button className={"secondary uppercase mx-2"}>
+                                                        RE-WATCH LESSON
+                                                    </Button>
+                                                </Link>
+                                            </>
+                                            :
+                                            <Link href={route("lessons.complete", lesson?.id)}>
+                                                <Button className={"secondary uppercase "}>
+                                                {course?.strict ? 'Mark as Complete' : 'Next Lesson' }
                                                 </Button>
                                             </Link>
-                                            {/* <Button
-                                            icon={<Check />}
-                                            className={
-                                                "secondary noise-10 uppercase "
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div> */}
+                                {/* <div className="grid grid-cols-12 gap-y-5  lg:gap-x-4  sticky top-2 lg:top-[5.5rem] z-[99] bg-[#0d0d0d] pb-[6.5px] "> */}
+                                <div className="grid grid-cols-12 gap-y-[13px]  lg:gap-x-4   z-[99] bg-[#0d0d0d] items-center">
+
+                                    {/* **********LESSON VIDEO ********** */}
+
+                                    <div onContextMenu={handleContextMenu} className="col-span-12 lg:col-span-9">
+                                        <div className="flex items-center justify-between mb-4 md:mb-7 gap-x-6 gap-y-6 hidden">
+                                            <div className="z-[99]">
+                                                {/* <Link  href={route(  "instructors.show",  course?.default_instructor?.id   )}   > */}
+
+                                                <div className="cursor-pointer z-[9999] flex items-center gap-4">
+                                                    <img
+                                                        className="w-14 h-14 rounded-full object-cover object-center"
+                                                        src={course?.default_instructor?.dp?.small?.url}
+                                                        alt=""
+                                                    />
+                                                    <div>
+                                                        <h4>
+                                                            {course?.default_instructor?.full_name}
+                                                        </h4>
+                                                        <p className="text-[#9E9E9E]">
+                                                            {course?.default_instructor?.category?.name}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {/* </Link> */}
+                                            </div>
+                                            <RatingModal course_id={course?.id} openModal={takeReview} />
+                                            <div className="flex items-center gap-4">
+                                                <div onClick={handleBookmarkToggle}>
+                                                    <IconButton
+                                                        disabled={processing}
+                                                        icon={<BookMark />}
+                                                        className={` ${lesson?.bookmarked
+                                                            ? "primary"
+                                                            : "secondary"
+                                                            }   icon_button `}
+                                                    ></IconButton>
+                                                </div>
+                                                <Link href={route('courses.preview', { course: course?.id })}>
+                                                    <IconButton
+                                                        icon={<ShareFat />}
+                                                        className={` secondary   icon_button `}
+                                                    ></IconButton>
+                                                </Link>
+
+                                            </div>
+                                        </div>
+                                        <div className={`${studyMoodOn && ' z-[1200] '} relative `}>
+                                            {studyMoodOn &&
+                                                <button onClick={() => { setStudyMoodOn(false); toggleStudyMode() }} className="absolute left-0 top-0 -mt-[50px] flex items-center gap-x-2">
+                                                    <Xmark />
+                                                    <p className=" pt-1 fw-bold">Study Mode</p>
+                                                </button>
                                             }
-                                        >
-                                            <div className="h-7 w-7 left-[4.5rem] -top-3  rounded-full backdrop-blur-xl bg-[#202020] mark-shadow-light   absolute -z-[9999] "></div>
-                                            Mark as Complete
-                                        </Button> */}
 
-                                        </>
-                                        :
-
-                                        <Link
-                                            href={route(
-                                                "lessons.complete",
-                                                lesson?.id
-                                            )}
-                                        >
-                                            <Button
-                                                // icon={<Check />}
-                                                className={
-                                                    "secondary   uppercase "
-                                                }
-                                            >
-                                                {/* <div className="h-7 w-7 left-[4.5rem] -top-3  rounded-full backdrop-blur-xl bg-[#202020] mark-shadow-light   absolute -z-[9999] "></div> */}
-                                                Mark as Complete
-                                            </Button>
-                                        </Link>
+                                            <div className="iframe-container text-start mt-[0.2%] ">
+                                                <style>
+                                                    {`
+                                    .codegena {
+                                        position: relative;
+                                        width: 100%;
+                                        height: 0;
+                                        padding-bottom: 56.27198%;
 
                                     }
 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-12 gap-y-2 md:gap-y-8 lg:gap-x-6 mt-6">
-                        <div className="col-span-12 lg:col-span-8">
-                            <div className="flex items-center justify-between mb-7 gap-x-6 gap-y-6 flex-wrap">
-                                <div className="z-[99]">
-                                    <Link
-                                        href={route(
-                                            "instructors.show",
-                                            course?.default_instructor?.id
-                                        )}
-                                    >
+                                    .codegena iframe {
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        border-radius:10px;
+                                        width: 100%;
+                                        height: 100%;
+                                    }
+                                    `}
+                                                </style>
 
-                                        <div className="cursor-pointer z-[99999999] flex items-center gap-4">
-                                            <img
-                                                className="w-14 h-14 rounded-full object-cover object-center"
-                                                src={course?.default_instructor?.dp ?.small?.url}
-                                                alt=""
-                                            />
-                                            <div>
-                                                <h4>
-                                                    {course?.default_instructor?.full_name}
-                                                </h4>
-                                                <p className="text-[#9E9E9E]">
-                                                    {course?.default_instructor?.category?.name }
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </div>
-                                <RatingModal course_id={course?.id} openModal={takeReview} />
-                                <div className="flex items-center gap-4">
-                                    <div onClick={handleBookmarkToggle}>
-                                        <IconButton
-                                        disabled={processing}
-                                            icon={<BookMark />}
-                                            className={` ${lesson?.bookmarked
-                                                ? "primary"
-                                                : "secondary"
-                                                }   icon_button `}
-                                        ></IconButton>
-                                    </div>
-                                    <Link href={route('courses.preview', { course: course?.id, byPass: 'false' })}>
-                                    <IconButton
-                                            icon={<ShareFat />}
-                                            className={` secondary   icon_button `}
-                                        ></IconButton>
-                                    </Link>
+                                                <div className={'codegena'}>
 
-                                </div>
-                            </div>
-                            <div className="text-start relative">
-                                <style>
-                                    {`
-                                .codegena {
-                                    position: relative;
-                                    width: 100%;
-                                    height: 0;
-                                    padding-bottom: 56.27198%;
-                                }
+                                                    {lesson.vimeo_url ?
+                                                        <>
 
-                                .codegena iframe {
-                                    position: absolute;
-                                    top: 0;
-                                    left: 0;
-                                    border-radius:10px;
-                                    width: 100%;
-                                    height: 100%;
-                                }
-                                `}
-                                </style>
-                                <div className="codegena">
-                                <VimeoVideoPlayer videoId={vimeoVideoId} lesson_id={lesson?.id} />
-                                    {/* <iframe
-                                        width="500px"
-                                        height="294px"
-                                        src={nowPlaying}
-                                    ></iframe> */}
-                                </div>
-                                {/* <div className="h-[9rem] w-[9rem]">
-                                <video id="player" playsinline controls data-poster="/path/to/poster.jpg">
-                                    <source src="/path/to/video.mp4" type="video/mp4" />
-                                    <source src="/path/to/video.webm" type="video/webm" />
+                                                            <Suspense >
+                                                                <VimeoVideoPlayer videoId={lesson?.vimeo_url} lesson_id={lesson?.id} setVideoReady={setVideoReady} />
+                                                            </Suspense>
+
+                                                            {!videoReady &&
+                                                                <img src={lesson?.thumbnail?.original?.url} className="absolute w-full h-full border-rounded-10" />
+                                                            }
+                                                        </>
+                                                        :
+                                                        <div className=" absolute top-[40%] fw-bold fs-x-large w-full flex justify-center items-center ">coming soon...</div>
+                                                    }
 
 
-                                    <track kind="captions" label="English captions" src="/path/to/captions.vtt" srclang="en" default />
-                                </video>
-                            </div> */}
-                            </div>
-                            <div className="text-start mt-8">
-                                <p className="fs-large fw-regular">
-                                    {course?.summery.length > 210
-                                        ? course?.summery?.substring(0, 210) +
-                                        "..."
-                                        : course?.summery}
-                                </p>
-                            </div>
-                        </div>
-                        <div className="col-span-12 lg:col-span-4">
-                            <div className="flex items-center gap-3 mt-1 mb-8 justify-end">
-                                <div
-                                    onClick={() => {
-                                        setShow(!show);
-                                    }}
-                                >
-                                    <Button
-                                        // icon={<Notebook />}
-                                        className={` ${show ? "primary" : " secondary "
-                                            } px-3 md:px-0  `}
-                                    >
-                                        Notes
-                                    </Button>
-                                </div>
-                                <div>
-                                    <Link
-                                        href={route('courses.discussion', course?.id)}
-                                    >
+                                                    <div>
+                                                        <div className={`h-full study-mode-on-notes  ${(openStudyNotes) && 'active'} ${!studyMoodOn && 'hidden'} `}>
+                                                            <div className={'h-full relative'} style={{ width: '440px' }}>
 
-                                        <Button
-                                            // icon={<Chats />}
-                                            className={` ${show === 1  ? "primary"  : " secondary "  } px-3 md:px-0  `}
-                                        >
-                                            Discussion
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </div>
-
-                            {/*Notes component*/}
-
-                            <div
-                                className={`notes-container ${show ? "show" : ""
-                                    }`}
-                            >
-                                {show && (
-                                    <div>
-                                        <Notes
-                                        course={course?.lessons}
-                                        lesson={lesson}
-                                        currentVideoIndex={currentVideoIndex}
-                                        currentVideoId={currentVideoId}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-
-                            <div
-                                className={`notes-container ${!show ? "show" : ""
-                                    }`}
-                            >
-                                {!show && (
-                                    <div className="relative h-[570px]">
-                                        {/*shadow top*/}
-                                        <div
-                                            className={`lessons-shadow top absolute ${isTopShadowVisible < 100 && "none" } `} ></div>
-                                        <div className={"relative overflow-y-auto h-[36rem]  xl:h-[30rem] lg:h-[23rem] 2xl:h-[36rem]"  }
-                                            onScroll={handleScroll}
-                                        >
-                                            {course?.lessons?.map((data, index) => (
-                                                 <Link href={ !data?.locked && route('lessons.play',data?.id )}>
-                                                    <div key={index + 1}
-                                                        onClick={() => {!data?.locked && handleLessonClick(data,index); setCurrentLessonIndex(index)}}
-                                                        className={` ${data?.locked && "opacity-50" }  ${lesson?.id == data?.id && 'noise-10 bg-[#ffffff20]'} border-rounded-10 cursor-pointer mb-4`}  >
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="relative">
-                                                                <img  src={data?.thumbnail?.small?.url }
-                                                                    className=" border-rounded-10 h-[86px] md:h-[162px] lg:h-[86px] min-w-[150px]  max-w-[150px] md:max-w-[281px] lg:max-w-[149px]  object-cover object-center"
-                                                                    alt=""
+                                                                <Notes
+                                                                    openStudyNotes={openStudyNotes}
+                                                                    setOpenStudyNotes={setOpenStudyNotes}
+                                                                    setShow={setShow}
+                                                                    course={course?.lessons}
+                                                                    lesson={lesson}
+                                                                    currentVideoIndex={currentVideoIndex}
+                                                                    currentVideoId={currentVideoId}
+                                                                    hideCloseButton={true}
                                                                 />
-                                                                <span className="absolute right-1 bottom-1 bg-[#000000] rounded-3xl px-2 py-1 text-[10px] text-[#FFFFFF] font-normal">
-                                                                    11:45
-                                                                </span>
-                                                                {data?.locked ? (
-                                                                    <img  className="absolute left-1 bottom-1"
-                                                                        src={Lock}  alt=""  />
-                                                                ) : (
-                                                                    <svg
-                                                                        className="w-6 h-6 absolute left-1 bottom-2"
-                                                                        width="25"
-                                                                        height="24"
-                                                                        viewBox="0 0 25 24"
-                                                                        fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                    >
-                                                                        <g
-                                                                            opacity="0.6"
-                                                                            clipPath="url(#clip0_1107_69303)"
-                                                                        >
-                                                                            <path
-                                                                                opacity="0.4"
-                                                                                d="M7.25 3.739V20.2615C7.25245 20.3933 7.28962 20.5222 7.35776 20.6351C7.4259 20.748 7.5226 20.841 7.63812 20.9046C7.75364 20.9682 7.88388 21.0002 8.01572 20.9974C8.14756 20.9946 8.27634 20.9571 8.38906 20.8887L21.8966 12.6274C22.0045 12.5621 22.0937 12.4701 22.1556 12.3602C22.2175 12.2504 22.2501 12.1264 22.2501 12.0003C22.2501 11.8741 22.2175 11.7501 22.1556 11.6403C22.0937 11.5304 22.0045 11.4384 21.8966 11.3731L8.38906 3.11181C8.27634 3.04338 8.14756 3.00588 8.01572 3.0031C7.88388 3.00031 7.75364 3.03233 7.63812 3.09594C7.5226 3.15954 7.4259 3.25248 7.35776 3.36538C7.28962 3.47828 7.25245 3.60715 7.25 3.739Z"
-                                                                                fill="white"
-                                                                            />
-                                                                            <path
-                                                                                d="M7.25 3.739V20.2615C7.25245 20.3933 7.28962 20.5222 7.35776 20.6351C7.4259 20.748 7.5226 20.841 7.63812 20.9046C7.75364 20.9682 7.88388 21.0002 8.01572 20.9974C8.14756 20.9946 8.27634 20.9571 8.38906 20.8887L21.8966 12.6274C22.0045 12.5621 22.0937 12.4701 22.1556 12.3602C22.2175 12.2504 22.2501 12.1264 22.2501 12.0003C22.2501 11.8741 22.2175 11.7501 22.1556 11.6403C22.0937 11.5304 22.0045 11.4384 21.8966 11.3731L8.38906 3.11181C8.27634 3.04338 8.14756 3.00588 8.01572 3.0031C7.88388 3.00031 7.75364 3.03233 7.63812 3.09594C7.5226 3.15954 7.4259 3.25248 7.35776 3.36538C7.28962 3.47828 7.25245 3.60715 7.25 3.739Z"
-                                                                                stroke="white"
-                                                                                strokeWidth="1.2"
-                                                                                strokeLinecap="round"
-                                                                                strokeLinejoin="round"
-                                                                            />
-                                                                        </g>
-                                                                        <defs>
-                                                                            <clipPath id="clip0_1107_69303">
-                                                                                <rect
-                                                                                    width="24"
-                                                                                    height="24"
-                                                                                    fill="white"
-                                                                                    transform="translate(0.5)"
-                                                                                />
-                                                                            </clipPath>
-                                                                        </defs>
-                                                                    </svg>
-                                                                )}
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-[16px] md:text-[32px] lg:text-[20px] font-medium ">
-                                                                    {index + 1}.
-                                                                    { data  ?.title  }
-                                                                </p>
+
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    </Link>
-                                                )
+
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+                                    {/* **********LESSON NOTES ********** */}
+                                    <div className={`col-span-3 lg:col-span-3 hidden-sm ${studyMoodOn && 'z-[1200]'} relative `}>
+                                        <div className={`h-full`}>
+                                            {/* {show && ( */}
+
+                                            {/*<motion.div*/}
+                                            {/* drag*/}
+                                            {/* dragListener={studyMoodOn}*/}
+                                            {/* dragControls={controls}*/}
+                                            {/* dragConstraints={calculateBoundries()}*/}
+                                            {/* dragElastic={0}*/}
+                                            {/*>*/}
+                                            <Notes
+                                                StudyNotes={false}
+                                                setShow={setShow}
+                                                course={course?.lessons}
+                                                lesson={lesson}
+                                                currentVideoIndex={currentVideoIndex}
+                                                currentVideoId={currentVideoId}
+                                                hideCloseButton={true}
+                                            />
+
+                                            {/* )} */}
+                                            {/*</motion.div>*/}
+                                        </div>
+                                    </div>
+
+
+
+                                    <div onContextMenu={handleContextMenu} className="col-span-6  flex items-center">
+                                        <div className="flex justify-between items-center md:items-center">
+                                            <div className="text-start">
+                                                <p className="lesson-text fw-medium">
+                                                    {lesson?.title}
+                                                </p>
+                                                {showGuestName ? <p className={` leasson-description `}>GUEST : {lesson?.guest_name}</p>
+                                                    :
+                                                    <p className={` leasson-description `}>MODULE {lesson?.module?.serial_number}: {lesson?.module?.name}</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div onContextMenu={handleContextMenu} className="col-span-6 hidden-sm">
+                                        <div className="flex  gap-x-4 gap-y-2 items-center justify-end">
+                                            {lesson?.resources_link &&
+                                                <div className={` w-[24%] `}>
+                                                    <Resources files={lesson?.resources_link} lesson_name={lesson.title} />
+                                                </div>
+                                            }
+                                            <button onClick={handleBookmarkToggle} className="academy-icon-button h-30 lesson-btn-p secondary w-[24%]">
+                                                <div className="button_container lesson-btn-p">FAVORITE
+                                                    {lessonBookmark
+                                                        ? <svg width="12" height="12" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <g clip-path="url(#clip0_9001_21340)">
+                                                                <path d="M6.39721 6.29981L8.5004 1.9004L11.3047 6.29981L15.511 7.03305L12.0057 10.6992L12.7068 15.8319L8.5004 13.6322L4.29402 15.8319L4.99508 10.6992L1.48976 6.29981H6.39721Z" fill="white" />
+                                                                <path d="M16.0963 5.68976L11.2894 5.25348L9.41227 0.631041C9.07459 -0.210347 7.92251 -0.210347 7.58483 0.631041L5.70773 5.26387L0.910698 5.68976C0.0367052 5.76247 -0.320838 6.9051 0.344589 7.50757L3.98954 10.8108L2.89705 15.7137C2.69841 16.607 3.62206 17.3134 4.37687 16.8356L8.49855 14.2387L12.6202 16.8459C13.375 17.3238 14.2987 16.6174 14.1 15.7241L13.0076 10.8108L16.6525 7.50757C17.3179 6.9051 16.9703 5.76247 16.0963 5.68976ZM8.49855 12.2962L4.76421 14.6542L5.75739 10.2083L2.46005 7.21672L6.81015 6.82199L8.49855 2.63583L10.1969 6.83238L14.547 7.22711L11.2496 10.2187L12.2428 14.6646L8.49855 12.2962Z" fill="white" />
+                                                            </g>
+                                                            <defs>
+                                                                <clipPath id="clip0_9001_21340">
+                                                                    <rect width="17" height="17" fill="white" />
+                                                                </clipPath>
+                                                            </defs>
+                                                        </svg>
+
+                                                        : <svg width="12" height="12" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M9.46187 3.42177L6.63854 3.17677L5.53604 0.580938C5.3377 0.108438 4.66104 0.108438 4.4627 0.580938L3.3602 3.1826L0.542704 3.42177C0.029371 3.4626 -0.180629 4.10427 0.210204 4.4426L2.35104 6.2976L1.70937 9.05094C1.5927 9.5526 2.1352 9.94927 2.57854 9.68094L4.99937 8.2226L7.4202 9.68677C7.86354 9.9551 8.40604 9.55844 8.28937 9.05677L7.64771 6.2976L9.78854 4.4426C10.1794 4.10427 9.9752 3.4626 9.46187 3.42177ZM4.99937 7.13177L2.80604 8.45594L3.38937 5.95927L1.4527 4.27927L4.0077 4.0576L4.99937 1.70677L5.99687 4.06344L8.55187 4.2851L6.6152 5.9651L7.19854 8.46177L4.99937 7.13177Z" fill="white" />
+                                                        </svg>
+
+                                                    }
+                                                </div>
+                                            </button>
+
+                                            <Link className="w-[24%]" href={route("lessons.complete", lesson?.id)}>
+                                                <AcademyButton className={" secondary uppercase lg:w-full border-rounded-10"}>
+                                                    {course?.strict ? 'Mark as Complete' : 'Next Lesson'}
+                                                </AcademyButton>
+                                            </Link>
+
+                                            <div className="w-[24%]">
+                                                <AcademyButton onClick={() => { setStudyMoodOn(true); toggleStudyMode() }} className={" secondary uppercase w-full border-rounded-10"}>
+                                                    STUDY MODE
+                                                </AcademyButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-span-6 md-d-none lg-d-none">
+                                        <div className="flex items-center justify-end gap-x-2">
+                                            <div className="">
+                                                <IconButton
+                                                    onClick={handleBookmarkToggle}
+                                                    disabled={processing}
+                                                    icon={<Star />}
+                                                    className={` ${lessonBookmark ? 'primary' : 'secondary '}     icon_button`}
+                                                ></IconButton>
+                                            </div>
+                                            <Link href={route("lessons.complete", lesson?.id)}>
+                                                <button className="  academy-icon-button secondary w-full h-30 pt-[2.5px]">
+                                                    <div className="button_container uppercase whitespace-nowrap">Next Lesson
+                                                    </div>
+                                                </button>
+                                            </Link>
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                                {/* **************LESSON TITLE AND BUTTONS********* */}
+
+                                <div  className="grid grid-cols-12  gap-y-2 md:gap-y-5 lg:gap-x-4 mt-[18px] lg:mt-3   mb-0 md:mb-0 lg:mb-6">
+
+
+
+                                    <div onContextMenu={handleContextMenu} className="col-span-12 lg:col-span-6 hidden-sm">
+                                        <div className="card-bg  input-shadow border-rounded-10 about-padding-outer">
+                                            <p className="course-about-heading w-full  mb-4">ABOUT THE PROGRAM</p>
+                                            <div className="relative  card-bg-discord border-rounded-10 px-3 md:px-5 padding-about w-full">
+                                                <div className="lg:flex gap-x-2 md:gap-x-1 lg:gap-x-8 xl:gap-x-0 w-full flex-col">
+                                                    <div className="flex items-center gap-x-[19px] mb-4 w-full lg:w-[100%]">
+                                                        <p className="course-about-description  ">Modules: {modules?.length < 1  ? 1 : modules?.length }</p>
+                                                        <p className="course-about-description">Lessons: {course?.lessons?.length}</p>
+                                                        <p className="course-about-description">Duration: {courseDuration(course?.duration)}hrs </p>
+                                                    </div>
+                                                    <p className={`   text-12 fw-regular md-d-none sm-d-none `}> {course?.summery}  </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-span-12 lg:col-span-6">
+
+                                        <div className="flex items-center gap-3 mb-3.5 lg:mb-0 md:justify-end ">
+                                            {/****Mobile***/}
+                                            {lesson?.resources_link &&
+                                                <div className={`    w-full hidden-lg `}>
+                                                    <Resources files={lesson?.resources_link} lesson_name={lesson.title} />
+                                                </div>
+                                            }
+                                            <div className="hidden-lg w-full">
+                                                <div onClick={() => { setShow(!show); }} className="w-full"  >
+                                                    <AcademyButton
+                                                        className={` ${show ? "secondary" : " secondary "} border-rounded-10 px-3 md:px-0 w-full `}  >
+                                                        {show ? 'LIBRARY' : 'NOTES'}
+                                                    </AcademyButton>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* ********** MOBILE ABOUT THE PROGRAM ********* */}
+
+                                        {/* <div className={` lg-d-none border-rounded-10 card-bg px-3 py-2 w-full mb-3 overflow-hidden ${isOpenAbout ? 'lesson-accordian-h-open' : 'lesson-accordian-h-close'}  `}>
+                                    <div onClick={() => { setIsOpenAbout(!isOpenAbout) }} className="flex justify-between items-center">
+
+                                        <p className="course-about-heading w-full  ">ABOUT THE PROGRAM</p>
+                                        <svg className={` ${isOpenAbout && 'rotate-180'} transform transition-all  `} width="12" height="12" viewBox="0 0 9 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.4375 0.916504L4.70657 5.08317L8.97563 0.916504H0.4375Z" fill="white" />
+                                        </svg>
+                                    </div>
+
+                                    <div className="relative mt-3 lg:h-[353px] card-bg-discord border-rounded-10 px-3 md:px-[26px] padding-about w-full">
+                                        <div className=" gap-x-2 md:gap-x-1 lg:gap-x-8 xl:gap-x-0 w-full">
+                                            <div className="  items-center gap-x-4 mb-2 md:mb-5 lg:mb-0 w-full lg:w-[70%]">
+                                                <p className="font-14 fw-semibold   ">Modules: {modules?.length} </p>
+                                                <p className="font-14 fw-semibold ">Lessons: {course?.lesson?.length}</p>
+                                                <p className="font-14 fw-semibold  mb-0 lg:mb-5">Duration: {courseDuration(course?.duration)}hrs </p>
+                                            </div>
+                                            <p className={`   font-14 fw-regular  `}> {course?.summery} </p>
+                                        </div>
+                                    </div>
+
+
+                                </div> */}
+
+
+
+
+
+                                        {/*Notes component mobile*/}
+
+                                        <div  className={`notes-container ${show ? "show" : ""  }`}  >
+                                            {show && (
+                                                <div>
+                                                    <Notes
+                                                        setShow={setShow}
+                                                        course={course?.lessons}
+                                                        lesson={lesson}
+                                                        currentVideoIndex={currentVideoIndex}
+                                                        currentVideoId={currentVideoId}
+                                                    />
+                                                </div>
                                             )}
                                         </div>
-                                        {/*shadow bottom*/}
-                                        <div
-                                            className={` ${isTopShadowVisible > 460 &&
-                                                "none"
-                                                }  z-50 lessons-shadow bottom -mt-[50px]  `}
-                                        ></div>
-                                    </div>
-                                )}
-                            </div>
-                            <div className=" mt-2 md:mt-8 mb-14 md:mb-0 flex items-center justify-between">
 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                                        <div onContextMenu={handleContextMenu} className={`modules notes-container ${!show ? "show" : ""  }`}  >
+                                            {!show && (
+                                                <div onContextMenu={handleContextMenu} className="card-background input-shadow border-rounded-10  pt-5  pb-5 lg:pb-6">
+                                                    <div className="flex justify-between items-center px-3.5 lg:px-5">
 
-            {/*footer lessons*/}
+                                                        <p className="uppercase text-[20px] md:text-[25px] leading-[2px] py-[18px] fw-bold">LIBRARY</p>
 
-            <section className={"lesson-footer  mt-5"}>
-                {/* <div className="grid grid-cols-12">
-                    <div className="col-span-12"> */}
-                        <div className="flex relative">
-                            <div onClick={() => { handleSliderPrev(catRef) }} className=" cursor-pointer hidden lg:block  ">
-                                <IconButton
-                                    className={"secondary  "}
-                                    icon={<ArrowLeft />}
-                                ></IconButton>
-                            </div>
-                            <div className="w-[100%] lg:w-[93%]    mx-auto relative ">
-                                <OwlCarousel
-                                    ref={catRef}
-                                    className="owl-theme relative"
-                                    margin={0}
-                                    autoWidth={true}
-                                    animateIn={"fadeIn"}
-                                    animateOut={"fadeOut"}
-                                    nav={false}
-                                    dots={false}
-                                >
 
-                                    {course?.lessons?.map((item, index) => (
-                                        <div key={index+4}>
-                                           {/* <Link href={ !item?.locked && route('lessons.play',item?.id )}> */}
-                                        <button className={` ${lesson?.id == item?.id ? 'bg-white' : 'bg-[#1A1A1A]'} border-x border-[#303030] h-[40px] w-[100px] md:w-[150px]  lg:w-[400px]  px-4 flex items-center justify-center `}>
-                                            <p className={` ${lesson?.id == item?.id  ? 'text-[#000000] ' : 'text-[#fff] '}   fw-medium fs-tiny`}>
-                                                Lesson {index + 1}
-                                            </p>
-                                        </button>
-                                       {/* </Link> */}
+                                                        {/* {lesson.module &&  */}
+                                                        <div className="custom-dropdown ">
+                                                            <button className="dropdown-button" onClick={toggleDropdown}>
+                                                                <span className="mt-[2px]">  {isOpen ? 'SELECT' : `MODULE ${selectedIndex + 1 == 0 ? 1 : selectedIndex + 1}`} </span>
+                                                                <svg
+                                                                    width="9"
+                                                                    height="6"
+                                                                    viewBox="0 0 9 6"
+                                                                    fill="none"
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    className={isOpen ? 'rotate' : ''}
+                                                                >
+                                                                    <path d="M0.4375 0.916504L4.70657 5.08317L8.97563 0.916504H0.4375Z" fill="white" />
+                                                                </svg>
+                                                            </button>
+
+                                                            <div className="relative">
+
+                                                                {isOpen && (
+                                                                    <div className="absolute z-[9999] w-full ">
+                                                                        <div onScroll={handleScrollModules} className="dropdown-options ">
+
+                                                                            {modules?.length > 5 && <>
+                                                                                <div className={`interests-shadow module-top ${showTopShadow ? '' : 'shadow-off'}`}></div>
+                                                                                <div className={`interests-shadow module-bottom ${showBottomShadow ? '' : 'shadow-off'}`}></div>
+                                                                            </>
+                                                                            }
+                                                                            
+                                                                            {lesson?.module == null &&
+                                                                                <>
+                                                                                    <div onClick={() => { setIsOpen(false) }} className="option">
+                                                                                        MODULE &nbsp; {1}
+                                                                                        <svg width="5" height="6" viewBox="0 0 5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                            <path d="M0.902344 5.77588L4.82789 3.2984L0.902343 0.820925L0.902344 5.77588Z" fill="white" />
+                                                                                        </svg>
+
+                                                                                    </div>
+                                                                                </>
+                                                                            }
+                                                                            {modules?.map((module, index) => (
+                                                                                <div key={index + 3} onClick={() => { setSelectedIndex(index), setSelectedModuleId(module?.id), setIsOpen(false) }} className="option">
+                                                                                    MODULE &nbsp; {index + 1}
+                                                                                    <svg width="5" height="6" viewBox="0 0 5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                        <path d="M0.902344 5.77588L4.82789 3.2984L0.902343 0.820925L0.902344 5.77588Z" fill="white" />
+                                                                                    </svg>
+
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        {/* } */}
+                                                    </div>
+
+                                                    <div className="relative mobile-height md:h-[460px] lg:h-[320px] border-rounded-10 overflow-hidden mt-4">
+
+                                                        <div ref={lessonContainerRef} className={` lab-fade-container ${isFading ? 'lab-fade-out' : 'lab-fade-in'} " grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3  gap-x-[1rem] gap-y-3 xl:gap-x-[1rem] lg:gap-y-3.5 play-lessons-wrapper px-3.5 lg:px-5 content-start " `}>
+                                                            {filteredLesson?.map((data, index) => (
+                                                                <Link key={index + 3} href={!data?.locked && route('lessons.play', data?.id)}>
+                                                                    <div onClick={() => { !data?.locked && handleLessonClick(data, index) }}
+                                                                        className={` ${data?.locked && "opacity-50"}   border-rounded-10 cursor-pointer`}  >
+                                                                        <div className="flex flex-col items-start gap-2.5">
+                                                                            <div className="relative w-full">
+                                                                                <img src={data?.thumbnail?.original?.url}
+                                                                                    className=" border-rounded-10  playlist-lesson-thumbnail  object-cover object-center"
+                                                                                    alt="" />
+                                                                                <div className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
+                                                                                    {data?.locked &&
+                                                                                        <img className="w-[4rem]" src={Lock} alt="" />}
+                                                                                </div>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p className="video-description">
+                                                                                    <span className="fw-bold">L{index + 1}:</span>  &nbsp;
+                                                                                    {data?.title}
+                                                                                </p>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </Link>
+                                                            ))}
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
-                                    ))}
+                                    </div>
 
-
-                                </OwlCarousel>
+                                </div>
                             </div>
+                        </section>
 
-                            <div onClick={() => { handleSliderNext(catRef) }} className="cursor-pointer hidden lg:block  ">
-                                <IconButton
-                                    className={"secondary  "}
-                                    icon={<ArrowRight />}
-                                ></IconButton>
-                            </div>
-                        </div>
+                    </motion.div>
 
-            </section>
-        </div>
+                </AnimatePresence>
+
+            </div>
+        </>
     );
 };
-Lesson.layout = (page) => <SessionLayout children={page} title="" />;
+
+
+function formatDuration(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function courseDuration(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours}.${minutes.toString().padStart(2, '0')}  `;
+}
+
+
+Lesson.layout = (page) => <LessonLayout children={page} title="" />;
 export default Lesson;

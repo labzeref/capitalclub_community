@@ -2,14 +2,19 @@
 import { Link } from "@inertiajs/react";
 import logo from "../../assets/svg/logo.svg";
 import AppLayout from "./AppLayout";
+import Toast from "@/Components/Toast/Toast";
+
 
 
 const InterestLayout = ({children}) => {
 
+  const handleContextMenu = (e) => {
+    e.preventDefault(); 
+  };
     return (
 
-            <div className="mybg">
-
+            <div onContextMenu={handleContextMenu}>
+ <Toast />
             <header className="p-4 bg-transparent ">
             <div className="container mx-auto px-5 xl:px-0  bg-transparent">
               <div className="grid grid-cols-12 gap-6 flex items-center">

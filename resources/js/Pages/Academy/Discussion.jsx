@@ -34,8 +34,7 @@ const Discussion = ({ course, topRankMembers }) => {
  const [isFollowedThread , setIsFollowedThread] = useState(false)
     const [showNewDiscussion, setShowNewDiscussion] = useState(false)
     const [newDiscussionData, setNewDiscussionData] = useState('')
-
-    console.log('get all     new threads', apiNewThreads)
+ 
 
 // **************getting all thread API's **************
     useEffect(() => {
@@ -54,6 +53,8 @@ const Discussion = ({ course, topRankMembers }) => {
         fetchData();
     }, [callAllThread]);
 
+ 
+
 
     const loadMore = async () => {
         try {
@@ -66,7 +67,6 @@ const Discussion = ({ course, topRankMembers }) => {
             ReactToast('error', error?.response?.data?.payload)
         }
     }
-
 
 
     // const [followdTab, setFollowedTab] = useState(false)
@@ -205,8 +205,7 @@ const Discussion = ({ course, topRankMembers }) => {
                         </div>
                         <div className="col-span-12 lg:col-span-6 lg:order-1 order-2  px-5 md:mx-0">
                             <div className="md:flex items-center justify-between   gap-y-5">
-                                <h3>Discussion Form</h3>
-                                {/* <button className="gradient-border-mask"> ok</button> */}
+                                <h3>Discussion Form</h3> 
                                 <div className="w-full md:w-[40%]  flex justify-end ">
                                     <button onClick={() => { setShowNewDiscussion(!showNewDiscussion) }} className="button primary px-3 md:px-1  mt-2">
                                         <div className="button_container glitch">

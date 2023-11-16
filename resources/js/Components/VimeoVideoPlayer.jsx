@@ -3,9 +3,17 @@ import VimeoPlayer from '@vimeo/player';
 import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import axios from 'axios';
+import { PostsContext } from '../Store/PostsProvider';
+import { useContext } from "react";
 
-const VimeoVideoPlayer = ({ videoId , lesson_id }) => {
+const VimeoVideoPlayer = ({ videoId , lesson_id , setVideoReady }) => {
+ 
+  const { get } = useForm();
+  // const { setVideoReady } = useContext(PostsContext);
+
   const playerRef = useRef(null);
+  let renderedPlayerRef = useRef(null);
+  let durationRef = useRef(null);
 
 const [duration, setDuration] = useState(null);
  
@@ -14,40 +22,66 @@ const [timerId, setTimerId] = useState(null);
   const sendProgressToServer = (progress) => {
 
  
-    const progressPercentage = (progress / duration) * 100;
-    console.log( 'progress in function : ' , progressPercentage)
-    // Hit the API with progress and lesson data
-    axios.post(route('lessons.update-progress', lesson_id), {
-      progress : progressPercentage
-    }).then(response => {
-      console.log('success', response);
-    }).catch(response => {
-      console.log('error', response);
-    })
-  };
+if (durationRef.current) {
+
+  const progressPercentage = (progress / durationRef.current) * 100;
+
+ 
+
+  // console.log( 'progress Percentage' , progressPercentage)
+
+if (progressPercentage > 99 ) {
+  console.log('run')
+   get(route("lessons.complete", lesson_id))
+}
+ 
+  axios.post(route('lessons.update-progress', lesson_id), {
+    progress : progressPercentage
+  }).then(response => {
+    // console.log('success', response);
+  }).catch(response => {
+    // console.log('error', response);
+  })
+};
+
+}
 
   
 
+  const regex = /vimeo\.com\/(?:video\/|video\/video\/|)(\d+)/;
 
+  const match = videoId.match(regex); 
+  const vimeoVideoId = match ? match[1] : null;
+  
+  // console.log('new id from client' , vimeoVideoId)
  
+ 
+
 
   useEffect(() => {
-    const player = new VimeoPlayer(playerRef.current, {
-      id: videoId,
+      renderedPlayerRef.current = new VimeoPlayer(playerRef.current, {
+      id: vimeoVideoId,
+      // id:'871122886'
+    }); 
+
+
+
+    renderedPlayerRef.current.ready().then(function() {   
+      setVideoReady(true)   
+      console.log('Video Ready play func');
+    }).catch(function(error) {
+      console.error('Error in ready function:', error);  
     });
-
-
- 
+    
 
       // Event listener for 'play' event
-      player.on('play', () => {
-        console.log('Video is playing.');
-  
+      renderedPlayerRef.current.on('play', () => {
+        // console.log('Video is playing.');
+        console.log('in play func')
         // Start the timer for sending progress every 10 seconds
         const intervalId = setInterval(() => {
-          player.getCurrentTime().then((seconds) => {
-            // console.log('Current time:', seconds);
-           console.log( 'progress in', seconds / duration *  100)
+          renderedPlayerRef.current.getCurrentTime().then((seconds) => {
+            // console.log('Current time:', seconds); 
             sendProgressToServer(seconds);
           });
         }, 10000); // 10 seconds interval
@@ -56,8 +90,8 @@ const [timerId, setTimerId] = useState(null);
       });
   
       // Event listener for 'pause' event
-      player.on('pause', () => {
-        console.log('Video is paused.');
+      renderedPlayerRef.current.on('pause', () => {
+        // console.log('Video is paused.');
   
         // Clear the timer when the video is paused
         if (timerId) {
@@ -68,31 +102,26 @@ const [timerId, setTimerId] = useState(null);
   
   
 
-      // Event listener for 'loaded' event
-      player.on('loaded', () => { 
-        player.getDuration().then((videoDuration) => {
-          // console.log('Duration:', videoDuration);
-          setDuration(videoDuration);
+      // // Event listener for 'loaded' event
+      renderedPlayerRef.current.on('loaded', () => { 
+        renderedPlayerRef.current.getDuration().then((videoDuration) => {
+    
+          durationRef.current = (videoDuration);
         });
       });
 
- 
-
-
-
     // Event listener for 'timeupdate' event
-    player.on('timeupdate', (data) => {
-      // console.log('Current time:', data.seconds);
+    renderedPlayerRef.current.on('timeupdate', (data) => {
     });
 
-    // Clean up the player when the component is unmounted
+    // Clean up the renderedPlayerRef.current when the component is unmounted
     return () => {
-      player.off('play');
-      player.off('pause');
-      player.off('timeupdate'); // Make sure to remove the 'timeupdate' listener as well
-      player.destroy();
+      renderedPlayerRef.current.off('play');
+      renderedPlayerRef.current.off('pause');
+      renderedPlayerRef.current.off('timeupdate');
+      renderedPlayerRef.current.destroy();
     };
-  }, [videoId , duration]);
+  }, []);
 
 
 

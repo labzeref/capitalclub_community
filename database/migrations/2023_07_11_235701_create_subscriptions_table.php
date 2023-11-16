@@ -14,6 +14,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->string('item_price_id');
             $table->string('charge_bee_id');
             $table->string('period_unit');
             $table->dateTime('current_term_start');

@@ -18,7 +18,6 @@ return new class extends Migration
                 ->on('instructors')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
-            $table->json('experience');
             $table->softDeletes();
             $table->timestamps();
         });

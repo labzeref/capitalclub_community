@@ -17,8 +17,26 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-    'registration_expiry' => env('REGISTRATION_PAGE_EXPIRY'),
-    'chunk_size' => env('CHUNK_SIZE', 1) * 1024 * 1024,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check Invitation Switch
+    |--------------------------------------------------------------------------
+    |
+    | You can on and off invitation functionality
+    */
+
+    'check_invitation' => env('CHECK_INVITATION', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Academy Opening Date
+    |--------------------------------------------------------------------------
+    |
+    | On this date the academy will be open
+    */
+
+    'academy_opening' => env('ACADEMY_PAGE_OPENING'),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,10 +50,27 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | FFMPEG binary keys
+    |--------------------------------------------------------------------------
+    |
+    | This is the path where ffpeg is installed
+    */
+
     'ffmpeg' => env('FFMPEG_BINARIES', '/usr/local/bin/ffmpeg'),
     'ffprobe' => env('FFPROBE_BINARIES', '/usr/local/bin/ffprobe'),
 
-    'sitePassword' => '$Z79Plg89QLeFHH0',
+    /*
+    |--------------------------------------------------------------------------
+    | Temporary site lock password
+    |--------------------------------------------------------------------------
+    |
+    | This is the password for the temporary lock site
+    */
+
+    'sitePassword' => 'zereflab#4686',
 
     /*
     |--------------------------------------------------------------------------
@@ -62,6 +97,8 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'admin_url' => env('APP_ADMIN_URL', 'http://localhost'),
+    'lander_url' => env('APP_LANDER_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
 
@@ -76,7 +113,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -165,6 +202,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -189,7 +227,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ])->toArray(),
 
 ];

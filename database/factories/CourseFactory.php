@@ -16,15 +16,8 @@ class CourseFactory extends Factory
             'title' => $this->faker->jobTitle,
             'summery' => $this->faker->text(450),
             'duration' => $this->faker->numberBetween(600, 6000),
-            'bannered' => $this->faker->boolean,
             'featured' => $this->faker->boolean,
             'published_at' => now()->subDays(mt_rand(8, 15)),
-            'experience' => [
-                ['title' => $this->faker->jobTitle, 'description' => $this->faker->text],
-                ['title' => $this->faker->jobTitle, 'description' => $this->faker->text],
-                ['title' => $this->faker->jobTitle, 'description' => $this->faker->text],
-                ['title' => $this->faker->jobTitle, 'description' => $this->faker->text],
-            ],
         ];
     }
 

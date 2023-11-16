@@ -23,12 +23,12 @@ import CourseInstructorCard from "@/Components/Course/CourseInstructorCard";
 import { Link } from "@inertiajs/react";
 import AcademySmallCard from "@/Components/Course/AcademySmallCard";
 const Instructor = ({ instructor, relatedInstructors, courses }) => {
-    console.log("instructor");
-    console.log(instructor);
-    console.log("relatedInstructors");
-    console.log(relatedInstructors);
-    console.log("courses");
-    console.log(courses);
+    // console.log("instructor");
+    // console.log(instructor);
+    // console.log("relatedInstructors");
+    // console.log(relatedInstructors);
+    // console.log("courses");
+    // console.log(courses);
     const [imageLoaded, setImageLoaded] = useState(false);
     return (
         <div className="pt-[4rem]">
@@ -36,13 +36,13 @@ const Instructor = ({ instructor, relatedInstructors, courses }) => {
                 <div data-aos="fade-in" data-aos-delay="100" data-aos-easing="ease" data-aos-duration="300" className="container mx-auto px-5 xl:px-0">
                     <div className="grid grid-cols-12 gap-y-14 md:gap-x-14 lg:gap-x-20 flex justify-center items-center">
                         <div className="col-span-12 md:col-span-6 order-2 md:order-1"  >
-                            <div 
-                            // style={{ backgroundImage: `url(${instructor?.dp?.original?.url}) ` }} 
-                            className="text-start flex item-center justify-center  w-full bg-cover	bg-center">
+                            <div
+                                // style={{ backgroundImage: `url(${instructor?.dp?.original?.url}) ` }} 
+                                className="text-start flex item-center justify-center  w-full bg-cover	bg-center">
                                 <img
                                     className=" h-[294px]  md:h-[547px] w-full object-cover border-rounded-10  object-top"
-                                    onLoad={()=>{setImageLoaded(true)}}
-                                    src={ imageLoaded ?  instructor?.dp?.original?.url : instructor?.dp?.medium?.url }
+                                    onLoad={() => { setImageLoaded(true) }}
+                                    src={imageLoaded ? instructor?.dp?.original?.url : instructor?.dp?.medium?.url}
                                     alt=""
                                 />
                             </div>
@@ -428,13 +428,7 @@ const Instructor = ({ instructor, relatedInstructors, courses }) => {
                                     </p>
                                 </div>
                                 <p className="fs-regular fw-regular">
-                                    Learn to listen and inspire a culture of
-                                    teamwork. The 43rd U.S.{" "}
-                                    <br className="hidden lg:block" /> president
-                                    teaches leadership skills from his career
-                                    and opens up{" "}
-                                    <br className="hidden lg:block" /> about
-                                    painting.
+                                    {instructor?.about}
                                 </p>
                                 {/* <Button
                                     icon={<Plus />}
@@ -465,128 +459,29 @@ const Instructor = ({ instructor, relatedInstructors, courses }) => {
                             </div>
                         </div>
                     </div>
-
                     <div className="grid grid-cols-12 gap-y-12 gap-x-4 lg:gap-x-6">
-
-
                         {courses?.map((data, index) => (
-                        <>
-                        <div key={index + 1} className="col-span-6 lg:col-span-4 xl:col-span-3">
-                         <AcademySmallCard
-                                        className={"academy-small-card feature-card"}
-                                        title={data?.title}
-                                        instructor={ data?.instructor?.full_name }
-                                        duration={"5 hr 40 min" }
-                                        lessons={ data?.lessons_count }
-                                        original_image={data?.thumbnail?.medium?.url}
-                                        medium_image={data?.thumbnail?.small?.url}
-                                        badge={"primary"}
-                                        badge_text={""}
-                                        live={false} />
-</div>
-                        {/* <div key={index + 1} className="col-span-6 lg:col-span-4 xl:col-span-3">
-                            <div className="item cursor-pointer">
-                                <img
-                                    className=" min-h-[112px] h-[112px] md:h-[306px] w-full object-cover object-center rounded-lg mb-6"
-                                    src={course?.thumbnail?.medium?.url}
-                                    alt=""
-                                />
-                                <div className="flex items-center gap-2 md:gap-6 md:mb-4 mb-2 ">
-                                    <div className="  flex item-center">
-                                        <span className=" mt-[3px] md:mt-0 mr-[5px] md:mr-[10px]">
-                                            <svg
-                                                className=" w-[14px] h-[12px]  md:w-6 md:h-6 "
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                <path
-                                                    d="M18 20H6"
-                                                    stroke="white"
-                                                    strokeOpacity="0.6"
-                                                    strokeWidth="1.2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    />
-                                                <path
-                                                    d="M22 4H2V16H22V4Z"
-                                                    fill="white"
-                                                    fillOpacity="0.2"
-                                                    stroke="white"
-                                                    strokeOpacity="0.6"
-                                                    strokeWidth="1.2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                            </svg>
-                                        </span>
-                                        <span className="opacity-60 text-[12px] md:text-[16px] font-normal md:captilize">
-                                            2 hr 10 min
-                                        </span>
-                                    </div>
-                                    <div className="regular text-[#FFFFFF] font-normal flex item-center">
-                                        <span className="mt-[3px] md:mt-0 mr-[5px] md:mr-[10px]">
-                                            <svg
-                                                className=" w-[14px] h-[12px]  md:w-6 md:h-6 "
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    fillRule="evenodd"
-                                                    clipRule="evenodd"
-                                                    d="M3 21H12H21C21.55 21 22 20.55 22 20V4C22 3.45 21.55 3 21 3H12H3C2.45 3 2 3.45 2 4V20C2 20.55 2.45 21 3 21Z"
-                                                    fill="white"
-                                                    fillOpacity="0.2"
-                                                />
-                                                <path
-                                                    d="M4 12H10"
-                                                    stroke="white"
-                                                    strokeOpacity="0.6"
-                                                    strokeWidth="1.2"
-                                                    strokeMiterlimit="10"
-                                                />
-                                                <path
-                                                    d="M4 8H10"
-                                                    stroke="white"
-                                                    strokeOpacity="0.6"
-                                                    strokeWidth="1.2"
-                                                    strokeMiterlimit="10"
-                                                />
-                                                <path
-                                                    d="M4 16H10"
-                                                    stroke="white"
-                                                    strokeOpacity="0.6"
-                                                    strokeWidth="1.2"
-                                                    strokeMiterlimit="10"
-                                                />
-                                                <path
-                                                    d="M14 12H20"
-                                                    stroke="white"
-                                                    strokeOpacity="0.6"
-                                                    strokeWidth="1.2"
-                                                    strokeMiterlimit="10"
-                                                />
-                                                <path
-                                                    d="M14 8H20"
-                                                    stroke="white"
-                                                    strokeOpacity="0.6"
-                                                    strokeWidth="1.2"
-                                                    strokeMiterlimit="10"
-                                                />
-                                            </svg>
-                                        </span>
-                                        <span className="opacity-60 text-[12px] md:text-[16px] font-normal md:uppercase">
-                                            7 Lessons
-                                        </span>
-                                    </div>
+                            <>
+                                <div key={index + 1} className="col-span-6 lg:col-span-4 xl:col-span-3">
+
+                                    
+                                        <AcademySmallCard
+                                            className={"academy-small-card feature-card"}
+                                            title={data?.title}
+                                            instructor={data?.instructor?.full_name}
+                                            duration={"5 hr 40 min"}
+                                            lessons={data?.lessons_count}
+                                            desktop_image={data?.mobile_thumbnail}
+                                            mobile_image={data?.mobile_thumbnail} 
+                                            routeToPlay={route('courses.preview', { course: data?.id })}
+                                            badge={"primary"}
+                                            badge_text={""}
+                                            live={false} />
+                                     
                                 </div>
-                                <h4 className="mb-2">{course?.title}</h4>
-                                <h6>{instructor?.full_name}</h6>
-                            </div>
-                        </div> */}
-                        </>
-                        
+
+                            </>
+
                         ))}
 
 

@@ -16,20 +16,11 @@ class Category extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'featured' => 'boolean',
-    ];
-
     protected $with = ['media'];
 
     public function scopeFeatured(Builder $query): void
     {
         $query->where('featured', true);
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('icon')->singleFile();
     }
 
     public function courses(): HasMany

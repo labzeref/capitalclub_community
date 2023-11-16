@@ -7,11 +7,11 @@
 
 footer {
     position: relative;
-    padding-top: 61px;
+    // padding-top: 61px;
     @include for_breakpoint(mobile) {
-        padding-top: 30px;
+        padding-top: 8px;
     }
-    margin-top: 128px;
+    // margin-top: 128px;
     overflow: hidden;
     .footer-light-container {
         opacity: 0.5;

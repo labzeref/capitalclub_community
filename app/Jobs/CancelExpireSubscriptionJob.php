@@ -13,13 +13,12 @@ class CancelExpireSubscriptionJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct()
-    {
-    }
-
+    /**
+     * This job will check all the users that have expired subscription
+     */
     public function handle(): void
     {
-        Subscription::chunk(1000, function ($subscriptions) {
+        Subscription::with('user')->chunk(1000, function ($subscriptions) {
             foreach ($subscriptions as $subscription) {
                 if ($subscription->current_term_end < now()) {
                     $subscription->update(['status' => 'cancelled']);

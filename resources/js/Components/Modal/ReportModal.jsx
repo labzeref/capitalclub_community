@@ -25,7 +25,7 @@ export default function ReportModal({ id, type }) {
                 ReactToast('success', response?.data?.metadata?.message);
                 setPostData('')
                 setShowModal(false)
-                console.log("Data posted successfully:", response.data);
+                // console.log("Data posted successfully:", response.data);
             } else {
                 const response = await axios.post(route("post-comments.report", id), {
                     reason: postData,
@@ -33,7 +33,7 @@ export default function ReportModal({ id, type }) {
                 ReactToast('success', response?.data?.metadata?.message);
                 setPostData('')
                 setShowModal(false)
-                console.log("Data posted successfully:", response.data);
+                // console.log("Data posted successfully:", response.data);
             }
 
             // setPostData("");

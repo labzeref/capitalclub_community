@@ -41,6 +41,11 @@ class Quiz extends Model
      * Methods
      * -------------------------------------
      */
+
+    /**
+     * Get the polling of quiz that how many peoples
+     * select which answer
+     */
     public function getPolls(): array
     {
         $answers = $this->answers;

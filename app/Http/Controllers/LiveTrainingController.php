@@ -4,64 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\LiveStreamResource;
 use App\Models\LiveStream;
-use Carbon\Carbon;
+use Inertia\Response;
+use Inertia\ResponseFactory;
 
 class LiveTrainingController extends Controller
 {
+    /**
+     * Show the live training index page where all live training shows
+     *
+     * @return Response|ResponseFactory
+     */
     public function index()
     {
+        $featured = LiveStream::with('liveSeries')->featured()->first();
+        if ($featured) {
+            $featured = new LiveStreamResource($featured);
+        }
 
         $upcoming = LiveStreamResource::collection(
-            LiveStream::with('liveSeries')
-                ->where('live_at', '>', Carbon::now())
-                ->orderBy('live_at', 'DESC')
-                ->take(7)
-                ->get());
+            LiveStream::with('liveSeries')->notFeatured()->upcoming()->get()
+        );
 
-        $bannered = LiveStreamResource::collection(
-            LiveStream::with('liveSeries')
-                ->where( 'bannered',true)
-                ->get());
-
-        $live = LiveStreamResource::collection(LiveStream::with('liveSeries') //live
-            ->where('live_at', '<', Carbon::now())
-            ->where('live_end_at', null)
-            ->get());
+        $live = LiveStreamResource::collection(
+            LiveStream::with('liveSeries')->notFeatured()->live()->get()
+        );
 
         $wasLive = LiveStreamResource::collection(
-            LiveStream::with('liveSeries')
-                ->where('live_end_at', '<', Carbon::now())
-                ->orderBy('live_at', 'DESC')
-                ->take(7)
-                ->get());
+            LiveStream::with('liveSeries')->notFeatured()->wasLive()->get()
+        );
 
-        //                 dd(
-        //                     'upcoming',
-        //
-        //                         LiveStream::with('liveSeries')
-        //                             ->where('live_at', '>',  Carbon::now())
-        //                             ->orderBy('live_at', 'DESC')
-        //                             ->take(7)
-        //                             ->get()->toArray(),
-        //                         'bannered',
-        //                         LiveStream::with('liveSeries')
-        //                             ->where('type', 'bannered')
-        //                             ->get()->toArray(),
-        //
-        //                            'featured',
-        //                     LiveStream::with('liveSeries') //live
-        //                     ->where('live_at', '<',  Carbon::now())
-        //                         ->where('live_end_at',null)
-        //                         ->get()->toArray(),
-        //
-        //                     'was live',
-        //                     LiveStream::with('liveSeries')
-        //                         ->where('live_end_at', '<',  Carbon::now())
-        //                         ->orderBy('live_at', 'DESC')
-        //                         ->take(7)
-        //                         ->get()->toArray()
-        //                 );
-
-        return inertia('Live/LiveTraining', compact('upcoming', 'live', 'bannered', 'wasLive'));
+        return inertia('Live/LiveTraining', compact('upcoming', 'live', 'featured', 'wasLive'));
     }
 }

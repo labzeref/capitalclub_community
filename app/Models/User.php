@@ -5,35 +5,47 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserStatusEnum;
 use App\Models\Asset\Category;
+use App\Notifications\ResetPasswordNotification;
+use App\Services\DiscordService;
 use App\Traits\AddDummyImageTrait;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
+use Exception;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, InteractsWithMedia, AddDummyImageTrait, Searchable, CascadeSoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, InteractsWithMedia, AddDummyImageTrait, CascadeSoftDeletes;
 
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $url = route('password.reset', ['token' => $token]);
+
+        $this->notify(new ResetPasswordNotification($this, $url));
+    }
 
     protected $casts = [
         'email_verified_at' => 'datetime',
@@ -41,6 +53,8 @@ class User extends Authenticatable implements HasMedia
         'status' => UserStatusEnum::class,
         'subscribed' => 'bool',
         'verified_by_webhook' => 'bool',
+        'discord_access_token_expiry' => 'datetime',
+        'discord_roles' => 'array',
     ];
 
     protected $with = ['media'];
@@ -48,8 +62,18 @@ class User extends Authenticatable implements HasMedia
     protected $appends = ['full_name'];
 
     protected array $cascadeDeletes = [
-        'socialMedia', 'posts', 'threads', 'reports', 'subscriptions', 'billingAddress', 'invoices',
+        'socialMedia', 'threads', 'reports', 'subscriptions', 'billingAddress', 'invoices',
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::created(function () {
+            $id = self::max('id') + 1;
+            DB::statement("ALTER SEQUENCE users_id_seq RESTART WITH $id");
+        });
+    }
 
     public function scopeTopRank(Builder $query): void
     {
@@ -78,13 +102,13 @@ class User extends Authenticatable implements HasMedia
         $this->addMediaConversion('medium')
             ->performOnCollections('dp')
             ->width(600)
-            ->height(400)
+            ->keepOriginalImageFormat()
             ->nonQueued();
 
         $this->addMediaConversion('small')
             ->performOnCollections('dp')
             ->width(300)
-            ->height(200)
+            ->keepOriginalImageFormat()
             ->nonQueued();
     }
 
@@ -134,11 +158,6 @@ class User extends Authenticatable implements HasMedia
         return $this->morphedByMany(Lesson::class, 'markable', 'markable_bookmarks');
     }
 
-    public function bookmarkedPosts(): MorphToMany
-    {
-        return $this->morphedByMany(Post::class, 'markable', 'markable_bookmarks');
-    }
-
     public function enrolledCourses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'course_enrollment')
@@ -162,7 +181,7 @@ class User extends Authenticatable implements HasMedia
     public function enrolledLessons(): BelongsToMany
     {
         return $this->belongsToMany(Lesson::class, 'lesson_enrollment')
-            ->withPivot(['course_id', 'completed', 'progress']);
+            ->withPivot(['course_id', 'completed']);
     }
 
     public function enrolledLiveStreams(): BelongsToMany
@@ -184,11 +203,6 @@ class User extends Authenticatable implements HasMedia
     public function pollAnswers(): MorphToMany
     {
         return $this->morphedByMany(Answer::class, 'pollerable', 'polling');
-    }
-
-    public function posts(): HasMany
-    {
-        return $this->hasMany(Post::class);
     }
 
     public function deactivateReason(): HasOne
@@ -214,16 +228,6 @@ class User extends Authenticatable implements HasMedia
     public function reports(): HasMany
     {
         return $this->hasMany(Report::class);
-    }
-
-    public function postReports(): HasMany
-    {
-        return $this->hasMany(Report::class)->where('reportable_type', Post::class);
-    }
-
-    public function postCommentReports(): HasMany
-    {
-        return $this->hasMany(Report::class)->where('reportable_type', PostComment::class);
     }
 
     /**
@@ -257,44 +261,90 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Invoice::class);
     }
 
+    public function industries(): BelongsToMany
+    {
+        return $this->belongsToMany(Industry::class, 'user_has_industries')->withoutTrashed();
+    }
+
+    public function instructor(): HasOne
+    {
+        return $this->hasOne(Instructor::class);
+    }
+
+    public function lastVisitLessonData(): HasMany
+    {
+        return $this->hasMany(LastVisitLessonData::class);
+    }
+
+    public function lessonWatchTimes(): HasMany
+    {
+        return $this->hasMany(LessonWatchTime::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(LessonNote::class);
+    }
+
     /**
      * -----------------
      * | Methods
      * -----------------
+     */
+
+    /**
+     * Tells the user has enrolled in this course or not
      */
     public function hasEnrolledInCourse(int $courseId): bool
     {
         return (bool) $this->enrolledCourses()->find($courseId);
     }
 
+    /**
+     * Make user enroll in course and its first lesson
+     */
     public function enrolledInCourse(Course $course): void
     {
         $this->enrolledCourses()->attach($course->id, [
             'progress' => 0,
             'enrolled_at' => now(),
         ]);
+
         $this->enrolledInLesson(
-            $course->lessons()->orderBy('id')->value('id'),
+            $course->lessons()->orderBy('id')->first()->id,
             $course->id
         );
     }
 
+    /**
+     * Tells that user has enrolled or not in this lesson
+     */
     public function hasEnrolledInLesson(int $lessonId): bool
     {
         return $this->enrolledLessons()->where('id', $lessonId)->exists();
     }
 
-    public function enrolledInLesson(int $lessonId, int $courseId, bool $quizSkipped = false): void
+    /**
+     * Make user enroll in lesson
+     */
+    public function enrolledInLesson(int $lessonId, int $courseId): void
     {
+        if ($this->hasEnrolledInLesson($lessonId)) {
+            Log::create(['name' => _user()->id . "user is a-e in l-$lessonId of c-$courseId"]);
+            return;
+        }
+
         $this->enrolledLessons()->attach($lessonId, [
             'course_id' => $courseId,
             'completed' => false,
-            'progress' => 0,
-            'quiz_skipped' => $quizSkipped,
+            'quiz_skipped' => false,
             'enrolled_at' => now(),
         ]);
     }
 
+    /**
+     * Make user enrolled in live training
+     */
     public function enrolledInLiveStream(int $liveStreamId): void
     {
         $this->enrolledLiveStreams()->attach($liveStreamId, [
@@ -302,6 +352,9 @@ class User extends Authenticatable implements HasMedia
         ]);
     }
 
+    /**
+     * Tells that user has enrolled or not in live trianing
+     */
     public function hasEnrolledInLiveStream(int $liveStreamId): bool
     {
         return $this->enrolledLiveStreams()
@@ -309,6 +362,9 @@ class User extends Authenticatable implements HasMedia
             ->exists();
     }
 
+    /**
+     * Tells user has completed this lesson or not
+     */
     public function hasCompletedLesson($lessonId): bool
     {
         return $this->enrolledLessons()
@@ -317,11 +373,99 @@ class User extends Authenticatable implements HasMedia
             ->exists();
     }
 
+    /**
+     * Tells that user has completed this course or not
+     */
     public function hasCompletedCourse($courseId): bool
     {
         return $this->enrolledCourses()
             ->wherePivot('completed', true)
             ->where('id', $courseId)
             ->exists();
+    }
+
+    /**
+     * Get discord access token
+     *
+     * @throws Exception
+     */
+    public function getDiscordAccessToken(): string
+    {
+        if (! $this->discord_access_token || ! $this->discord_access_token_expiry) {
+            throw new Exception('User discord token and its expiry not present in database.');
+        }
+
+        if ($this->discord_access_token_expiry > now()->addMinutes(10)) {
+            return $this->discord_access_token;
+        }
+
+        $discordService = new DiscordService();
+
+        $response = $discordService->getRefreshToken(refreshToken: $this->discord_refresh_token);
+
+        if (! $response->ok()) {
+            throw new Exception("Discord refresh token api execute with {$response->status()} status.");
+        }
+
+        $tokenData = $response->json();
+
+        $this->update([
+            'discord_access_token' => $tokenData['access_token'],
+            'discord_refresh_token' => $tokenData['refresh_token'],
+            'discord_access_token_expiry' => now()->addSeconds($tokenData['expires_in']),
+            'discord_scope' => $tokenData['scope'],
+        ]);
+
+        return $tokenData['access_token'];
+    }
+
+    /**
+     * Will update the last visit lesson in database
+     *
+     * @param int $courseId
+     * @param int $lessonId
+     * @return void
+     */
+    public function updateLastVisitLessonData(int $courseId, int $lessonId): void
+    {
+        if ($this->lastVisitLessonData()->where('course_id', $courseId)->exists()) {
+            $this->lastVisitLessonData()->where('course_id', $courseId)->update([
+                'lesson_id' => $lessonId
+            ]);
+        } else {
+            $this->lastVisitLessonData()->create([
+                'course_id' => $courseId,
+                'lesson_id' => $lessonId,
+            ]);
+        }
+    }
+
+    /**
+     * Get last visit lesson id against course id
+     *
+     * @param int $courseId
+     * @return int
+     */
+    public function getLastVisitLessonId(int $courseId): int
+    {
+        $lastVisitLessonId = $this->lastVisitLessonData()
+            ->where('course_id', $courseId)
+            ->value('lesson_id');
+
+        if ($lastVisitLessonId) {
+            return $lastVisitLessonId;
+        }
+
+        return Lesson::where('course_id', $courseId)->value('id');
+    }
+
+    public function getGlitchId(): string
+    {
+        return 'GLITCH #' .str_pad($this->id, 4, '0', STR_PAD_LEFT);
+    }
+
+    public function getDiscordFormatNameId(): string
+    {
+        return "$this->discord_display_name #" .str_pad($this->id, 4, '0', STR_PAD_LEFT);
     }
 }

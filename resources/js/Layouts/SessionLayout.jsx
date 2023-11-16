@@ -7,22 +7,27 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import AppLayout from "./AppLayout";
 import ToastNotification from "@/Components/ToastNotification";
-const SessionLayout = ({ children }) => {
+import Layout from "./Layout";
+const SessionLayout = ({ children, courseId }) => {
     useEffect(() => {
         AOS.init();
     }, [])
+
+    const handleContextMenu = (e) => {
+        e.preventDefault(); 
+      };
     return (
-        <div className="">
+        <div onContextMenu={handleContextMenu} >
             <Toast />
-            <ToastNotification  />  
-            <div className="academy-bg">
+            <ToastNotification  />
+            {/* <div className="academy-bg">
 
                 <img src={bg} className="light-spot" />
-            </div>
+            </div> */}
 
-            <Navbar />
+            <Navbar courseId={courseId} />
 
-            <div className="min-h-[80vh]">
+            <div className="min-h-[80vh]  ">
                 {children}
             </div>
 
@@ -31,5 +36,5 @@ const SessionLayout = ({ children }) => {
     );
 
 }
-SessionLayout.layout = (page) => <AppLayout children={page} title="" />;
+SessionLayout.layout = (page) => <Layout children={page} title="" />;
 export default SessionLayout;

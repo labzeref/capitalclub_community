@@ -12,9 +12,13 @@ const AuthLayout = ({ children, login = true }) => {
     useEffect(() => {
         AOS.init();
     }, [])
+
+    const handleContextMenu = (e) => {
+        e.preventDefault(); 
+      };
     return (
         <>
-            <div className="welcome mybg">
+            <div onContextMenu={handleContextMenu} className="welcome mybg">
                 <Toast />
 
                 <div className="static z-[99999999] flex justify-between col-span-12 p-6   ">

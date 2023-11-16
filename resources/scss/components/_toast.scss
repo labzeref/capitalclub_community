@@ -131,7 +131,24 @@
     }
 }
 
+.Toastify__toast-container--bottom-center {
+    bottom: 1em !important;
+    left: 50% !important;
+    transform: translateX(-50%)  !important;
+}
 
+.Toastify__toast-container {
+   
+    padding: 0;
+    left: 0;
+    margin: 0;
+    @include for_breakpoint(mobile) { 
+        width: 90vw;
+        max-width: 250px;
+        left: 50% !important;
+        transform: translateX(-50%)  !important;
+    }
+}
 
 
 

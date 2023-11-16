@@ -9,6 +9,6 @@ class LiveTrainingSeeder extends Seeder
 {
     public function run(): void
     {
-        LiveSeries::factory(18)->hasFaqs(1)->hasLiveStreams(1)->create();
+        LiveSeries::factory(18)->hasLiveStreams(1)->create();
     }
 }

@@ -7,6 +7,9 @@ use Illuminate\Validation\Rules\Password;
 
 class NewPasswordRequest extends FormRequest
 {
+    /**
+     * Rules for the request
+     */
     public function rules(): array
     {
         return [
@@ -14,10 +17,5 @@ class NewPasswordRequest extends FormRequest
             'email' => 'required|email',
             'password' => ['required', 'confirmed', Password::defaults()],
         ];
-    }
-
-    public function authorize(): bool
-    {
-        return true;
     }
 }

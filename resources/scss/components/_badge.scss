@@ -35,3 +35,45 @@
         color: $warning-color;
     }
 }
+
+
+// notificaiton css
+@keyframes up-right {
+    0% { 
+        transform: scale(1);
+        opacity: .25
+    }
+    50% {
+        transform: scale (1, 5);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: .25;
+    }
+}
+.circle-noti {
+    margin-right: -3px;
+    margin-top: -20px;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    opacity: .25;
+
+    @include for_breakpoint(mobile) {
+        margin-right: 0px;
+    }
+    @include for_breakpoint(tablet) {
+        margin-right: 0px;
+    }
+}
+.red-noti {
+    background-color: #BA3E17;
+    position: absolute;
+    // top: 50%;
+    // left: 50%;
+    -webkit-animation: up-right 1s infinite;
+    -moz-animation: up-right 1s infinite;
+    -o-animation: up-right 1s infinite;
+    animation: up-right 1s infinite;
+}

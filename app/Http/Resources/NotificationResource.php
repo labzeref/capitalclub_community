@@ -10,9 +10,9 @@ class NotificationResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'image' => $this->data['image'],
+            'iconUrl' => _getSignedUrl($this->data['iconPath']),
             'title' => $this->data['title'],
-            'description' => $this->data['description'],
+            'link' => $this->data['link'],
             'read' => $this->read_at?->diffForHumans(),
             'created_at' => $this->created_at?->diffForHumans(),
         ];

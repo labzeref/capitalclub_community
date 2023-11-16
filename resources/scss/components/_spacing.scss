@@ -1,9 +1,22 @@
+// .container{
+//     max-width: 1536px; 
+//    @media screen and (max-width:1500px){
+//     width: 100%;
+//    }
+//    @media screen and (min-width:1501px){
+//     max-width: 1536px;
+//    }
+// }
+
 .paddingGlobal {
     padding: 0 2.5rem 0 2.5rem;
 }
 
 .paddingSectionLarge {
     padding: 4rem 0 4rem 0;
+    @include for_breakpoint(mobile) {
+        padding: 2rem 0 2rem 0;
+    }
 }
 
 .paddingSectionMedium {

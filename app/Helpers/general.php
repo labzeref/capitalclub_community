@@ -3,8 +3,10 @@
 use App\Models\User;
 use Aws\CloudFront\UrlSigner;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
 
+/**
+ * This files add in autoload and all this function is accessible everywhere in project
+ */
 function _user(): User|Authenticatable|null
 {
     return auth()->user();
@@ -47,17 +49,60 @@ function _defaultDp(): stdClass
     return $object;
 }
 
-function logActivity(?Model $causedBy, ?Model $performedOn, string $log): void
+function _defaultDesktopImage(): stdClass
 {
-    if ($performedOn) {
-        activity()
-            ->causedBy($causedBy)
-            ->performedOn($performedOn)
-            ->log(__($log));
-    } else {
-        activity()
-            ->causedBy($causedBy)
-            ->log(__($log));
-    }
+    $object = new stdClass();
+    $object->url = asset('/images/placeholders/desktop-placeholder.png');
 
+    return $object;
+}
+
+function _defaultDesktopMediumImage(): stdClass
+{
+    $object = new stdClass();
+    $object->url = asset('/images/placeholders/desktop-medium-placeholder.png');
+
+    return $object;
+}
+
+function _defaultDesktopSmallImage(): stdClass
+{
+    $object = new stdClass();
+    $object->url = asset('/images/placeholders/desktop-small-placeholder.png');
+
+    return $object;
+}
+
+function _defaultMobileImage(): stdClass
+{
+    $object = new stdClass();
+    $object->url = asset('/images/placeholders/mobile-placeholder.png');
+
+    return $object;
+}
+
+function _defaultMobileMediumImage(): stdClass
+{
+    $object = new stdClass();
+    $object->url = asset('/images/placeholders/mobile-medium-placeholder.png');
+
+    return $object;
+}
+
+function _defaultMobileSmallImage(): stdClass
+{
+    $object = new stdClass();
+    $object->url = asset('/images/placeholders/mobile-small-placeholder.png');
+
+    return $object;
+}
+
+function _getPageRemainingSeconds(): int
+{
+    $now = now();
+    $upcoming = now()->setHour(15)->setMinute(0)->seconds(0);
+    if ($upcoming < $now) {
+        $upcoming = $upcoming->addDay();
+    }
+    return $now->diffInSeconds($upcoming, false);
 }

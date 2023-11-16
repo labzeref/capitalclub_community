@@ -14,12 +14,12 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->string('phone_number', 20);
-            $table->string('street_address');
-            $table->string('city', 40);
-            $table->string('zip_code');
-            $table->string('country_iso', 5);
-            $table->string('state', 40);
+            $table->string('phone_number', 20)->nullable();
+            $table->string('street_address')->nullable();
+            $table->string('city', 40)->nullable();
+            $table->string('zip_code')->nullable();
+            $table->string('country_iso', 5)->nullable();
+            $table->string('state', 40)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -6,14 +6,19 @@ use App\Events\MessageForLiveStreamEvent;
 use App\Http\Requests\StreamMessageRequest;
 use App\Http\Resources\StreamMessageResource;
 use App\Models\LiveStream;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class StreamMessageController extends Controller
 {
+    /**
+     * Store the message of live chat of live training
+     *
+     * @return JsonResponse
+     */
     public function storeChatLiveStream(StreamMessageRequest $request, LiveStream $liveStream)
     {
-        if (! $liveStream->chat_enabled)
-        {
+        if (! $liveStream->chat_enabled) {
             return $this->sendError(__('Sorry, it seems like chat is disabled'));
         }
         $user = _user();
@@ -35,7 +40,7 @@ class StreamMessageController extends Controller
         }
 
         DB::commit();
-
+        $liveStreamId = $liveStream->id;
         $streamMessage->load('user', 'mentionedMessage.user');
         broadcast(new MessageForLiveStreamEvent($streamMessage, $liveStreamId, _user()->id));
 

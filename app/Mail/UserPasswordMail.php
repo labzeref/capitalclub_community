@@ -16,12 +16,13 @@ class UserPasswordMail extends Mailable implements ShouldQueue
 
     public function __construct(private readonly User $user, private readonly string $password)
     {
+        $this->queue = 'emails';
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'User Password',
+            subject: 'Your Account Credentials',
         );
     }
 

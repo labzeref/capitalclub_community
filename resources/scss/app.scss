@@ -1,8 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "functions";
 @import "react-toastify/dist/ReactToastify.css";
 @import 'owl.carousel/dist/assets/owl.carousel.css';
 @import 'owl.carousel/dist/assets/owl.theme.default.css';
 @import "variables";
 @import "components/init";
+
+input::-webkit-contacts-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+  }

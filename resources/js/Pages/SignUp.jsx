@@ -114,10 +114,7 @@ const SignUp = () => {
             });
             return;
         }
-
-        // All form data is valid
-        console.log(formData);
-        // navigate('/intrest')
+ 
     };
 
     const [hours, setHours] = useState(48);

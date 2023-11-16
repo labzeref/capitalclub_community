@@ -1,12 +1,69 @@
-.navbar-main{
-    position: absolute;
+.navbar-main {
+    // position: sticky;
     width: 100%;
-    top: 16px;
-    left: 50%;
+    margin: 30px auto 30px;
+    // left: 50%;
     z-index: 1000;
-    transform:translateX(-50%);
+    // transform:translateX(-100%);
 
-    nav{
-
+    @include for_breakpoint(tablet) {
+        margin: 18px auto 18px;
     }
+    @include for_breakpoint(mobile) {
+        margin: 18px auto 18px;
+    }
+    @include for_breakpoint(laptop) {
+        margin: 46px auto 42px;
+    }
+
+   
+
+}
+
+.desktop-nav-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px !important;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: $primary-color !important;
+    background-color: #1a1a1a;
+    border-radius: 50px;
+    line-height: normal;
+    // padding: 15px 39px 12px 39px;
+    padding-top: 4px;
+    width: 151px;
+    height: 36px;
+
+
+    transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3 ease-in-out;
+
+
+    &.active {
+        color: #000 !important;
+        background-color: white !important;
+    }
+    &:hover {
+        background: rgba(126, 126, 126, 0.5) !important;
+    }
+
+    @include for_breakpoint(tablet) {
+        font-size: 10px;
+    } 
+}
+
+.notification-icon {
+   
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+    border-radius: 50px;
+
+    @include for_breakpoint(mobile) {
+        margin-right: 6px;
+    } 
 }

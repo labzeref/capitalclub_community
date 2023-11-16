@@ -5,68 +5,65 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\User\UserCompactResource;
 use App\Models\Course;
+use App\Models\Instructor;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Inertia\Response;
+use Inertia\ResponseFactory;
 
 class CourseController extends Controller
 {
+    /**
+     * Show the course preview screen
+     *
+     * @return RedirectResponse|Response|ResponseFactory
+     */
     public function preview(Request $request, Course $course)
     {
         $hasEnrolledInCourse = _user()->hasEnrolledInCourse($course->id);
+//
+//        if ($hasEnrolledInCourse && !$request->input('byPass')) {
+//            return to_route('courses.play', $course->id);
+//        }
 
-        if ($hasEnrolledInCourse && ! $request->input('byPass')) {
-            return to_route('lessons.play', $course->lessons()->orderBy('id')->value('id'));
-        }
+        $courseModulesCount = $course->lessons->pluck('module')->unique()->count();
 
-        $course = new CourseResource(
-            $course->load(['lessons', 'faqs', 'trailer'])
-        );
+        $course = new CourseResource($course->load(['lessons' => fn ($lessons) => $lessons->orderBy('id'), 'trailer', 'defaultInstructor']));
 
-        $similarCourses = CourseResource::collection(
-            Course::query()
-                ->whereHas('category', fn ($query) => $query->where('id', $course->category->id))
-                ->get()
-        );
+        $instructorUser = User::find($course->defaultInstructor->user_id);
 
-        $topRankMembers = UserCompactResource::collection(
-            User::query()
-                ->whereHas('enrolledCourses', fn ($query) => $query->where('id', $course->id))
-                ->topRank()
-                ->get()
-        );
+        $instructorAvatar = $instructorUser
+            ? $instructorUser->getFirstMedia('dp')
+                ? _getSignedUrl($instructorUser->getFirstMediaPath('dp'))
+                : _defaultDp()
+            : null;
 
         return inertia('Academy/Course', compact([
             'course',
-            'similarCourses',
             'hasEnrolledInCourse',
-            'topRankMembers',
+            'courseModulesCount',
+            'instructorAvatar'
         ]));
     }
 
+    /**
+     * Enroll the user and navigate to lesson play screen
+     *
+     * @return RedirectResponse
+     */
     public function enrol(Course $course)
     {
         $user = _user();
         $hasEnrolledInCourse = $user->hasEnrolledInCourse($course->id);
 
-        if (! $hasEnrolledInCourse) {
+        if (!$hasEnrolledInCourse) {
             DB::beginTransaction();
 
             try {
                 $user->enrolledInCourse($course);
-
-                $firstLesson = $course->lessons()->orderBy('id')->first();
-
-                logActivity(
-                    causedBy: $user,
-                    performedOn: $course,
-                    log: "You have enrolled in course <span class='activity-text'>$course->title</smpan>."
-                );
-                logActivity(
-                    causedBy: $user,
-                    performedOn: $firstLesson,
-                    log: "You have enrolled in lesson <span class='activity-text'>$firstLesson->title</smpan>."
-                );
             } catch (\Throwable $throwable) {
                 DB::rollBack();
 
@@ -76,15 +73,25 @@ class CourseController extends Controller
             DB::commit();
         }
 
-        return to_route('lessons.play', $course->lessons()->orderBy('id')->value('id'));
+        return to_route('courses.play', $course->id);
     }
 
+    /**
+     * Play the course and start the lesson where user was left
+     * and navigate to lesson play screen
+     *
+     * @return RedirectResponse
+     */
     public function play(Course $course)
     {
-        $lastUnlockedLessonId = _user()->enrolledLessons()
-            ->wherePivot('course_id', $course->id)
-            ->orderBy('id', 'desc')
-            ->value('id');
+        if ($course->strict) {
+            $lastUnlockedLessonId = _user()->enrolledLessons()
+                ->wherePivot('course_id', $course->id)
+                ->orderBy('id', 'desc')
+                ->value('id');
+        } else {
+            $lastUnlockedLessonId = _user()->getLastVisitLessonId(courseId: $course->id);
+        }
 
         return to_route('lessons.play', $lastUnlockedLessonId);
     }

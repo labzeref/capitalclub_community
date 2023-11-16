@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 
 import { useForm } from "@inertiajs/react";
+import Draggable from 'react-draggable';
+import Xmark from "@/Components/Xmark";
+import axios from 'axios';
 
-const Notes = ({ course, lesson, currentVideoIndex, currentVideoId }) => {
+const Notes = ({ setShow, studyMoodOn, course, lesson, currentVideoIndex, currentVideoId, hideCloseButton, openStudyNotes, setOpenStudyNotes }) => {
     const [checkboxChecked, setCheckboxChecked] = useState(false);
     const handleCheckboxChange = () => {
         setCheckboxChecked(!checkboxChecked);
@@ -13,13 +16,7 @@ const Notes = ({ course, lesson, currentVideoIndex, currentVideoId }) => {
     //   ? allNotes.map(note =>(<></>)  )
     //   : currentLessonNotes.map(note =>  (<></>));
 
-    // console.log('course....:', course)
 
-    // console.log(' current Lesson Id......', currentVideoId)
-
-    // console.log(' props all Notes', course[currentVideoId]?.note)
-
-    // console.log('current Lesson Index....', currentVideoIndex)
 
 
 
@@ -35,27 +32,29 @@ const Notes = ({ course, lesson, currentVideoIndex, currentVideoId }) => {
 
 
 
-    const { data, setData, post, processing, errors } = useForm({
-        defaultValues: {
-            content: "",
-        }
-    });
-    console.log('data :', data)
+    const [data, setData] = useState("");
+
+    
     const [timer, setTimer] = useState(null);
 
 
-    const handleKeyUp = (e, id) => { 
-         if (timer) {
+    const handleKeyUp = (e, id) => {
+        const content = e.target.innerHTML;  
+        setData(content);
+    
+        if (timer) {
             clearTimeout(timer);
         }
+    
         setTimer(
             setTimeout(() => {
-                post(route("lessons.notes.store", id), {
-                    preserveScroll: true
+                axios.post(route("lessons.notes.store", id), {
+                    content: content
                 });
             }, 1000)
         );
     };
+    
 
     useEffect(() => {
         return () => {
@@ -65,108 +64,78 @@ const Notes = ({ course, lesson, currentVideoIndex, currentVideoId }) => {
 
 
 
+    // const [draggingEnabled, setDraggingEnabled] = useState(false);
+
+    // const handleMouseDown = (e) => {
+    //   const isHeaderClicked = e.target.classList.contains('notes-header');
+    //   if (isHeaderClicked) {
+    //     setDraggingEnabled(true);
+    //   }
+    // };
+
+    // const handleStart = (e, ui) => {
+    //   if (!draggingEnabled) {
+    //     // Prevent the drag operation if it's not enabled.
+    //     e.preventDefault();
+    //   }
+    // };
+
+    // const handleDrag = (e, ui) => {
+    //   // This function is called continuously while dragging.
+    //   console.log('Dragging:',e ,  ui.deltaX, ui.deltaY);
+    // };
+
+    // const handleStop = () => {
+    //   setDraggingEnabled(false);
+    // };
+ 
     return (
-        <div className="">
+
+        <div className={`${studyMoodOn && 'relative z-[999999] '} notes-vh notes-header `}>
 
 
 
-            <div className="bg-[#FFFFFF] border-rounded-10 p-6 overflow-y-auto h-[33.5rem]">
-                <div className="flex items-center justify-between">
-                    <h4 className="text-[#000000]">Notes</h4>
-                    <div className="flex items-center gap-2">
-                        <div className="flex items-center  ">
-                            <input
-                                id="default-checkbox"
-                                type="checkbox"
-                                value=""
-                                checked={checkboxChecked}
-                                onChange={(e) => { handleCheckboxChange() }}
-                                className="w-5 h-5 text-black bg-black   border-[1.2px] border-gray-100  focus:shadow-transparent focus:ring-transparent"
-                            />
+            <div className="card-bg border-rounded-15 overflow-x-hidden h-full input-shadow notes-bg  ">
+
+                <div className={`   ${!hideCloseButton && 'cursor-pointer'} px-6 py-4 bg-1a notes-top-radius-15 notes-header flex items-center justify-between `}>
+                    <p className="choice-text-options uppercase">Notes</p>
+
+                    <div onClick={() => { setShow(false), setOpenStudyNotes(false) }} >
+                        <div className={` cursor-pointer  notes-cross-button ${!openStudyNotes && 'notes-cross-button-hidden'}`} >
+                            <Xmark />
+
                         </div>
-                        <p className="fs-tiny fw-regular text-[#000000]">
-                            Show all notes
-                        </p>
                     </div>
                 </div>
-                {/* {checkboxChecked ?
-     <> */}
                 {allNotes?.map((data, index) => (
                     <div
                         key={index + 1}
-                        className={`mt-5 ${!checkboxChecked && data?.id === lesson?.id ? 'block' : checkboxChecked ? 'block' : 'hidden'}`}
+                        className={`mt-2 h-[90%] play-notes-p  overflow-y-auto ${!checkboxChecked && data?.id === lesson?.id ? 'block' : checkboxChecked ? 'block' : 'hidden'}`}
                     >
-                        <p className="fs-tiny fw-regular text-[#000000] opacity-50 mb-2">
-                            Lesson {index + 1}
-                        </p>
-                        <hr
-                            className="opacity-20 border-none mb-3"
-                            style={{ borderTop: "1px solid #000000" }}
-
+                        <div
+                            contentEditable
+                            onKeyUp={(e) => handleKeyUp(e, data?.id)}
+                            dangerouslySetInnerHTML={{ __html: data?.note  }}
+                            onChange={(e) => setData(e.target.value)}
+                            className="w-full h-[97%] notes-scroll fw-medium card-bg pr-5 fs-tiny pl-0 focus:outline-none focus:ring-0 focus:border-transparent border-transparent notes-placeholder"
+                            data-placeholder="Start typing..."
                         />
-                        <p className="text-[#000000] fs-small fw-medium mb-3">
-                            {index + 1} . {data?.title}
-                        </p>
-                        <textarea
+                        {/* <textarea
                             defaultValue={data?.note}
                             onKeyUp={(e) => handleKeyUp(e, data?.id)}
-                            onChange={(e) => setData("content", e.target.value)}
-                            className="w-full text-[#000000] focus:outline-none focus:ring-0 focus:border-transparent border-transparent"
-                            placeholder="start writing.."
+                            onChange={(e) => setData(e.target.value)}
+                            className="w-full h-[97%] notes-scroll fw-medium card-bg pr-5  fs-tiny pl-0 focus:outline-none focus:ring-0 focus:border-transparent border-transparent notes-placeholder"
+                            placeholder="Start typing..."
                             id=""
-                            rows={checkboxChecked ? 5 : 14}
-                        ></textarea>
+                            rows={checkboxChecked ? 5 : 20}
+                        ></textarea> */}
 
                     </div>
                 ))}
-                {/* </>
-     : <div className="mt-5">
-            <p className="fs-tiny fw-regular text-[#000000] opacity-50 mb-2">
-                Lesson {currentVideoIndex+1}
-            </p>
-            <hr
-                className="opacity-20 border-none mb-3"
-                style={{ borderTop: "1px solid #000000" }}
-
-            />
-            <p className="text-[#000000] fs-small fw-medium mb-3">
-            {currentVideoIndex+1} . {course[currentVideoIndex]?.title}
-            </p>
-            <textarea
-            defaultValue={course[currentVideoIndex]?.note}
-               onKeyUp={handleKeyUp}
-               onChange={(e)=> {setData("content", e.target.value)}}
-                className="w-full  text-[#000000] focus:outline-none focus:ring-0 focus:border-transparent border-transparent "
-                placeholder="start writing.."
-                id=""
-                rows="5"
-            ></textarea>
-        </div> }    */}
-                {/* <div className="mt-6">
-            <p className="fs-tiny fw-regular text-[#000000] opacity-50 mb-2">
-                Lesson 2
-            </p>
-            <hr
-                className="opacity-20 border-none mb-3"
-                style={{ borderTop: "1px solid #000000" }}
-
-            />
-            <p className="text-[#000000] fs-small fw-medium mb-3">
-                2. Sources of Inspiration
-            </p>
-            <textarea
-                className="w-full  text-[#000000] focus:outline-none focus:ring-0 focus:border-transparent border-transparent "
-                placeholder="Type your message here..."
-                id=""
-                rows="4"
-            ></textarea>
-        </div> */}
-
-
             </div>
 
 
-
+            <div className={`interests-shadow notes-bottom -mb-1`}></div>
 
 
         </div>

@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')
+                ->nullable()
                 ->constrained()
                 ->restrictOnUpdate()
                 ->restrictOnDelete();
@@ -21,13 +22,12 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
             $table->string('title');
-            $table->string('summery', 500);
+            $table->string('summery', 500)->nullable();
             $table->unsignedBigInteger('duration')->nullable();
             $table->boolean('featured')->default(false);
-            $table->boolean('bannered')->default(false);
+            $table->boolean('strict')->default(false);
             $table->decimal('avg_rating')->default(false);
             $table->date('published_at')->nullable();
-            $table->json('experience');
             $table->softDeletes();
             $table->timestamps();
         });

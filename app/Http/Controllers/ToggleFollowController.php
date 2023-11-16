@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Thread;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 
 class ToggleFollowController extends Controller
 {
+    /**
+     * Toggle the follow of a thread
+     *
+     * @return JsonResponse
+     */
     public function thread(Thread $thread)
     {
         $user = _user();
@@ -18,22 +24,21 @@ class ToggleFollowController extends Controller
         if ($user->followingThreads()->find($thread->id)) {
             $user->followingThreads()->detach($thread->id);
             $message = __('Thread unfollowed');
-            logActivity(
-                causedBy: $user,
-                performedOn: $thread,
-                log: "You have unfollow the thread <span class='activity-text'>{$thread->user->full_name}</span>.");
+
         } else {
             $user->followingThreads()->attach($thread->id);
             $message = __('Thread followed');
-            logActivity(
-                causedBy: $user,
-                performedOn: $thread,
-                log: "You have follow the thread <span class='activity-text'>{$thread->user->full_name}</span>.");
+
         }
 
         return $this->sendResponse($message);
     }
 
+    /**
+     * Toggle the follow of a user
+     *
+     * @return JsonResponse
+     */
     public function user(User $user)
     {
         $authUser = _user();
@@ -44,17 +49,11 @@ class ToggleFollowController extends Controller
         if ($authUser->followingUsers()->find($user->id)) {
             $authUser->followingUsers()->detach($user->id);
             $message = __('User unfollowed');
-            logActivity(
-                causedBy: $user,
-                performedOn: $user,
-                log: "You have unfollowed other user <span class='activity-text'>$user->full_name</span>.");
+
         } else {
             $authUser->followingUsers()->attach($user->id);
             $message = __('User followed');
-            logActivity(
-                causedBy: $user,
-                performedOn: $user,
-                log: "You have follow other user <span class='activity-text'>$user->full_name</span>.");
+
         }
 
         return $this->sendResponse($message);

@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\User\UserCompactResource;
-use App\Models\Chat\Conversation;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Inertia\Response;
+use Inertia\ResponseFactory;
 
 class UserController extends Controller
 {
+    /**
+     * Show the other user public profile screen
+     *
+     * @return Response|ResponseFactory
+     */
     public function profile(User $user)
     {
         _user()->load('followingUsers');
@@ -17,21 +24,18 @@ class UserController extends Controller
         return inertia('Discussion/UserPublicProfile', compact('profile'));
     }
 
-    public function message(User $user)
+    public function getAuthUser(Request $request)
     {
-        DB::beginTransaction();
+        $user = _user();
 
-        try {
-            $conversationId = Conversation::start(_user()->id, $user->id)->id;
-            $activeConversationId = encrypt($conversationId);
-        } catch (\Throwable $throwable) {
-            DB::rollBack();
+        $loads = $request->get('loads', []);
 
-            return back()->with('error', _serverErrorMessage());
+        if (is_array($loads)) {
+            if (in_array('billingAddress', $loads)) {
+                $user->load('billingAddress');
+            }
         }
 
-        DB::commit();
-
-        return to_route('chat.index', $activeConversationId);
+        return $this->sendResponse(new UserResource($user));
     }
 }

@@ -7,17 +7,27 @@ const Toast = () => {
 
     useEffect(() => {
         if (toastMessage) {
-            console.log('toasting')
-            toast[toastMessage?.type](`${toastMessage?.message}`, {
-                position: "bottom-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            });
+
+            toast[toastMessage?.type](
+                <div>
+                    <p className="fw-regular choice-text">
+                        <div
+                            dangerouslySetInnerHTML={{ __html: toastMessage?.message  }}
+                        />
+                    </p>
+
+                </div>,
+                {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                }
+            );
 
         }
     }, [toastMessage]);

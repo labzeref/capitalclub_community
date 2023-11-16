@@ -9,12 +9,13 @@ class SiteLockMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        if ($request->session()->has('siteUnlocked')) {
+        if (
+            !config('app.check_invitation') ||
+            $request->session()->has('invitation_email') && $request->session()->has('invitation_code')
+        ) {
             return $next($request);
         }
 
-        $wantedUrl = encrypt($request->fullUrl());
-
-        return inertia('Auth/LandingPassword', compact('wantedUrl'));
+        return redirect()->away(config('app.lander_url'));
     }
 }

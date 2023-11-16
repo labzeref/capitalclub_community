@@ -6,6 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ReviewRequest extends FormRequest
 {
+    /**
+     * Rules for the request
+     *
+     * @return string[]
+     */
     public function rules(): array
     {
         return [

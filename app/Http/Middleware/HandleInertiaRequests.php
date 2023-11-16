@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Resources\User\UserCompactResource;
+use App\Models\LiveStream;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -29,8 +30,12 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user,
             ],
+            'discordServerUrl' => $request?->user()?->discord_integrated
+                ? config('discord.serverLink')
+                : null,
             'csrf_token' => csrf_token(),
             'toastMessage' => $this->getToastMessage(),
+            'anyLiveTraining' => $this->anyLiveTraining(),
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
                     'location' => $request->url(),
@@ -55,5 +60,13 @@ class HandleInertiaRequests extends Middleware
         }
 
         return $toast_message;
+    }
+
+    private function anyLiveTraining(): bool
+    {
+        return false;
+//        return LiveStream::where('live_at', '<', now())
+//            ->where('live_end_at', null)
+//            ->exists();
     }
 }

@@ -193,6 +193,32 @@ return [
             'timeout' => 600,
             'nice' => 0,
         ],
+        'one-process' => [
+            'connection' => 'redis',
+            'queue' => ['seeder', 'discord', 'active-campaign'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 1024,
+            'tries' => 1,
+            'timeout' => 600,
+            'nice' => 0,
+        ],
+        'one-process-with-tries' => [
+            'connection' => 'redis',
+            'queue' => ['emails'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 1024,
+            'tries' => 5,
+            'timeout' => 600,
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [
@@ -202,12 +228,20 @@ return [
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
+            'one-process' => [],
+            'one-process-with-tries' => [],
         ],
 
         'local' => [
             'supervisor-1' => [
-                'maxProcesses' => 3,
+                'maxProcesses' => 20,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
             ],
+            'one-process' => [
+                'maxProcesses' => 20,
+            ],
+            'one-process-with-tries' => [],
         ],
     ],
 ];

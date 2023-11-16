@@ -8,27 +8,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class LiveSeries extends Model implements HasMedia
 {
-    use SoftDeletes, HasFactory, InteractsWithMedia, AddDummyImageTrait, Searchable, CascadeSoftDeletes;
+    use SoftDeletes, HasFactory, InteractsWithMedia, AddDummyImageTrait, CascadeSoftDeletes;
 
     protected $guarded = ['id'];
 
     protected $casts = [
         'published' => 'boolean',
-        'experience' => 'json',
     ];
 
     protected $with = ['media', 'defaultInstructor', 'liveStreams'];
 
-    protected array $cascadeDeletes = ['liveStreams', 'faqs'];
+    protected array $cascadeDeletes = ['liveStreams'];
 
     public function toSearchableArray(): array
     {
@@ -41,6 +38,7 @@ class LiveSeries extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('thumbnail')->singleFile();
+        $this->addMediaCollection('mobileThumbnail')->singleFile();
     }
 
     public function registerAllMediaConversions(): void
@@ -48,13 +46,25 @@ class LiveSeries extends Model implements HasMedia
         $this->addMediaConversion('medium')
             ->performOnCollections('thumbnail')
             ->width(600)
-            ->height(400)
+            ->keepOriginalImageFormat()
             ->nonQueued();
 
         $this->addMediaConversion('small')
             ->performOnCollections('thumbnail')
             ->width(300)
-            ->height(200)
+            ->keepOriginalImageFormat()
+            ->nonQueued();
+
+        $this->addMediaConversion('medium')
+            ->performOnCollections('mobileThumbnail')
+            ->width(600)
+            ->keepOriginalImageFormat()
+            ->nonQueued();
+
+        $this->addMediaConversion('small')
+            ->performOnCollections('mobileThumbnail')
+            ->width(300)
+            ->keepOriginalImageFormat()
             ->nonQueued();
     }
 
@@ -76,10 +86,5 @@ class LiveSeries extends Model implements HasMedia
     public function defaultInstructor(): BelongsTo
     {
         return $this->belongsTo(Instructor::class, 'default_instructor_id');
-    }
-
-    public function faqs(): MorphMany
-    {
-        return $this->morphMany(FAQ::class, 'faqable');
     }
 }

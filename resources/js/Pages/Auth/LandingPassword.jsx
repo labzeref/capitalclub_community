@@ -15,9 +15,11 @@ const LandingPassword = ({ wantedUrl }) => {
 
         post(route('site-lock.authenticate'));
     }
-
+    const handleContextMenu = (e) => {
+        e.preventDefault(); 
+      };
     return (
-        <div>
+        <div onContextMenu={handleContextMenu}>
             <Toast />
             <div className='flex justify-center'>
                 <div className="mt-5 mb-6 lg:mb-[70px] flex justify-center lg:justify-start">

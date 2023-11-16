@@ -38,6 +38,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \Spatie\ResponseCache\Middlewares\CacheResponse::class,
         ],
 
         'api' => [
@@ -65,10 +66,14 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'site-lock' => \App\Http\Middleware\SiteLockMiddleware::class,
+        'ShouldNotHasProfileCompleted' => \App\Http\Middleware\ShouldNotHasProfileCompleted::class,
+        'ShouldHasProfileCompleted' => \App\Http\Middleware\ShouldHasProfileCompleted::class,
         'shouldEnrolledInCourse' => \App\Http\Middleware\ShouldEnrolledInCourseMiddleware::class,
         'shouldEnrolledInLesson' => \App\Http\Middleware\ShouldEnrolledInLessonMiddleware::class,
         'shouldHasSubscription' => \App\Http\Middleware\ShouldHasSubscriptionMiddleware::class,
         'destroyDeactivateUserSession' => \App\Http\Middleware\DestroyDeactivateUserSessionMiddleware::class,
+        'playGameIfAcademyLocked' => \App\Http\Middleware\PlayGameIfAcademyLockedMiddleware::class,
+        'redirectToAcademyIfOpen' => \App\Http\Middleware\RedirectToAcademyIfOpenMiddleware::class,
+        'doNotCacheResponse' => \Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class,
     ];
 }

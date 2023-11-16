@@ -3,12 +3,15 @@
 namespace App\Http\Resources\Lesson;
 
 use App\Http\Resources\CourseResource;
+use App\Http\Resources\Media\BlurMediaResource;
 use App\Http\Resources\Media\MediaResource;
 use App\Http\Resources\Media\MediumMediaResource;
 use App\Http\Resources\Media\SmallMediaResource;
+use App\Http\Resources\ModuleResource;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /** @mixin Lesson */
 class LessonResource extends JsonResource
@@ -19,35 +22,75 @@ class LessonResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'serial_number' => $this->serial_number,
             'course' => new CourseResource($this->whenLoaded('course')),
+            'module' => new ModuleResource($this->whenLoaded('module')),
+            'resources' => LessonResourceResource::collection($this->whenLoaded('resources')),
+            'resources_link' => $this->resources_link,
             'thumbnail' => $this->whenLoaded(
                 'media',
                 fn () => [
-                    'original' => new MediaResource($this->getFirstMedia('thumbnail')),
-                    'medium' => new MediumMediaResource($this->getFirstMedia('thumbnail')),
-                    'small' => new SmallMediaResource($this->getFirstMedia('thumbnail')),
+                    'original' => $this->getFirstMedia('thumbnail')
+                        ? new MediaResource($this->getFirstMedia('thumbnail'))
+                        : _defaultDesktopImage(),
+                    'medium' => $this->getFirstMedia('thumbnail')
+                        ? new MediumMediaResource($this->getFirstMedia('thumbnail'))
+                        : _defaultDesktopMediumImage(),
+                    'small' => $this->getFirstMedia('thumbnail')
+                        ? new SmallMediaResource($this->getFirstMedia('thumbnail'))
+                        : _defaultDesktopSmallImage(),
+                    'blur' => $this->getFirstMedia('thumbnail')
+                        ? new BlurMediaResource($this->getFirstMedia('thumbnail'))
+                        : _defaultDesktopSmallImage(),
+                ]
+            ),
+            'banner' => $this->whenLoaded(
+                'media',
+                fn () => [
+                    'original' => $this->getFirstMedia('banner')
+                        ? new MediaResource($this->getFirstMedia('banner'))
+                        : _defaultDesktopImage(),
+                    'medium' => $this->getFirstMedia('banner')
+                        ? new MediumMediaResource($this->getFirstMedia('banner'))
+                        : _defaultDesktopMediumImage(),
+                    'small' => $this->getFirstMedia('banner')
+                        ? new SmallMediaResource($this->getFirstMedia('banner'))
+                        : _defaultDesktopSmallImage(),
+                    'blur' => $this->getFirstMedia('banner')
+                        ? new BlurMediaResource($this->getFirstMedia('banner'))
+                        : _defaultDesktopSmallImage(),
+                ]
+            ),
+            'mobile_banner' => $this->whenLoaded(
+                'media',
+                fn () => [
+                    'original' => $this->getFirstMedia('mobileBanner')
+                        ? new MediaResource($this->getFirstMedia('mobileBanner'))
+                        : _defaultMobileImage(),
+                    'medium' => $this->getFirstMedia('mobileBanner')
+                        ? new MediumMediaResource($this->getFirstMedia('mobileBanner'))
+                        : _defaultMobileMediumImage(),
+                    'small' => $this->getFirstMedia('mobileBanner')
+                        ? new SmallMediaResource($this->getFirstMedia('mobileBanner'))
+                        : _defaultMobileSmallImage(),
+                    'blur' => $this->getFirstMedia('mobileBanner')
+                        ? new BlurMediaResource($this->getFirstMedia('mobileBanner'))
+                        : _defaultMobileSmallImage(),
                 ]
             ),
             'bookmarked' => auth()->user()->bookmarkedLessons->contains($this->id),
             'title' => $this->title,
+            'guest_name' => $this->guest_name,
             'description' => $this->description,
             'vimeo_url' => $this->vimeo_url,
             'duration' => $this->duration,
-            'published' => (bool) $this->published_at,
-            'published_at' => $this->published_at?->toDateString(),
-            'dripped' => (bool) $this->dripped_at,
-            'dripped_at' => $this->dripped_at?->toDateString(),
-            'has_preview' => $this->has_preview,
-            'preview_start_time' => $this->preview_start_time,
-            'preview_end_time' => $this->preview_end_time,
+            'dripped' => (bool) $this->dripped_at > now(),
             $this->mergeWhen(
                 $this->relationLoaded('enrolledUsers'),
                 fn () => [
-                    'locked' => ! $this->hasEnrolledInUser($user->id),
+                    'locked' => $this->course->strict ? ! $this->hasEnrolledInUser($user->id) : false,
                     'completed' => (bool) $this->enrolledUsers->where('id', $user->id)
                         ->first()?->pivot->completed,
-                    'progress' => (float) $this->enrolledUsers->where('id', _user()->id)
-                        ->first()?->pivot->progress,
                 ]
             ),
             'note' => $this->whenLoaded(

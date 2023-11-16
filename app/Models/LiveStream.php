@@ -12,13 +12,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use Maize\Markable\Markable;
 use Maize\Markable\Models\Bookmark;
 
 class LiveStream extends Model
 {
-    use SoftDeletes, HasFactory, Markable, Searchable, CascadeSoftDeletes;
+    use SoftDeletes, HasFactory, Markable, CascadeSoftDeletes;
 
     protected $guarded = ['id'];
 
@@ -27,17 +26,44 @@ class LiveStream extends Model
     protected $casts = [
         'live_at' => 'timestamp:Y-m-d H:i:sT ',
         'live_end_at' => 'timestamp:Y-m-d H:i:sT ',
-        'published' => 'boolean',
-        'bannered' => 'boolean',
+        'published_at' => 'datetime',
+        'featured' => 'boolean',
     ];
 
     protected array $cascadeDeletes = ['streamMessages'];
 
-    protected static function booted(): void
+    protected static function booted(): void // only for student side
     {
         static::addGlobalScope('published', function (Builder $builder) {
-            $builder->where('published', true);
+            $builder->whereNotNull('published_at');
         });
+    }
+
+    public function scopeNotFeatured(Builder $query): void
+    {
+        $query->where('featured', false);
+    }
+
+    public function scopeFeatured(Builder $query): void
+    {
+        $query->where('featured', true);
+    }
+
+    public function scopeUpcoming(Builder $query): void
+    {
+        $query->where('live_at', '>', now());
+    }
+
+    public function scopeLive(Builder $query): void
+    {
+        $query->where('live_at', '<=', now())
+            ->whereNull('live_end_at');
+    }
+
+    public function scopeWasLive(Builder $query): void
+    {
+        $query->where('live_at', '<=', now())
+            ->whereNotNull('live_end_at');
     }
 
     protected function liveAtReadable(): Attribute
@@ -49,14 +75,11 @@ class LiveStream extends Model
 
     protected function status(): Attribute
     {
-        $now = Carbon::now();
+        $live_at = Carbon::parse($this->live_at);
+        $live_end_at = Carbon::parse($this->live_end_at);
 
         return Attribute::make(
-            get: fn () => $this->live_at > $now ?
-                'upcoming'
-                : ($this->live_end_at === null || $this->live_end_at > $now ?
-                    'live'
-                : 'was-live')
+            get: fn () => $live_at > now() ? 'upcoming' : ($this->live_end_at === null ? 'live' : 'was-live')
         );
     }
 
@@ -96,6 +119,10 @@ class LiveStream extends Model
      * -----------------
      * | Methods
      * -----------------
+     */
+
+    /**
+     * Tells this live training has sibling or not in the same group
      */
     public function hasSiblings(): bool
     {

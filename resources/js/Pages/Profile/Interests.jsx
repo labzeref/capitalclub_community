@@ -3,7 +3,7 @@ import house from "../../../assets/House.png";
 import life from "../../../assets/BezierCurve.png";
 import music from "../../../assets/Music.png";
 import cross from "../../../assets/cross.png";
-import IntrestModal from "../../Components/Modal/IntrestModal";
+import check from "../../../assets/img/CheckCircle.png";
 import Button from "../../Components/Button";
 import { ReactComponent as Check } from "../../../assets/svg/Check.svg";
 import Layout from "@/Layouts/Layout.jsx";
@@ -15,16 +15,22 @@ import { useForm } from "@inertiajs/react";
  * interests_ids
  * route('profile.interests.update')
  */
-const Interests = ({ categories, profile }) => {
-    console.log("categories");
-    console.log(categories);
-    console.log("profile");
-    console.log(profile);
+const Interests = ({ categories, profile, user, interests }) => {
+    // console.log("categories");
+    // console.log(categories);
+    // console.log("profile");
+    // console.log(profile);
+
+    // console.log("user");
+    // console.log(user);
+
+    // console.log("interests");
+    // console.log(interests);
+
 
     const { delete: deleteRequest } = useForm();
 
     const handleSubmit = (e, id) => {
-        console.log('id is ............................', id)
         e.preventDefault();
         deleteRequest(route('profile.interests.delete', id));
     };
@@ -32,99 +38,150 @@ const Interests = ({ categories, profile }) => {
 
     return (
         <div>
-            <div data-aos="fade-in" data-aos-delay="100" data-aos-easing="ease" data-aos-duration="300" className=" paddingSectionMedium containerMedium">
+            <div data-aos="fade-in" data-aos-delay="100" data-aos-easing="ease" data-aos-duration="300" className=" md:px-6 lg:px-0    containerMedium">
                 <div className="grid grid-cols-12 gap-4 px-5 lg:px-0">
-                    <div className="col-span-2 lg:col-span-2 hidden lg:block">
-                        {" "}
-                    </div>
 
-                    <div className="col-span-12 lg:col-span-10">
-                        <div className="flex justify-between  items-center">
-                            <h3 className="    ">Intrested</h3>
-                            <IntrestModal categories={categories} profile={profile} />
-                        </div>
-                    </div>
+
+
                 </div>
                 <div className=" xl:min-h-[65vh] 2xl:min-h-[70vh] flex flex-col justify-between">
                     <div>
-                        <div className="grid grid-cols-12 gap-4 py-4 lg:py-12">
-                            <div className="col-span-12 md:col-span-2 ">
-                                <p className="py-2 lg:py-6 fs-regular fw-medium px-6 lg:px-0 ">
-                                    {" "}
-                                    Industries
-                                </p>
-                            </div>
-                            <div className="col-span-12 md:col-span-10 px-4 lg:px-0">
-                                <div className="grid grid-cols-12 gap-4">
-                                    {" "}
-                                    {profile?.interests?.map((item, index) => (
-                                        <div className="col-span-6 md:col-span-4">
-                                            <div className="relative  isIcon noise-10 inset-border h-[129px] w-[163px] md:h-auto md:w-auto p-[20px] ">
-                                                <div onClick={(e) => { handleSubmit(e, item?.id) }} className=" absolute    right-1   top-1">
-                                                    <svg
-                                                        width="20"
-                                                        height="20"
-                                                        viewBox="0 0 20 20"
-                                                        fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <g
-                                                            opacity="0.6"
-                                                            clipPath="url(#clip0_1371_78706)"
-                                                        >
-                                                            <path
-                                                                opacity="0.4"
-                                                                d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z"
-                                                                fill="white"
-                                                            />
-                                                            <path
-                                                                d="M12.5 7.5L7.5 12.5"
-                                                                stroke="white"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                            />
-                                                            <path
-                                                                d="M7.5 7.5L12.5 12.5"
-                                                                stroke="white"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                            />
-                                                            <path
-                                                                d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5Z"
-                                                                stroke="white"
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                            />
-                                                        </g>
-                                                        <defs>
-                                                            <clipPath id="clip0_1371_78706">
-                                                                <rect
-                                                                    width="20"
-                                                                    height="20"
-                                                                    fill="white"
-                                                                />
-                                                            </clipPath>
-                                                        </defs>
-                                                    </svg>
-                                                </div>
-                                                <div className="md:flex justify-center md:justify-start items-center md:items-start md:text-start text-center">
-                                                    {" "}
-                                                    <img
-                                                        src={item?.icon?.url}
-                                                        alt="home"
-                                                        className="md:w-5 md:h-5 w-12 h-12 md:mr-3 mx-auto md:mx-0 mb-2 md:mb-0"
-                                                    />{" "}
-                                                    <p className=" fs-regular fw-regular   ">
-                                                        {" "}
-                                                        {item?.name}{" "}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                        <div className="  w-full ">
+                            <p className="  text-center  w-full md:pt-[4rem] fs-x-large fw-medium px-6 lg:px-0 ">
+
+                                INTERESTS
+                            </p>
+                        </div>
+                        <div className="   py-4 lg:py-6">
+
+                            <div className=" w-[70%]  flex justify-center  mx-auto px-4 lg:px-0">
+
+                              <div className="flex flex-col md:flex-row justify-center">
+
+                                    {user?.interests?.map((item, index) => (
+
+                                     <div key={index+3} className="relative m-4 border-rounded-10 bg-[#1a1a1a] isIcon flex justify-center  items-center  inset-border h-[129px] w-[163px] md:h-[136px] md:w-[200px]   ">
+                                         <div className=" absolute    left-2   top-2">
+                                             <img
+                                                 src={check}
+                                                 alt="home"
+                                                 className="w-5 h-5   md:mr-3 mx-auto md:mx-0 mb-2 md:mb-0"
+                                             />
+                                         </div>
+                                         <div className="flex-col flex justify-center  items-center  text-center">
+                                         {/* <img
+                                   className="md:w-10 md:h-10 w-12 h-12   mx-auto md:mx-0 mb-2 md:mb-0"
+                                    src={`data:image/svg+xml;utf8,${encodeURIComponent(item?.icon)}`}
+                                    alt=""
+                                    style={{ filter: `brightness(0) invert(1})` }}
+                                  /> */}
+
+
+                                             <img
+                                    className={` w-[30px] h-[30px] md:w-[40px] md:h-[40px] `}
+                                    src={`data:image/svg+xml;utf8,${encodeURIComponent(item?.icon)}`}
+                                    alt=""
+                                    style={{ filter: `brightness(0) invert( 0.6 )` }}
+                                  />
+
+
+                                             <p className=" fs-regular fw-regular pt-3  ">
+
+                                                 {item?.name}
+                                             </p>
+                                         </div>
+                                     </div>
+
+                             ))}
+
+                                 </div>
                             </div>
                         </div>
+
+
+                        {user?.business_owner &&
+                            <div className="flex justify-center w-full">
+                                <div className="md:flex  w-full md:w-auto gap-7 my-[16px] ">
+                                    <div className="  text-center  md:text-end   ">
+                                        <p className="py-3 fs-x-large fw-medium">   BUSINESS </p>
+                                    </div>
+                                    <div className="   flex justify-center px-4 md:px-0">
+                                        <div className=" w-[100%] max-w-[300px] md:w-[280px] flex bg-[#1a1a1a] border-rounded-10 p-6 gap-4 fs-regular fw-regular">
+                                            <img
+                                                src={check}
+                                                className="w-[1.125rem] mt-[2px]  h-[1.125rem]"
+                                                alt="uncheck"
+                                            /> {user?.business_owner}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        {user?.industry &&
+                            <div className="flex justify-center w-full">
+                                <div className="md:flex  w-full md:w-auto gap-7 my-[16px] ">
+                                    <div className="  text-center  md:text-end w-full md:w-[50%] ">
+                                        <p className="py-3 fs-x-large fw-medium"> INDUSTRY  </p>
+                                    </div>
+                                    <div className="   flex justify-center px-4 md:px-0">
+                                        <div className=" w-[100%] max-w-[300px] md:w-[280px] flex bg-[#1a1a1a] border-rounded-10 p-6 gap-4 fs-regular fw-regular">
+                                            <img
+                                                src={check}
+                                                className="w-[1.125rem] mt-[2px]  h-[1.125rem]"
+                                                alt="uncheck"
+                                            /> {user?.industry} </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        {user?.annual_revenue &&
+                            <div className="flex justify-center w-full">
+                                <div className="md:flex  w-full md:w-auto gap-7 my-[16px] ">
+                                    <div className="  text-center  md:text-end w-full md:w-[50%] ">
+                                        <p className="py-3 fs-x-large fw-medium">   REVENUE</p>
+                                    </div>
+                                    <div className="   flex justify-center px-4 md:px-0">
+                                        <div className=" w-[100%] max-w-[300px] md:w-[280px] flex bg-[#1a1a1a] border-rounded-10 p-6 gap-4 fs-regular fw-regular">
+                                            <img
+                                                src={check}
+                                                className="w-[1.125rem] mt-[2px]  h-[1.125rem]"
+                                                alt="uncheck"
+                                            /> {user?.annual_revenue}</div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                        {user?.objective &&
+                           <div className="flex justify-center w-full">
+                           <div className="md:flex  w-full md:w-auto   my-[16px] ">
+                               <div className="  text-center  md:text-start w-full md:w-[50%] ">
+                                    <p className="py-3 fs-x-large fw-medium md:-ml-8">   OBJECTIVES</p>
+                                </div>
+                                <div className="md:ml-8 flex justify-center px-4 md:px-0">
+                                        <div className=" w-[100%] max-w-[300px] md:w-[280px] flex bg-[#1a1a1a] border-rounded-10 p-6 gap-4 fs-regular fw-regular">
+                                        <img
+                                            src={check}
+                                            className="w-[1.125rem] mt-[2px]  h-[1.125rem]"
+                                            alt="uncheck"
+                                        /> {user?.objective}</div>
+
+
+                                </div>
+                                </div>
+                                </div>
+                        }
+
+
+
+
+
+
+
                     </div>
                 </div>
                 {/* <div className="flex space-x-[24px] lg:space-x-[8px] px-6 lg:px-0 "> */}
@@ -133,19 +190,14 @@ const Interests = ({ categories, profile }) => {
 
                     </div>
                     <div className=" flex col-span-10 md:col-span-10 gap-3 px-4 lg:px-0">
-                        <Button
-                            onClick={() => setShowModal(false)}
-                            className={"secondary mt-[10px] uppercase"}
-                        >
-                            Cancel
-                        </Button>
+                        {/*
                         <Button
                             onClick={() => setShowModal(false)}
                             icon={<Check />}
                             className={"primary mt-[10px] uppercase"}
                         >
                             Save Interests
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
             </div>

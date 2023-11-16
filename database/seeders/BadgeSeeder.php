@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Badge;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class BadgeSeeder extends Seeder
 {
@@ -68,8 +69,8 @@ class BadgeSeeder extends Seeder
         collect($svgs)->each(fn ($svg) => Badge::create([
             'svg' => $svg,
             'weight' => mt_rand(1, 7),
-            'title' => fake()->jobTitle,
-            'description' => fake()->text(250),
+            'title' => Str::words(5),
+            'description' => Str::words(10),
         ]));
     }
 }

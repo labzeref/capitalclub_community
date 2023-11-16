@@ -13,18 +13,21 @@ export default function NotesCard({
     notes,
     ...props
 }) {
+
+
+    
     return (
         <div className={className}>
             <div className=" Progress-Notes-card " >
-                <div className="card-img  notes-card-img rounded-t-[10px]" style={{backgroundImage: `url(${image}) `}}>
+                <div className="card-img  notes-card-img rounded-t-[10px]"  >
                 <div className="academy-top-inst-img top-instructor-overlay absolute top-0 left-0 w-full"></div>
-                {/* <img className="card-img notes-card-img" src={`${image}`} alt="" /> */}
+                <img className="card-img notes-card-img" src={`${image}`} alt="" />
                 </div>
-                <div className="card-bg  rounded-b-[10px] top-[160px] h-[247px] w-[306px] ">
-                    <div className="h-[140px]">
+                <div className="card-bg  rounded-b-[10px] top-[160px] h-[20px] w-full ">
+                    {/* <div className="h-[140px]">
                     <p className="fs-x-large fw-medium">{title}</p>
                     <p className="fs-medium fw-regular">{detail}</p>
-                    </div>
+                    </div> */}
                     <div>
                         <NotesModal notes={notes} />
                     </div>

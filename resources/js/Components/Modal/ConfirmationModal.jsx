@@ -13,8 +13,8 @@ export default function ConfirmationModal({handleAction}) {
     const [showModal, setShowModal] = useState(false);
 
 
- 
- 
+
+
 
     useEffect(() => {
         if (showModal) {
@@ -26,7 +26,7 @@ export default function ConfirmationModal({handleAction}) {
         return () => {
             document.body.style.overflow = 'auto';
         };
-    }, [showModal]); 
+    }, [showModal]);
 
     return (
         <>
@@ -69,11 +69,11 @@ export default function ConfirmationModal({handleAction}) {
                                     <div className="flex justify-center">
                                         <div className="  mx-auto">
                                         <svg className="mx-auto" width="129" height="128" viewBox="0 0 129 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <g clip-path="url(#clip0_1033_61390)">
+                      <g clipPath="url(#clip0_1033_61390)">
                       <path opacity="0.2" d="M100.5 28V104C100.5 105.061 100.079 106.078 99.3284 106.828C98.5783 107.579 97.5609 108 96.5 108H32.5C31.4391 108 30.4217 107.579 29.6716 106.828C28.9214 106.078 28.5 105.061 28.5 104V28H100.5Z" fill="white"/>
-                      <path d="M108.5 28H20.5" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M44.5 12H84.5" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M100.5 28V104C100.5 105.061 100.079 106.078 99.3284 106.828C98.5783 107.579 97.5609 108 96.5 108H32.5C31.4391 108 30.4217 107.579 29.6716 106.828C28.9214 106.078 28.5 105.061 28.5 104V28" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M108.5 28H20.5" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M44.5 12H84.5" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M100.5 28V104C100.5 105.061 100.079 106.078 99.3284 106.828C98.5783 107.579 97.5609 108 96.5 108H32.5C31.4391 108 30.4217 107.579 29.6716 106.828C28.9214 106.078 28.5 105.061 28.5 104V28" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
                       </g>
                       <defs>
                       <clipPath id="clip0_1033_61390">
@@ -81,13 +81,13 @@ export default function ConfirmationModal({handleAction}) {
                       </clipPath>
                       </defs>
                     </svg>
-                                           
+
                                             <h3 className=" text-white  text-center semibold">
                                                Are you sure ?
                                             </h3>
                                         </div>
                                     </div>
-                                 
+
                                 </div>
                                 {/*footer*/}
                                 <div className="md:flex items-center justify-center p-3  md:p-6  md:space-x-3 space-y-3 md:space-y-0">
@@ -98,7 +98,7 @@ export default function ConfirmationModal({handleAction}) {
                                     <button onClick={(e)=>{handleAction(e) ; setShowModal(false)}} className="button primary w-full">
                                         <div className="button_container glitch uppercase">
 
-                                            Delete
+                                            Deactivate
                                         </div>
                                     </button>
 

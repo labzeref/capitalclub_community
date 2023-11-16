@@ -1,32 +1,41 @@
 h1 {
     font-family: $font-family;
     font-weight: 700;
-    font-size: 4rem;
+    font-size: 4.375rem;
     line-height: 1.1;
     text-transform: uppercase;
     @include for_breakpoint(mobile) {
-        font-size: 2rem;
+        font-size: 1.875rem;
         font-weight: 700;
     }
     @include for_breakpoint(tablet) {
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 700;
+    }
+}
+.fs-65{
+    font-size: 65px;
+    @include for_breakpoint(mobile) {
+        font-size: 30px;
+    }
+    @include for_breakpoint(tablet) {
+        font-size: 3.5rem;
     }
 }
 
-h2 {
-    font-family: $font-family;
-    font-weight: 700;
-    font-size: 3rem;
-    line-height: 1.1;
-    text-transform: uppercase;
-    @include for_breakpoint(mobile) {
-        font-size: 1.5rem;
-    }
-    @include for_breakpoint(tablet) {
-        font-size: 2rem;
-    }
-}
+// h2 {
+//     font-family: $font-family;
+//     font-weight: 700;
+//     font-size: 3rem;
+//     line-height: 1.1;
+//     text-transform: uppercase;
+//     @include for_breakpoint(mobile) {
+//         font-size: 1.5rem;
+//     }
+//     @include for_breakpoint(tablet) {
+//         font-size: 2rem;
+//     }
+// }
 
 h3 {
     font-family: $font-family;
@@ -42,37 +51,37 @@ h3 {
     }
 }
 
-h4 {
-    font-family: $font-family;
-    font-weight: 600;
-    font-size: 1.5rem;
-    line-height: 1.2;
-    @include for_breakpoint(mobile) {
-        font-size: 1rem;
-    }
-}
+// h4 {
+//     font-family: $font-family;
+//     font-weight: 600;
+//     font-size: 1.5rem;
+//     line-height: 1.2;
+//     @include for_breakpoint(mobile) {
+//         font-size: 1rem;
+//     }
+// }
 
-h5 {
-    font-family: $font-family;
-    font-weight: 500;
-    font-size: 1.25rem;
-    line-height: 1.2;
-}
+// h5 {
+//     font-family: $font-family;
+//     font-weight: 500;
+//     font-size: 1.25rem;
+//     line-height: 1.2;
+// }
 
-h6 {
-    font-family: $font-family;
-    font-weight: 500;
-    font-size: 1.125rem;
-    line-height: 1.2;
-    @include for_breakpoint(mobile) {
-        font-size: 16px;
-    }
-}
+// h6 {
+//     font-family: $font-family;
+//     font-weight: 500;
+//     font-size: 1.125rem;
+//     line-height: 1.2;
+//     @include for_breakpoint(mobile) {
+//         font-size: 16px;
+//     }
+// }
 
-p {
-    font-family: $font-family !important;
-    font-size: 1rem;
-}
+// p {
+//     font-family: $font-family !important;
+//     font-size: 1rem;
+// }
 .fw-regular {
     font-weight: 400 !important;
 }
@@ -86,27 +95,31 @@ p {
     font-weight: 700 !important;
 }
 
-/* paragraph font size  */
+// /* paragraph font size  */
+.fs-xs {
+    font-size: 0.65rem !important;
+}
 .fs-tiny {
-    font-size: 0.75rem !important; //12px
+    font-size: 0.75rem !important;
+
 }
 .fs-small {
-    font-size: 0.875rem !important; //14px
+    font-size: calc(0.725rem + 1vh) !important;
     @include for_breakpoint(mobile) {
-        font-size: 0.75rem !important; //12px
+        font-size: calc( 5px + 1vh) !important;
     }
 }
 .fs-regular-sm {
-    font-size: 0.938rem !important; //15px
+    font-size: 0.938rem !important;
 }
 .fs-regular {
-    font-size: 1rem !important; //16px
+    font-size: 1rem !important;
     @include for_breakpoint(mobile) {
-        font-size: 0.875rem !important; //14px
+        font-size: 0.875rem !important;
     }
 }
 .fs-medium {
-    font-size: 1.125rem !important; //18px
+    font-size: 1.125rem !important;
 }
 .fs-large {
     font-size: 1.25rem !important;
@@ -140,6 +153,445 @@ p {
 .text-24 {
     font-size: 1.5rem;
 }
+.text-20 {
+    font-size: 1.25rem;
+}
+.text-18 {
+    font-size: 1.125rem;
+}
 .text-16 {
     font-size: 1rem;
+}
+.text-14 {
+    font-size: 0.875rem;
+}
+.text-12 {
+    font-size: 0.75rem;
+}
+.text-30{
+    font-size: 30px !important;
+}
+.text-10 {
+    font-size: 10px;
+    @include for_breakpoint(mobile) {
+        font-size:  8px
+    }
+}
+.text-8 {
+    font-size: clamp(0.525vh, 0.387vh, 3rem);
+    @include for_breakpoint(mobile) {
+        font-size: clamp(1.5vh, 0.387vh, 3rem);
+    }
+}
+
+.font-size-10{
+    font-size: 10px;
+}
+
+.font-size-12{
+    font-size: 12px;
+}
+
+.font-size-14{
+    font-size: 14px;
+}
+
+.font-size-32{
+    font-size: 32px;
+
+    @include for_breakpoint(mobile) {
+        font-size: 20px;
+    }
+
+}
+
+
+// .test-vw{
+//     @include responsive(font-size,  10px);
+// }
+
+.font-40{
+    @include for_breakpoint(vw-mobile) {
+        font-size:8vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: 40px;
+    }
+}
+
+.font-20{
+    @include for_breakpoint(vw-mobile) {
+        font-size:4vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: 20px;
+    }
+}
+
+.font-14{
+
+    @include for_breakpoint(vw-mobile) {
+        font-size: 2.8vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: 14px;
+    }
+}
+.font-12{
+    font-size: 2.4vw;
+    @include for_breakpoint(vw-mobile) {
+        font-size: 2.4vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: 12px;
+    }
+}
+.font-11{
+    font-size: 2.2vw;
+}
+.font-10{
+    @include for_breakpoint(vw-mobile) {
+        font-size: 2vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: 10px;
+    }
+}
+.font-9{
+    @include for_breakpoint(vw-mobile) {
+        font-size: 1.8vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: 11px;
+    }
+}
+.font-8{
+    @include for_breakpoint(vw-mobile) {
+        font-size: 1.6vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        font-size: 11px;
+    }
+}
+.font-5{
+    font-size: 1vw;
+}
+
+
+
+// -------------MARGIN Bottom-----
+.mb-7vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-bottom: 1.4vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-bottom: 10px;
+    }
+}
+.mb-6vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-bottom: 1.306vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-bottom: 10px;
+    }
+}
+.mb-8vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-bottom: 1.72vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-bottom: 12px;
+    }
+}
+
+.mb-10vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-bottom: 2.6vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-bottom: 32px;
+    }
+}
+
+.mb-13vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-bottom: 2.6vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-bottom: 12px;
+    }
+}
+
+
+
+.mb-13vw-input{
+    @include for_breakpoint(vw-mobile) {
+        margin-bottom: 1.9vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-bottom: 5px;
+    }
+}
+
+
+
+
+// -------------MARGIN TOP-----
+
+.mt-57vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-top: 11.2vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-top: 57px;
+    }
+}
+
+
+.mt-28vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-top: 5.6vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-top: 28px;
+    }
+
+}
+
+.mt-24vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-top: 4.9vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-top: 24px;
+    }
+}
+
+.mt-20vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-top: 4vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-top: 42px;
+    }
+}
+
+
+.mt-18vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-top: 3.6vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-top: 16px;
+    }
+}
+
+.mt-12vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-top: 2.4vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-top: 12px;
+    }
+}
+
+
+.mt-10vw{
+    @include for_breakpoint(vw-mobile) {
+        margin-top: 2.5vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        margin-top: 10px;
+    }
+}
+
+
+
+
+
+
+
+// -------------Padding-----
+
+.px-9vw{
+    @include for_breakpoint(vw-mobile) {
+        padding-left:  1.9vw;
+        padding-right:  1.9vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        padding-left:  9px;
+        padding-right:  9px;
+    }
+}
+
+.py-9vw{
+    @include for_breakpoint(vw-mobile) {
+        padding-top: 4.9vw;
+        padding-bottom: 4.9vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        padding-top: 22px;
+        padding-bottom: 22px;
+    }
+}
+
+
+.p-card-checkout{
+    @include for_breakpoint(vw-mobile) {
+        padding: 1.6vw 1vw 1.6vw 1.4vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        padding: 11px 9px 11px 10px;
+    }
+}
+.p-card-billing{
+    @include for_breakpoint(vw-mobile) {
+        padding: 2vw 1.3vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        padding: 14px 9px;
+    }
+}
+
+// -------------height-----
+.h-34vw{
+    @include for_breakpoint(vw-mobile) {
+        height: 6.9vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        height: 34px;
+    }
+}
+
+
+.h-21rem{
+    @include for_breakpoint(vw-mobile) {
+        height: 85vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        height: 29rem;
+    }
+}
+
+// md:h-[35px] h-[25px] md:w-[35px] w-[25px]
+
+.h-25vw{
+    @include for_breakpoint(vw-mobile) {
+        width: 5vw;
+        height: 5vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        width: 30px;
+        height: 30px;
+    }
+}
+.hash-img{
+    width: 30px;
+    height: 30px;
+    margin-top: 13px;
+    @include for_breakpoint(mobile) {
+        width: 17px;
+        height: 17px;
+        margin-top: 7px;
+    }
+    @include for_breakpoint(tablet) {
+        width: 23px;
+        height: 25px;
+        margin-top: 10px;
+    }
+
+}
+
+.hash-img-mobile-landscap{
+    width: 28px;
+    height: 28px;
+    margin-top: 15px;
+    @include for_breakpoint(tablet) {
+        width: 23px;
+        height: 23px;
+        margin-top: 11px;
+    }
+}
+
+
+.h-27vw{
+    @include for_breakpoint(vw-mobile) {
+        height: 5.4vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        height: 55px;
+    }
+}
+
+.h-20vw{
+    @include for_breakpoint(vw-mobile) {
+        height: 4vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        height: 35px;
+    }
+}
+
+.h-18vw{
+    @include for_breakpoint(vw-mobile) {
+        height: 3.6vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        height: 26px;
+    }
+}
+
+
+
+
+
+// ---------------WIDTH
+.w-20vw{
+    @include for_breakpoint(vw-mobile) {
+        height: 4vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        height: 35px;
+    }
+}
+
+
+
+
+
+// -------------line height
+
+.leading-10vw{
+    @include for_breakpoint(vw-mobile) {
+        line-height:  2.16vw;
+    }
+    @include for_breakpoint(vw-laptop) {
+        line-height:  10.8px;
+    }
+}
+
+
+
+// ------Error Pages
+.fs-30{
+    font-size: 30px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 36px;
+    @include for_breakpoint(mobile) {
+        font-size: 16px;
+        line-height: 26px;
+    }
+}
+
+.error-code{
+    font-size: 9rem;
+    font-weight: 700;
+    line-height: 150px;
+    @include for_breakpoint(mobile) {
+        font-size: 6.6rem;
+        line-height: 120px;
+    }
+
 }

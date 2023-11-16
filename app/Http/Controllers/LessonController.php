@@ -8,54 +8,102 @@ use App\Http\Requests\SubmitQuizRequest;
 use App\Http\Requests\UpdateLessonProgressRequest;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\Lesson\LessonResource;
+use App\Http\Resources\ModuleResource;
 use App\Http\Resources\QuizResource;
 use App\Models\Lesson;
+use App\Models\LessonWatchTime;
+use App\Models\Module;
 use App\Models\Quiz;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Inertia\Response;
+use Inertia\ResponseFactory;
 
 class LessonController extends Controller
 {
+    /**
+     * Show the lesson play screen
+     *
+     * @return Response|ResponseFactory
+     */
     public function play(Lesson $lesson)
     {
         $user = _user();
         $user->load('enrolledLessons');
 
         $course = $lesson->course()->with([
-            'lessons' => fn ($query) => $query->orderBy('id')->with([
+            'lessons' => fn($query) => $query->orderBy('serial_number')->with([
+                'resources',
                 'enrolledUsers',
-                'note' => fn ($query) => $query->where('user_id', _user()->id),
+                'note' => fn($query) => $query->where('user_id', _user()->id),
             ]),
         ])->first();
+
+        if (! $user->hasEnrolledInCourse($course->id)) {
+            $user->enrolledInCourse($course);
+        }
+
+        $showGuestName = $course->title == 'MONEY TALKS';
+
+        if (!$course->strict) {
+            $user->updateLastVisitLessonData(courseId: $course->id, lessonId: $lesson->id);
+        }
+
+        $modules = ModuleResource::collection($course->modules);
 
         $lesson = new LessonResource($course->lessons->where('id', $lesson->id)->first());
         $course = new CourseResource($course);
 
-        $takeReview = $user->hasCompletedCourse($course->id) && ! $course->hasReviewForUser($user->id);
+        $takeReview = $user->hasCompletedCourse($course->id) && !$course->hasReviewForUser($user->id);
 
-        return inertia('Academy/Lesson', compact(['course', 'lesson', 'takeReview']));
+        return inertia('Academy/Lesson', compact(['course', 'lesson', 'takeReview', 'modules', 'showGuestName']));
     }
 
+    /**
+     * Store the notes for the lessons
+     *
+     * @return JsonResponse
+     */
     public function storeNote(StoreLessonNoteRequest $request, Lesson $lesson)
     {
         $lesson->note()->updateOrCreate([
             'user_id' => _user()->id,
         ], $request->validated());
 
-        return back();
+        return $this->sendResponse([]);
     }
 
+    /**
+     * Completing the lesson if quiz is not exist
+     * otherwise redirect to quiz
+     *
+     * @return RedirectResponse|Response|ResponseFactory
+     */
     public function complete(Lesson $lesson)
     {
         $user = _user();
         $nextLesson = $lesson->nextLesson();
 
-        if (! $nextLesson && $lesson->quizzes()->doesntExist()) {
+        if (!$lesson->course->strict) {
+            if ($nextLesson) {
+                return to_route('lessons.play', $nextLesson->id);
+            } else {
+                return back();
+            }
+        }
+
+        if (!$nextLesson && $lesson->quizzes()->doesntExist()) {
             $lesson->complete($user->id);
             $lesson->course()->setEagerLoads([])->first()->updateProgressForUser($user);
 
             return back()->with('success', __('Course is completed'));
         } elseif ($nextLesson && $lesson->quizzes()->doesntExist()) {
+            $lesson->complete($user->id);
+            $user->enrolledInLesson($nextLesson->id, $nextLesson->course->id);
+
             return to_route('lessons.play', $nextLesson->id);
         }
 
@@ -70,46 +118,42 @@ class LessonController extends Controller
         return inertia('Academy/Quiz', compact(['quiz', 'lesson', 'lessonNumber']));
     }
 
+    /**
+     * If the quiz is skip able then redirect to the next lesson
+     *
+     * @return RedirectResponse
+     */
     public function skipQuiz(Lesson $lesson)
     {
         $user = _user();
         $course = $lesson->course()->setEagerLoads([])->first();
         $nextLesson = $lesson->nextLesson();
 
-        if (! $lesson->quiz_skipable) {
+        if (!$lesson->quiz_skipable) {
             return back()->with('info', __('Quiz is not skip able.'));
         }
 
         $lesson->complete($user->id);
-        logActivity(
-            causedBy: $user,
-            performedOn: $lesson,
-            log: 'You have complete the lesson .'
-        );
+        $lesson->updateQuizResultForUser($user->id, null, true);
         $course->updateProgressForUser($user);
 
         if ($nextLesson) {
             $user->enrolledInLesson($nextLesson->id, $course->id);
-            logActivity(
-                causedBy: $user,
-                performedOn: $nextLesson,
-                log: "You have enrolled in lesson <span class='activity-text'>$lesson->title</span>."
-            );
 
             return to_route('lessons.play', $nextLesson->id)
                 ->with('success', __('Quiz skipped and new lesson unlocked.'));
         }
 
-        logActivity(
-            causedBy: $user,
-            performedOn: $course,
-            log: "You have completed the course, <span class='activity-text'>$course->title</span>."
-        );
-
         return to_route('lessons.play', $lesson)
             ->with('success', __('Course is completed.'));
     }
 
+    /**
+     * Calculating the quiz result if not pass then redirect back and
+     * if pass then redirect to the next lesson and store result
+     *
+     * @return RedirectResponse
+     */
     public function submitQuiz(SubmitQuizRequest $request, Lesson $lesson)
     {
         DB::beginTransaction();
@@ -166,26 +210,13 @@ class LessonController extends Controller
 
             if ($success) {
                 $lesson->complete($user->id);
-                logActivity(
-                    causedBy: $user,
-                    performedOn: $lesson,
-                    log: "You have completed the lesson <span class='activity-text'>$lesson->title</span>."
-                );
                 $course->updateProgressForUser($user);
 
                 if ($nextLesson) {
                     $user->enrolledInLesson($nextLesson->id, $course->id);
-                    logActivity(
-                        causedBy: $user,
-                        performedOn: $nextLesson,
-                        log: "You have enrolled in lesson <span class='activity-text'>$lesson->title</span>."
-                    );
+
                 } else {
-                    logActivity(
-                        causedBy: $user,
-                        performedOn: $course,
-                        log: "You have completed the course <span class='activity-text'>$course->title</span>."
-                    );
+
                 }
             }
 
@@ -226,6 +257,11 @@ class LessonController extends Controller
         return to_route('lesson.quiz-result');
     }
 
+    /**
+     * Show the quiz result screen
+     *
+     * @return Response|ResponseFactory
+     */
     public function quizResult()
     {
         /**
@@ -234,7 +270,7 @@ class LessonController extends Controller
          */
         $data = session('quizResult');
 
-        if (! $data) {
+        if (!$data) {
             abort(404);
         }
 
@@ -251,15 +287,22 @@ class LessonController extends Controller
         ]));
     }
 
+    /**
+     * This run after each 5 sec while user watching lesson video,
+     * and we save the progress of the video
+     *
+     * @return JsonResponse
+     */
     public function updateProgress(UpdateLessonProgressRequest $request, Lesson $lesson)
     {
         $user = _user();
 
-        $enrolledLesson = $user->enrolledLessons()->find($lesson->id);
-
-        if ($enrolledLesson->pivot->progress < $request->progress) {
-            $user->enrolledLessons()->syncWithPivotValues($lesson->id, ['progress' => $request->progress]);
-        }
+        LessonWatchTime::updateOrCreate([
+            'user_id' => $user->id,
+            'lesson_id' => $lesson->id,
+        ], [
+            'progress' => $request->progress
+        ]);
 
         return $this->sendResponse();
     }

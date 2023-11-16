@@ -4,10 +4,10 @@ import "plyr/dist/plyr.css";
 import { useState } from "react";
 
 const PlyrComponent = ({ source, thumbnail }) => {
-    console.log(source)
+ 
     const videoRef = useRef(null);
     const [currentTime, setCurrentTime] = useState(0);
-    console.log(currentTime)
+ 
     useEffect(() => {
         const player = new Plyr(videoRef.current, {
             controls: [

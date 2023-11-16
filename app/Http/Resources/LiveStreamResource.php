@@ -14,7 +14,7 @@ class LiveStreamResource extends JsonResource
             'id' => $this->id,
             'sub_title' => $this->sub_title,
             'embed_url' => $this->embed_url,
-            'video_url' => $this->embed_url,
+            'video_url' => $this->video_url,
             'live_at' => $this->live_at,
             'live_at_readable' => $this->live_at_readable,
             'live_end_at' => $this->live_end_at,
