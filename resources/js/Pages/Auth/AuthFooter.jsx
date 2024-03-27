@@ -37,7 +37,7 @@ const AuthFooter = () => {
                                             <a href='terms-and-conditions'  className="fw-semibold font-14 flex  " >  <p >TERMS & CONDITIONS</p> </a>
                                             <a href='privacy-policy'   >   <p className="fw-semibold font-14 flex  ">PRIVACY POLICY</p> </a>
                                             <a
-                                                href="https://support.capital.club"
+                                                href="https://capitalclub1498.zendesk.com/hc/en-us"
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="fw-semibold font-14 flex order-0 md:order-3"

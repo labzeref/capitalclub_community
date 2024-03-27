@@ -25,9 +25,7 @@ import { ReactComponent as ArrowLeft } from "../../../assets/svg/ArrowLeft.svg";
 import ShareModal from "@/Components/Modal/ShareModal";
 import IconButton from "@/Components/IconButton";
 import { AnimatePresence, motion, useDragControls } from "framer-motion"
-// import CC_LOTTIE from "@/Components/CC_LOTTIE.json";  
-import CC_LOTTIE from "@/Components/CC_LOTTIE_V01.json"; 
-
+// import CC_LOTTIE from "@/Components/CC_LOTTIE.json";
 
 
 
@@ -42,10 +40,27 @@ import { PostsContext } from '../../Store/PostsProvider';
 import { useContext } from "react";
 import AcademyButton from "@/Components/AcademyButton";
 import Lottie from "react-lottie-player";
+import CC_LOTTIE from "@/Components/CC_LOTTIE_V01.json";
 import { Suspense } from "react";
 import Xmark from "@/Components/Xmark";
 import LessonLayout from "@/Layouts/LessonLayout";
 const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
+
+
+
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+
+        // Reset height to auto to ensure the scroll height is accurate
+        textarea.style.height = 'auto';
+        // Adjust the height
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }, [lesson?.description ? lesson?.description : course?.summery]); // Recalculate on value change
+
+
     const controls = useDragControls()
     // console.log('course')
     // console.log(course)
@@ -60,7 +75,10 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
 
     useEffect(() => {
         AOS.init();
-
+        let fragment = window.location.hash?.slice(1);
+        if (fragment === 'open-note') {
+            setShow(true)
+        }
     }, [])
 
     const getLastUnlockedVideoUrl = () => {
@@ -158,6 +176,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
     const [isFading, setIsFading] = useState(false);
 
 
+
     useEffect(() => {
 
         setIsFading(true);
@@ -176,13 +195,6 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
-
-    useEffect(() => {
-        window.scrollTo(0, 0)
-    }, [])
-
-
-
 
 
 
@@ -203,7 +215,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
 
     const [lottieDelayAnimation, setLottieDelayAnimation] = useState(false);
 
-    const lottieFunciton = () => {
+    const lottieFunction = () => {
 
 
         setTimeout(() => {
@@ -217,9 +229,67 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
 
 
     const handleContextMenu = (e) => {
-        e.preventDefault(); 
-      };
- 
+        e.preventDefault();
+    };
+
+
+
+
+    //   **** Full screen ****
+
+    const [isFullScreen, setIsFullScreen] = useState(false);
+
+    const toggleFullScreen = () => {
+        if (!isFullScreen) {
+            enterFullScreen();
+        } else {
+            exitFullScreen();
+        }
+    };
+
+    const enterFullScreen = () => {
+        const element = document.documentElement;
+
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+
+        setIsFullScreen(true);
+    };
+
+    const exitFullScreen = () => {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+
+        setIsFullScreen(false);
+    };
+
+    useEffect(() => {
+        document.addEventListener('fullscreenchange', handleFullScreenChange);
+
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullScreenChange);
+        };
+    }, []);
+
+    const handleFullScreenChange = () => {
+        setIsFullScreen(!!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement));
+    };
+
+
 
     return (
         <>
@@ -245,7 +315,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                             play
                             height='100px'
                             className='play-page-animation'
-                            onComplete={lottieFunciton}
+                            onComplete={lottieFunction}
                         />
                     </div>
                 </div>
@@ -257,7 +327,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
                     >
-                        <section className="relative z-10">
+                        <section className="relative ">
                             <div className="container lg:px-3 mx-auto px-4 min-h-[91vh] md:min-h-[66vh] ">
                                 {/* <div className="grid grid-cols-12">
                             <div className="col-span-12">
@@ -338,7 +408,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                         </div>
                                         <div className={`${studyMoodOn && ' z-[1200] '} relative `}>
                                             {studyMoodOn &&
-                                                <button onClick={() => { setStudyMoodOn(false); toggleStudyMode() }} className="absolute left-0 top-0 -mt-[50px] flex items-center gap-x-2">
+                                                <button onClick={() => { setStudyMoodOn(false); toggleStudyMode(); toggleFullScreen() }} className="absolute left-0 top-0 -mt-[50px] flex items-center gap-x-2">
                                                     <Xmark />
                                                     <p className=" pt-1 fw-bold">Study Mode</p>
                                                 </button>
@@ -372,7 +442,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                         <>
 
                                                             <Suspense >
-                                                                <VimeoVideoPlayer videoId={lesson?.vimeo_url} lesson_id={lesson?.id} setVideoReady={setVideoReady} />
+                                                                <VimeoVideoPlayer progress={lesson?.duration_watched} videoId={lesson?.vimeo_url} lesson_id={lesson?.id} setVideoReady={setVideoReady} />
                                                             </Suspense>
 
                                                             {!videoReady &&
@@ -449,7 +519,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                 </p>
                                                 {showGuestName ? <p className={` leasson-description `}>GUEST : {lesson?.guest_name}</p>
                                                     :
-                                                    <p className={` leasson-description `}>MODULE {lesson?.module?.serial_number}: {lesson?.module?.name}</p>
+                                                    <p className={` leasson-description `}>{ lesson.module ? 'MODULE ' + lesson?.module?.serial_number + ' : '+ lesson?.module?.name : '' }</p>
                                                 }
                                             </div>
                                         </div>
@@ -491,7 +561,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                             </Link>
 
                                             <div className="w-[24%]">
-                                                <AcademyButton onClick={() => { setStudyMoodOn(true); toggleStudyMode() }} className={" secondary uppercase w-full border-rounded-10"}>
+                                                <AcademyButton onClick={() => { setStudyMoodOn(true); toggleStudyMode(); toggleFullScreen() }} className={" secondary uppercase w-full border-rounded-10"}>
                                                     STUDY MODE
                                                 </AcademyButton>
                                             </div>
@@ -521,21 +591,29 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                 </div>
                                 {/* **************LESSON TITLE AND BUTTONS********* */}
 
-                                <div  className="grid grid-cols-12  gap-y-2 md:gap-y-5 lg:gap-x-4 mt-[18px] lg:mt-3   mb-0 md:mb-0 lg:mb-6">
+                                <div className="grid grid-cols-12  gap-y-2 md:gap-y-5 lg:gap-x-4 mt-[18px] lg:mt-3   mb-0 md:mb-0 lg:mb-6">
 
 
 
                                     <div onContextMenu={handleContextMenu} className="col-span-12 lg:col-span-6 hidden-sm">
                                         <div className="card-bg  input-shadow border-rounded-10 about-padding-outer">
-                                            <p className="course-about-heading w-full  mb-4">ABOUT THE PROGRAM</p>
+                                            <p className="course-about-heading w-full  mb-4"> {lesson?.description ? 'ABOUT THE EPISODE' : 'ABOUT THE PROGRAM'} </p>
                                             <div className="relative  card-bg-discord border-rounded-10 px-3 md:px-5 padding-about w-full">
                                                 <div className="lg:flex gap-x-2 md:gap-x-1 lg:gap-x-8 xl:gap-x-0 w-full flex-col">
                                                     <div className="flex items-center gap-x-[19px] mb-4 w-full lg:w-[100%]">
-                                                        <p className="course-about-description  ">Modules: {modules?.length < 1  ? 1 : modules?.length }</p>
+                                                        <p className="course-about-description  ">Modules: {modules?.length < 1 ? 1 : modules?.length}</p>
                                                         <p className="course-about-description">Lessons: {course?.lessons?.length}</p>
                                                         <p className="course-about-description">Duration: {courseDuration(course?.duration)}hrs </p>
                                                     </div>
-                                                    <p className={`   text-12 fw-regular md-d-none sm-d-none `}> {course?.summery}  </p>
+                                                    <textarea ref={textareaRef} className={`   text-12 fw-regular md-d-none sm-d-none `} style={{
+                                                        background: 'transparent',
+                                                        border: 'none',
+                                                        outline: 'none',
+                                                        resize: 'none',
+                                                        width: '100%',
+                                                        height:'auto',
+                                                        overflowY: 'hidden'
+                                                    }} value={lesson?.description ? lesson?.description : course?.summery} disabled={true}>   </textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -591,7 +669,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
 
                                         {/*Notes component mobile*/}
 
-                                        <div  className={`notes-container ${show ? "show" : ""  }`}  >
+                                        <div className={`notes-container ${show ? "show" : ""}`}  >
                                             {show && (
                                                 <div>
                                                     <Notes
@@ -605,7 +683,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                             )}
                                         </div>
 
-                                        <div onContextMenu={handleContextMenu} className={`modules notes-container ${!show ? "show" : ""  }`}  >
+                                        <div onContextMenu={handleContextMenu} className={`modules notes-container ${!show ? "show" : ""}`}  >
                                             {!show && (
                                                 <div onContextMenu={handleContextMenu} className="card-background input-shadow border-rounded-10  pt-5  pb-5 lg:pb-6">
                                                     <div className="flex justify-between items-center px-3.5 lg:px-5">
@@ -640,7 +718,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                                                 <div className={`interests-shadow module-bottom ${showBottomShadow ? '' : 'shadow-off'}`}></div>
                                                                             </>
                                                                             }
-                                                                            
+
                                                                             {lesson?.module == null &&
                                                                                 <>
                                                                                     <div onClick={() => { setIsOpen(false) }} className="option">
@@ -675,17 +753,32 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                             {filteredLesson?.map((data, index) => (
                                                                 <Link key={index + 3} href={!data?.locked && route('lessons.play', data?.id)}>
                                                                     <div onClick={() => { !data?.locked && handleLessonClick(data, index) }}
-                                                                        className={` ${data?.locked && "opacity-50"}   border-rounded-10 cursor-pointer`}  >
+                                                                        className={` ${data?.locked && "opacity-50"}  overflow-hidden border-rounded-10 cursor-pointer`}  >
                                                                         <div className="flex flex-col items-start gap-2.5">
-                                                                            <div className="relative w-full">
-                                                                                <img src={data?.thumbnail?.original?.url}
-                                                                                    className=" border-rounded-10  playlist-lesson-thumbnail  object-cover object-center"
-                                                                                    alt="" />
+
+
+                                                                            <div className="relative w-full ">
+
+
+                                                                                <div className="relative overflow-hidden border-rounded-10">
+
+                                                                                    <img src={data?.thumbnail?.original?.url}
+                                                                                        className={` ${data?.duration_watched > 80 && 'grayscale'}    playlist-lesson-thumbnail  object-cover object-center`}
+                                                                                        alt="" />
+
+                                                                                    <div className="w-[130%] h-[5px] bg-[#1a1a1a]">
+
+                                                                                        <div style={{ width: data?.duration_watched+'%' }} className={`h-[5px] bg-[#ffffff]  bottom-0 absolute `}></div>
+                                                                                    </div>
+                                                                                </div>
                                                                                 <div className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
                                                                                     {data?.locked &&
                                                                                         <img className="w-[4rem]" src={Lock} alt="" />}
                                                                                 </div>
+
                                                                             </div>
+
+
                                                                             <div>
                                                                                 <p className="video-description">
                                                                                     <span className="fw-bold">L{index + 1}:</span>  &nbsp;

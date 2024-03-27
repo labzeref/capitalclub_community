@@ -333,7 +333,10 @@
 
     &.active {
         color: #000;
-        background-color: #EBEBEB;
+        background-color: #EBEBEB !important;
+        // &:hover{
+        //     background-color: #EBEBEB !important;
+        // }
     }
 
     margin: 0 2px;

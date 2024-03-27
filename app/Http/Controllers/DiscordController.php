@@ -40,6 +40,11 @@ class DiscordController extends Controller
         }
 
         $user = $request->user();
+
+        if ($user->discord_integrated) {
+            return to_route('discord.setup');
+        }
+
         $user->update(['discord_code' => $request->code]);
 
         ConnectToDiscordJob::dispatchSync($user->id);

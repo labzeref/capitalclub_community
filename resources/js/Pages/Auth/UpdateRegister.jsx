@@ -198,12 +198,10 @@ const UpdateRegister = ({ countries, billingAddress, user, userData, setUserData
                 // Get the formatted phone number with the country code
                 const formattedPhoneNumber = intlTelInputInstance.getNumber();
 
-console.log(' not correct phone')
-
-                // console.log('Formatted phone number:', formattedPhoneNumber);
+                 // console.log('Formatted phone number:', formattedPhoneNumber);
                 setData('phone_number', formattedPhoneNumber);
             } else {
-                console.log('correct phone')
+                // console.log('correct phone')
                 // setDisableButton(true);
                 setIsValidPhone(true);
                 // console.log('Invalid phone number:', phoneNumber);

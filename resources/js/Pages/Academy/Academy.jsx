@@ -10,11 +10,18 @@ import { ReactComponent as ArrowRight } from "../../../assets/svg/ArrowRight.svg
 import whiteimg from "../../../assets/white.jpg";
 
 import ccc1 from "../../../assets/img/ccc1.jpg";
+import ccc1Blur from "../../../assets/img/ccc1-blur.jpg";
 import ccc2 from "../../../assets/img/ccc2.jpg";
+import ccc2Blur from "../../../assets/img/ccc2-blur.jpg";
 import ccc3 from "../../../assets/img/ccc3.jpg";
+import ccc3Blur from "../../../assets/img/ccc3-blur.jpg";
+
 import ccc4 from "../../../assets/img/ccc4.jpg";
+import ccc4Blur from "../../../assets/img/ccc4-blur.jpg";
 import ccc5 from "../../../assets/img/ccc5.jpg";
+import ccc5Blur from "../../../assets/img/ccc5-blur.jpg";
 import ccc6 from "../../../assets/img/ccc6.jpg";
+import ccc6Blur from "../../../assets/img/ccc6-blur.jpg";
 
 import { ReactComponent as ArrowLeft } from "../../../assets/svg/ArrowLeft.svg";
 
@@ -27,7 +34,7 @@ import CourseCard from "@/Components/Course/CourseCard.jsx";
 import CourseFeaturedCard from "@/Components/Course/CourseFeaturedCard.jsx";
 import Badge from "@/Components/Badge.jsx";
 import CourseInstructorCard from "@/Components/Course/CourseInstructorCard.jsx";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -41,6 +48,7 @@ import IconButton from "@/Components/IconButton";
 import ToastNotification from "@/Components/ToastNotification";
 import { useState } from "react";
 import Lottie from "react-lottie-player";
+import WELCOME_LOTTIE from "@/Components/welcome.json";
 import ArrowMark from "@/Components/ArrowMark";
 import SlideArrows from "@/Components/SlideArrows";
 
@@ -48,8 +56,8 @@ const Academy = ({
     featuredCourses, // collection
     generalCourses, // collection
     moneyTalkCourse, // object
-    entrepreneurCourse, // object
-    tiktokDropShippingBootcamp, // object
+     exclusiveCourses, // collection
+     exclusiveCourses2, // collection
 }) => {
 
     useEffect(() => {
@@ -74,6 +82,7 @@ const Academy = ({
     // console.log("upcomingCourses");
     // console.log(upcomingCourses);
     // console.log("generalCourses", generalCourses);
+    console.log("exclusiveCourses", exclusiveCourses);
 
 
     // const filteredCategories = categoryWiseCourses.filter(category => category?.courses.length > 0);
@@ -130,12 +139,13 @@ const Academy = ({
     //   }, [ ]);
 
 
+
     const [owlOptions, setOwlOptions] = useState({
         options: {
             loop: true,
             margin: 18,
             items: 1,
-            autoplay: true,
+            autoplay: false,
             autoplayHoverPause: true,
             autoplayTimeout: 10000,
             // animationDuration: 100,
@@ -213,7 +223,7 @@ const Academy = ({
             thumbnail: {
 
                 blur: {
-                    url: ccc1,
+                    url: ccc1Blur,
                 },
                 original: {
                     url: ccc1,
@@ -225,7 +235,7 @@ const Academy = ({
             thumbnail: {
 
                 blur: {
-                    url: ccc2,
+                    url: ccc2Blur,
                 },
                 original: {
                     url: ccc2,
@@ -233,64 +243,115 @@ const Academy = ({
 
             }
         },
+        // {
+        //     thumbnail: {
+        //
+        //         blur: {
+        //             url: ccc3Blur,
+        //         },
+        //         original: {
+        //             url: ccc3,
+        //         }
+        //
+        //     }
+        // },
+        // {
+        //     thumbnail: {
+
+        //         blur: {
+        //             url: ccc4Blur,
+        //         },
+        //         original: {
+        //             url: ccc4,
+        //         }
+
+        //     }
+        // },
         {
             thumbnail: {
 
                 blur: {
-                    url: ccc3,
+                    url: ccc5Blur,
                 },
                 original: {
-                    url: ccc3,
-                }
-
-            }
-        },
-        {
-            thumbnail: {
-
-                blur: {
-                    url: ccc4,
-                },
-                original: {
-                    url: ccc4,
-                }
-
-            }
-        },
-        {
-            thumbnail: {
-
-                blur: {
                     url: ccc5,
-                },
-                original: {
-                    url: ccc5,
                 }
 
             }
         },
 
-        {
-            thumbnail: {
+        // {
+        //     thumbnail: {
 
-                blur: {
-                    url: ccc6,
-                },
-                original: {
-                    url: ccc6,
-                }
+        //         blur: {
+        //             url: ccc6Blur,
+        //         },
+        //         original: {
+        //             url: ccc6,
+        //         }
 
-            }
-        },
+        //     }
+        // },
 
     ];
 
 
+//     const isHardRefreshed = usePage().props.isHardRefreshed;
+
+//     const [isDocumentReady, setDocumentReady] = useState(false);
+
+//   const isLoaded = localStorage.getItem("academyLoaded", true);
 
 
-    return (
+//     const handleLottieComplete = () => {
+//         localStorage.setItem("academyLoaded", true);
+//         if (document.readyState === 'complete') {
+//             setTimeout(() => {
+//                 setDocumentReady(true);
+//             }, 1000);
+
+//         } else {
+
+//             // If document is not ready yet, listen for the DOMContentLoaded event
+//             document.addEventListener('DOMContentLoaded', () => {
+//                 setDocumentReady(true);
+//             });
+//         }
+//     };
+
+//     useEffect(() => {
+//         // Cleanup event listener on component unmount
+//         return () => {
+//             document.removeEventListener('DOMContentLoaded', () => {
+//                 setDocumentReady(true);
+//             });
+//         };
+//     }, []);
+
+
+
+     return (
         <div data-aos="fade-in" data-aos-delay="100" data-aos-easing="ease" data-aos-duration="300" className="">
             <Head title="Academy" />
+
+            {/* {!isLoaded &&
+            <>
+
+
+            {!isHardRefreshed &&  <div className={`academy-preloader ${isDocumentReady && 'hide-loader'}`}>
+                <Lottie
+                    loop={false}
+                    animationData={WELCOME_LOTTIE}
+                    onComplete={handleLottieComplete}
+                    play
+                    height='100px'
+                    className='play-page-animation'
+                />
+            </div>
+}
+            </>} */}
+
+
             <div className="  container mx-auto lg:px-3  px-4">
                 {/* Main slider  */}
 
@@ -380,8 +441,8 @@ const Academy = ({
                                 {generalCourses?.map((data, index) => (
                                     <React.Fragment key={index + 2}>
                                         <div className=" col-span-6 lg:col-span-6 ">
-                                            <LazyLoad height={'auto'} width={'auto'} threshold={0.75} onContentVisible={() => { console.log('loaded!') }}>
-                                                <AcademySmallCard
+                                            <LazyLoad height={'auto'} width={'auto'} threshold={0.75} >
+                                                <AcademyLargeCard
                                                     className={"academy-small-card no-slide-course-card"}
                                                     title={data?.title}
                                                     instructor={data?.default_instructor?.full_name}
@@ -415,7 +476,32 @@ const Academy = ({
                         <h1 className=" text-center mb-[21px] md:mb-[1.59rem]   mt-[30px] md:mt-[60px]"> EXCLUSIVE
                             SERIES</h1>
                     </div>
-                    {moneyTalkCourse && <div className="large-second   ">
+
+                        {
+                        exclusiveCourses.length > 0 &&
+                        <div className="large-second gap-y-[30px] md:gap-y-[36px] flex flex-col  ">
+                            {
+                                exclusiveCourses.map((course, index) => (
+                                    <AcademyLargeCard
+                                className={"academy-large-card feature-card"}
+                                title={course?.title}
+                                instructor={course?.default_instructor?.full_name}
+                                duration={"5 hr 40 min"}
+                                lessons={course?.lessons_count}
+                                desktop_image={course?.thumbnail}
+                                mobile_image={course?.mobile_thumbnail}
+                                badge={"primary"}
+                                badge_text={""}
+                                routeToPlay={route('courses.preview', course?.id)}
+                                isLock={isLock ? 'pointer-events-none' : 'pointer-events-auto'}
+                                isLockedIcon={isLock}
+                                live={false} />
+                                ))
+                            }
+                            </div>
+                        }
+
+                    {moneyTalkCourse && <div className="large-second mt-[30px] md:mt-[36px]  ">
                         <LazyLoad height={'auto'} width={'auto'} threshold={0.75}  >
                             <AcademyLargeCard
                                 className={"academy-large-card feature-card"}
@@ -452,28 +538,29 @@ const Academy = ({
                                     {moneyTalkCourse?.lessons?.map((data, index) => (
                                         <React.Fragment key={index + 3}>
                                             {/* <LazyLoad height={'auto'} width={'auto'} threshold={0.80}  > */}
-                                                <AcademyLargeCard
-                                                    className={"academy-large-card feature-card slide-item "}
-                                                    title={data?.title}
-                                                    instructor={data?.default_instructor?.full_name}
-                                                    duration={"5 hr 40 min"}
-                                                    lessons={data?.lessons_count}
-                                                    desktop_image={data?.banner}
-                                                    mobile_image={data?.banner}
-                                                    badge={"primary"}
-                                                    badge_text={""}
-                                                    live={false}
-                                                    routeToPlay={route('lessons.play', data?.id)}
-                                                    isLock={isLock ? 'pointer-events-none' : 'pointer-events-auto'}
-                                                    isLockedIcon={isLock}
-                                                    videoProgress={0} />
+                                            <AcademyLargeCard
+                                                className={"academy-large-card feature-card slide-item "}
+                                                title={data?.title}
+                                                instructor={data?.default_instructor?.full_name}
+                                                duration={"5 hr 40 min"}
+                                                lessons={data?.lessons_count}
+                                                desktop_image={data?.banner}
+                                                mobile_image={data?.banner}
+                                                badge={"primary"}
+                                                badge_text={""}
+                                                live={false}
+                                                routeToPlay={route('lessons.play', data?.id)}
+                                                isLock={isLock ? 'pointer-events-none' : 'pointer-events-auto'}
+                                                isLockedIcon={isLock}
+                                                lessonProgress={data?.duration_watched}
+                                            />
                                             {/* </LazyLoad> */}
                                         </React.Fragment>
                                     ))}
                                 </OwlCarousel>)
                             }
                             <div className="hidden lg:block">
-                                <div className="absolute mx-auto  position-center z-[9999] px-4">
+                                <div className="absolute mx-auto  position-center z-[999] px-4">
                                     <div onClick={() => {
                                         handleSliderPrev(newLessonRef)
                                     }}>
@@ -481,7 +568,7 @@ const Academy = ({
 
                                     </div>
                                 </div>
-                                <div className="absolute mx-auto right-1 position-center z-[9999] px-4">
+                                <div className="absolute mx-auto right-1 position-center z-[999] px-4">
                                     <div className="rotate-180" onClick={() => {
                                         handleSliderNext(newLessonRef)
                                     }}>
@@ -501,53 +588,36 @@ const Academy = ({
 
                     {/* ***************** MONEY TALKS SECTION END ***************  */}
 
-                    {/* ****************TIK TOK START* ***************** */}
 
-                    {tiktokDropShippingBootcamp &&
-                        <div className="large-second mt-[20px] md:mt-[60px]  ">
-                            <LazyLoad height={'auto'} width={'auto'} threshold={0.85}  >
-                                <AcademyLargeCard
-                                    className={"academy-large-card  "}
-                                    title={tiktokDropShippingBootcamp?.title}
-                                    instructor={tiktokDropShippingBootcamp?.default_instructor?.full_name}
-                                    duration={"5 hr 40 min"}
-                                    lessons={tiktokDropShippingBootcamp?.lessons_count}
-                                    desktop_image={tiktokDropShippingBootcamp?.thumbnail}
-                                    mobile_image={tiktokDropShippingBootcamp?.mobile_thumbnail}
-                                    badge={"primary"}
-                                    badge_text={""}
-                                    routeToPlay={route('courses.preview', tiktokDropShippingBootcamp?.id)}
-                                    isLock={isLock ? 'pointer-events-none' : 'pointer-events-auto'}
-                                    isLockedIcon={isLock}
-                                    live={false} />
-                            </LazyLoad>
+
+                    {/* ****************Exclusive v2* ***************** */}
+
+                    {
+                        exclusiveCourses2.length > 0 &&
+                        <div className="large-second mt-[20px] gap-y-[30px] md:gap-y-[36px] flex flex-col  ">
+                            {
+                                exclusiveCourses2.map((course, index) => (
+                                    <AcademyLargeCard
+                                        className={"academy-large-card feature-card"}
+                                        title={course?.title}
+                                        instructor={course?.default_instructor?.full_name}
+                                        duration={"5 hr 40 min"}
+                                        lessons={course?.lessons_count}
+                                        desktop_image={course?.thumbnail}
+                                        mobile_image={course?.mobile_thumbnail}
+                                        badge={"primary"}
+                                        badge_text={""}
+                                        routeToPlay={route('courses.preview', course?.id)}
+                                        isLock={isLock ? 'pointer-events-none' : 'pointer-events-auto'}
+                                        isLockedIcon={isLock}
+                                        live={false} />
+                                ))
+                            }
                         </div>
                     }
 
-                    {/* ****************ENTEREPRENURE START* ***************** */}
+                    {/* ****************Exclusive v2* ***************** */}
 
-                    {entrepreneurCourse && <div className="large-second mt-[30px] md:mt-[36px] ">
-                        <LazyLoad height={'auto'} width={'auto'} threshold={0.90} onContentVisible={() => { console.log('loaded!') }}>
-                            <AcademyLargeCard
-                                className={"academy-large-card  "}
-                                title={entrepreneurCourse?.title}
-                                instructor={entrepreneurCourse?.default_instructor?.full_name}
-                                duration={"5 hr 40 min"}
-                                lessons={entrepreneurCourse?.lessons_count}
-                                desktop_image={entrepreneurCourse?.thumbnail}
-                                mobile_image={entrepreneurCourse?.mobile_thumbnail}
-                                badge={"primary"}
-                                badge_text={""}
-                                routeToPlay={route('courses.preview', entrepreneurCourse?.id)}
-                                isLock={isLock ? 'pointer-events-none' : 'pointer-events-auto'}
-                                isLockedIcon={isLock}
-                                live={false} />
-                        </LazyLoad>
-                    </div>
-                    }
-
-
-                    {/* ****************ENTEREPRENURE END****************** */}
 
                     {/* *************COMING SOON START************** */}
                     {/* <div className="h-[1px] w-full bg-[#1B1B1B] mt-[49px] lg-d-none"></div> */}
@@ -565,29 +635,27 @@ const Academy = ({
                                     className="owl-theme relative">
                                     {imageArray?.map((data, index) => (
                                         <React.Fragment key={index + 3}>
-                                            <LazyLoad height={'auto'} width={'auto'} threshold={0.80}  >
-                                                <AcademyLargeCard
-                                                    className={"academy-large-card coming-soon "}
-                                                    title={'data?.title'}
-                                                    instructor={'data?.default_instructor?.full_name'}
-                                                    duration={"5 hr 40 min"}
-                                                    lessons={'data?.lessons_count'}
-                                                    desktop_image={data?.thumbnail}
-                                                    mobile_image={data?.thumbnail}
-                                                    badge={"primary"}
-                                                    badge_text={""}
-                                                    live={false}
-                                                    // routeToPlay={route('courses.play', { course: featuredCourses?.id, byPass: 'false' })}
-                                                    isLock={isLock ? 'pointer-events-none' : 'pointer-events-auto'}
-                                                    isLockedIcon={isLock}
-                                                    videoProgress={0} />
-                                            </LazyLoad>
+                                            <AcademyLargeCard
+                                                className={"academy-large-card coming-soon "}
+                                                title={'data?.title'}
+                                                instructor={'data?.default_instructor?.full_name'}
+                                                duration={"5 hr 40 min"}
+                                                lessons={'data?.lessons_count'}
+                                                desktop_image={data?.thumbnail}
+                                                mobile_image={data?.thumbnail}
+                                                badge={"primary"}
+                                                badge_text={""}
+                                                live={false}
+                                                // routeToPlay={route('courses.play', { course: featuredCourses?.id, byPass: 'false' })}
+                                                isLock={isLock ? 'pointer-events-none' : 'pointer-events-auto'}
+                                                isLockedIcon={isLock}
+                                                videoProgress={0} />
                                         </React.Fragment>
                                     ))}
                                 </OwlCarousel>)
                             }
                             <div className="hidden lg:block">
-                                <div className="absolute mx-auto  position-center z-[9999] px-5">
+                                <div className="absolute mx-auto  position-center z-[999] px-5">
                                     <div onClick={() => {
                                         handleSliderPrev(upComingRef)
                                     }}>
@@ -595,7 +663,7 @@ const Academy = ({
 
                                     </div>
                                 </div>
-                                <div className="absolute mx-auto right-1  position-center z-[9999] px-5">
+                                <div className="absolute mx-auto right-1  position-center z-[999] px-5">
                                     <div className="rotate-180" onClick={() => {
                                         handleSliderNext(upComingRef)
                                     }}>

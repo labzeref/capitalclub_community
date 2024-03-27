@@ -31,7 +31,15 @@ class CourseController extends Controller
 
         $courseModulesCount = $course->lessons->pluck('module')->unique()->count();
 
-        $course = new CourseResource($course->load(['lessons' => fn ($lessons) => $lessons->orderBy('id'), 'trailer', 'defaultInstructor']));
+        $course = new CourseResource(
+            $course->load([
+                'lessons' => fn($lessons) => $lessons->orderBy('module_id')->orderBy('serial_number')->with([
+                    'progress' => fn($progress) => $progress->where('user_id', _user()->id)
+                ]),
+                'trailer',
+                'defaultInstructor'
+            ])
+        );
 
         $instructorUser = User::find($course->defaultInstructor->user_id);
 

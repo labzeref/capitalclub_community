@@ -251,10 +251,10 @@ const NotesModal = ({ notes }) => {
 
                                                         <div className="flex justify-between">
                                                             <p className="  w-[60%] text-left fs-tiny fw-bold mb-2  ">
-                                                                {index + 1}. {data?.title}
+                                                                Lesson {index + 1}: {data?.title}
                                                             </p>
 
-                                                            <Link className=" " href={route('lessons.play', data?.id)}   >
+                                                            <Link className=" " href={route('lessons.play', data?.id) + '#open-note'}   >
                                                                 <div className="flex cursor-pointer">
                                                                     <p className="fs-tiny fw-semibold   px-1   md:mt-[2px] ">
                                                                         OPEN
@@ -280,7 +280,7 @@ const NotesModal = ({ notes }) => {
                                                             onKeyUp={(e) => handleKeyUp(e, data?.id)}
                                                             dangerouslySetInnerHTML={{ __html: data?.note }}
                                                             onChange={(e) => setData(e.target.value)}
-                                                            className="w-full bg-[#1A1A1A] text-14 overflow-auto outline-none h-[200px] border-0 outline-0 focus:outline-none focus:ring-0 focus:border-transparent border-transparent"
+                                                            className="w-full bg-[#1A1A1A] text-[#797979] text-[9px] md:text-[12px] fw-medium overflow-auto outline-none h-[80px] md:h-[100px] border-0 outline-0 focus:outline-none focus:ring-0 focus:border-transparent border-transparent"
                                                             placeholder="Add your text here…"
                                                             id=""
                                                             rows="7"

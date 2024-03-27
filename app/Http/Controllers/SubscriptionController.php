@@ -27,6 +27,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Inertia\Response;
@@ -113,6 +114,8 @@ class SubscriptionController extends Controller
     public function store(Request $request)
     {
 
+        return $this->sendError(__('Subscription is not available right now please come back later.'));
+
         $startData = now()->setHour(15)->setMinute(0)->seconds(0);
         $endData = now();
 
@@ -163,12 +166,41 @@ class SubscriptionController extends Controller
                 $paymentIntent = null;
             }
 
-            [$chargeBeeSubscription, $card, $chargeBeeInvoice] = $this->chargeBeeService->createSubscriptionWithItem(
-                $customerId,
-                config('chargbee.yearly_item_price_id'),
-                $paymentIntent,
-                $request->coupon
-            );
+//            [$chargeBeeSubscription, $card, $chargeBeeInvoice] = $this->chargeBeeService->createSubscriptionWithItem(
+//                $customerId,
+//                config('chargbee.yearly_item_price_id'),
+//                $paymentIntent,
+//                $request->coupon
+//            );
+
+            try {
+                [$chargeBeeSubscription, $card, $chargeBeeInvoice] = $this->chargeBeeService->createSubscriptionWithItem(
+                    $customerId,
+                    config('chargbee.yearly_item_price_id'),
+                    $paymentIntent,
+                    $request->coupon
+                );
+            } catch (\Throwable $throwable) {
+
+
+
+                Log::channel('payments')->info("----------------------------------------------------------------------------------------------------------");
+                Log::channel('payments')->info("Payment failed by");
+                Log::channel('payments')->info("User: ".$user->email);
+                Log::channel('payments')->info("Exception: ".$throwable->getMessage());
+
+
+                if (str_contains(strtolower($throwable->getMessage()), "could not connect to the gateway.")) {
+                    [$chargeBeeSubscription, $card, $chargeBeeInvoice] = $this->chargeBeeService->createSubscriptionWithItem(
+                        $customerId,
+                        config('chargbee.yearly_item_price_id'),
+                        $paymentIntent,
+                        $request->coupon
+                    );
+                } else {
+                    throw $throwable;
+                }
+            }
 
             $amount = 0;
 
@@ -365,7 +397,12 @@ class SubscriptionController extends Controller
         $paymentIntent = '';
 
         if (config('chargbee.3ds_secure')) {
-            $paymentIntent = $this->chargeBeeService->createPaymentIntent(price: $price)->toJson();
+            $priceForPaymentIntent = $price;
+
+            if ($priceForPaymentIntent == 0) {
+                $priceForPaymentIntent = 0.01; // This price is in "$" it will be converted to cents
+            }
+            $paymentIntent = $this->chargeBeeService->createPaymentIntent(price: $priceForPaymentIntent)->toJson();
         }
 
         $response = [

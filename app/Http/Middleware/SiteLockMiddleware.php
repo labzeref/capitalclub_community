@@ -11,7 +11,8 @@ class SiteLockMiddleware
     {
         if (
             !config('app.check_invitation') ||
-            $request->session()->has('invitation_email') && $request->session()->has('invitation_code')
+            $request->session()->has('invitation_email') && $request->session()->has('invitation_code') ||
+            $request->user()
         ) {
             return $next($request);
         }

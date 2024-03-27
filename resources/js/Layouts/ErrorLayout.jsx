@@ -40,7 +40,7 @@ const ErrorLayout = ({ children, refresh = '', goHome = '', goSupport = '' }) =>
                     </button>
                     }
                     {goSupport && <a
-                        href="https://support.capital.club"
+                        href="https://capitalclub1498.zendesk.com/hc/en-us"
                         target="_blank"
                         rel="noopener noreferrer"
 

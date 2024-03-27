@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\AddDummyImageTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
@@ -56,5 +57,10 @@ class Admin extends Authenticatable implements HasMedia
             ->width(300)
             ->keepOriginalImageFormat()
             ->nonQueued();
+    }
+
+    public function security(): HasOne
+    {
+        return $this->hasOne(AdminSecurity::class);
     }
 }

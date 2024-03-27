@@ -23,35 +23,61 @@ class AcademyController extends Controller
         $generalCourses = CourseResource::collection(
             Course::query()
                 ->where('title', '!=', 'DATA SETS')
+                ->where('title', '!=', 'MASTER THE ART OF PERFORMANCE CREATIVE')
                 ->where('title', '!=', 'MONEY TALKS')
                 ->where('title', '!=', 'ENTREPRENEUR FIT')
                 ->where('title', '!=', 'TIKTOK DROPSHIPPING BOOTCAMP')
+                ->where('title', '!=', 'CREATE. MULTIPLY. PRESERVE.')
+                ->where('title', '!=', 'Confessions of a Central Banker')
                 ->withCount('lessons')
                 ->orderBy('id')
                 ->get()
         );
 
-        $tiktokDropShippingBootcamp = new CourseResource(
+        $exclusiveCourses = CourseResource::collection(
             Course::query()
-                ->where('title', 'TIKTOK DROPSHIPPING BOOTCAMP')
-                ->with('lessons')
-                ->first()
+                ->whereIn('title', [
+                    'Confessions of a Central Banker',
+                    'CREATE. MULTIPLY. PRESERVE.'
+                ])
+                ->orderBy('id','desc')
+                ->get()
         );
 
         $moneyTalkCourse = new CourseResource(
-            Course::where('title', 'MONEY TALKS')->with('lessons')->first()
+            Course::query()
+                ->where('title', 'MONEY TALKS')
+                ->with([
+                    'lessons' => fn($lessons) => $lessons->with([
+                        'progress' => fn($progress) => $progress->where('user_id', _user()->id)
+                    ])
+                ])
+                ->first()
         );
 
-        $entrepreneurCourse = new CourseResource(
-            Course::where('title', 'ENTREPRENEUR FIT')->with('lessons')->first()
+        $exclusiveCourses2 = CourseResource::collection(
+            Course::query()
+                ->whereIn('title', [
+                    'ENTREPRENEUR FIT',
+                    'TIKTOK DROPSHIPPING BOOTCAMP',
+                    'MASTER THE ART OF PERFORMANCE CREATIVE'
+                ])
+                ->orderByRaw("
+                    CASE
+                        WHEN title = 'TIKTOK DROPSHIPPING BOOTCAMP' THEN 1
+                        WHEN title = 'ENTREPRENEUR FIT' THEN 2
+                        WHEN title = 'MASTER THE ART OF PERFORMANCE CREATIVE' THEN 3
+                    END
+                ")
+                ->get()
         );
 
         return inertia('Academy/Academy', compact([
             'featuredCourses',
             'generalCourses',
             'moneyTalkCourse',
-            'entrepreneurCourse',
-            'tiktokDropShippingBootcamp',
+            'exclusiveCourses',
+            'exclusiveCourses2',
         ]));
     }
 }

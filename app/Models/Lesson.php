@@ -155,6 +155,11 @@ class Lesson extends Model implements HasMedia
         return $this->hasMany(LessonResourceModel::class);
     }
 
+    public function progress(): HasOne
+    {
+        return $this->hasOne(LessonWatchTime::class);
+    }
+
     /**
      * -----------------
      * | Methods

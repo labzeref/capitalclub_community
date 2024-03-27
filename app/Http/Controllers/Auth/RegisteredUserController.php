@@ -151,7 +151,7 @@ class RegisteredUserController extends Controller
             $premiumUser = PremiumUser::whereEmail($request->email)->whereNotNull('glitch_id')->first();
 
             if ($user) {
-                if ($user->subscribed) {
+                if ($user->subscriptions()->withTrashed()->exists()) {
                     DB::rollBack();
                     return back()->with('error', __('Email already exist please login.'));
                 }

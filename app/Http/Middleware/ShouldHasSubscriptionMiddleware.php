@@ -9,7 +9,7 @@ class ShouldHasSubscriptionMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        if (_user()->subscribed) {
+        if (_user()->subscribed || _user()->life_time_membership) {
             return $next($request);
         }
 

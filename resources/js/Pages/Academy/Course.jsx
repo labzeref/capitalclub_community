@@ -44,9 +44,9 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
     // console.log('instructorAvatar')
     // console.log(instructorAvatar)
 
-    // useEffect(() => {
-    //     window.scrollTo(0, 0);  
-    //   }, []);
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
 
     const countryCode = course?.default_instructor?.country_iso ? course?.default_instructor?.country_iso : 'us';
 
@@ -126,7 +126,7 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
     const newLessonRef = useRef(null);
     const [owlCourseLessons, setOwlCourseLessons] = useState({
         options: {
-            loop: true,
+            loop: false,
             margin: 18,
             items: 3,
             autoplay: false,
@@ -214,7 +214,7 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
     }, []);
 
 
- 
+
 
     useEffect(() => {
         if (showDetail) {
@@ -564,14 +564,14 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
                                                 badge_text={""}
                                                 live={false}
                                                 routeToPlay={route('lessons.play', data?.id)}
-                                                videoProgress={0} />
+                                                lessonProgress={data?.duration_watched} />
                                             <p className="lesson-title pt-1 md:pt-5">{index + 1} . {data?.title}</p>
                                         </div>
                                     ))}
                                 </OwlCarousel>
 
                                 <div className="hidden lg:block">
-                                <div className="absolute mx-auto  top-[35%] z-[9999] px-4">
+                                <div className="absolute mx-auto  top-[35%] z-[999] px-4">
                                     <div onClick={() => {
                                         handleSliderPrev(newLessonRef)
                                     }}>
@@ -579,7 +579,7 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
 
                                     </div>
                                 </div>
-                                <div className="absolute mx-auto right-1 top-[35%] z-[9999] px-4">
+                                <div className="absolute mx-auto right-1 top-[35%] z-[999] px-4">
                                     <div className="rotate-180" onClick={() => {
                                         handleSliderNext(newLessonRef)
                                     }}>

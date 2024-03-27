@@ -101,7 +101,7 @@ const Payment = ({
         if(couponCodeValue){
             axios.get(route('subscription.payment-intent', couponCodeValue)).then(response => {
 
-                console.log( 'payment intent res with coupon code:' , response)
+
 
                 if (is3DSecure) {
                     setPaymentIntent(response?.data?.payload?.paymentIntent);
@@ -133,7 +133,7 @@ const Payment = ({
         }else{
             axios.get(route('subscription.payment-intent')).then(response => {
 
-                console.log( 'payment intent res without coupon code:' , response)
+
 
                 if (is3DSecure) {
                     setPaymentIntent(response?.data?.payload?.paymentIntent);
@@ -226,6 +226,8 @@ const Payment = ({
 
             if (CardRef.current) {
                 const additionalData = {
+                    firstName: user.first_name,
+                    lastName: user.last_name,
                     plan: planName,
                     email: user?.email,
                     phone: user?.billingAddress?.phone_number,
@@ -273,6 +275,7 @@ const Payment = ({
                 }
 
                 CardRef.current[method](param1, param2).then(async response => {
+                    // console.log('rs authorization of card', response)
                     // await setRecaptchaError(null)
 
                     axios.post(route('subscription.store'), {
@@ -325,7 +328,7 @@ const Payment = ({
                     // setPaymentProcessing(false)
 
                 }).catch(error => {
-                    console.error('error', error)
+                    // console.log('er authorization of card', error)
                     handlePaymentIntent()
                     setIsDisable(false)
                     setPaymentProcessing(false)
@@ -386,6 +389,7 @@ const Payment = ({
         e.preventDefault();
       };
 
+      
     return (
         <>
 

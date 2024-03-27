@@ -98,6 +98,10 @@ class LessonResource extends JsonResource
                 fn () => $this->note?->content
             ),
             'quiz_skipable' => $this->quiz_skipable,
+            'duration_watched' => $this->when(
+                $this->relationLoaded('progress'),
+                fn () => (float) $this->progress?->progress
+            ),
         ];
     }
 }

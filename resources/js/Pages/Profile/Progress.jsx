@@ -150,7 +150,7 @@ const Progress = ({
 
 
 
-
+console.log('bookmarkedCourses' , bookmarkedCourses)
 
     return (
         <div className={`profile-margin ${bookmarkedCourses.length > 0 || notedCourses.length > 0 ? 'h-[100%]' : 'h-[75vh]'} `} style={{ maxHeight: '-webkit-fill-available' }}>
@@ -193,22 +193,7 @@ const Progress = ({
 
                         {/* **********RELATED LESSONS************* */}
 
-                        <>
-                            <AnimatePresence>
-                                {showModal &&
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        <BookmarkLessons setShowModal={setShowModal} showModal={showModal} favLessons={favLessons} />
-                                    </motion.div>
-                                }
-                            </AnimatePresence>
-
-
-                        </>
+                      
 
 
                     </div>
@@ -247,6 +232,22 @@ const Progress = ({
 
                 </div>
             </div>
+            <>
+                            <AnimatePresence>
+                                {showModal &&
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
+                                        <BookmarkLessons setShowModal={setShowModal} showModal={showModal} favLessons={favLessons} />
+                                    </motion.div>
+                                }
+                            </AnimatePresence>
+
+
+                        </>
         </div>
     );
 };

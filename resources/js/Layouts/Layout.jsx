@@ -13,9 +13,12 @@ import ToastNotification from "@/Components/ToastNotification";
 import logo from "../../assets/logo.svg";
 import { useRef } from "react";
 const Layout = ({ children }) => {
+
+   
+
+
     useEffect(() => {
         AOS.init();
-        
     }, [])
   
     const { contextNotify, studymode } = useContext(PostsContext);
@@ -31,7 +34,7 @@ const Layout = ({ children }) => {
     // Get the last segment
     const currentPage = segments[segments.length - 1];
 
-
+console.log(currentPage)
 
     const topElementRef = useRef(null);
     useEffect(() => {
@@ -57,7 +60,7 @@ const Layout = ({ children }) => {
                         </Suspense>
                     </div>
                 </div>
-                {currentPage == 'academy' ?
+                {currentPage == 'academy' || currentPage == 'marketplace' || currentPage == 'marketplace-profile' ?
                     <Footer /> :
                     <>
                         {currentPage == 'play' && studymode ?

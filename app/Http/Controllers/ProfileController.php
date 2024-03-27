@@ -49,12 +49,18 @@ class ProfileController extends Controller
 //        $bookmarkedLessons = LessonResource::collection($user->bookmarkedLessons);
         $bookmarkedCourses = CourseResource::collection(
             Course::query()
-                ->withWhereHas(
+                ->whereHas(
                     'lessons',
                     fn($lessons) => $lessons->whereIn('id', $user->bookmarkedLessons->pluck('id')->toArray())
                 )
                 ->with([
-                    'modules' => fn($modules) => $modules->whereIn('id', $user->bookmarkedLessons->pluck('module_id')->toArray())
+                    'modules' => fn($modules) => $modules->whereIn('id', $user->bookmarkedLessons->pluck('module_id')->toArray()),
+                    'lessons' => fn($lessons) => $lessons
+                        ->whereIn('id', $user->bookmarkedLessons->pluck('id')->toArray())
+                        ->orderBy('serial_number')
+                        ->with([
+                        'progress' => fn($progress) => $progress->where('user_id', $user->id)
+                    ]),
                 ])
                 ->get()
         );
@@ -226,6 +232,10 @@ class ProfileController extends Controller
 
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->with('error', __('Password does not match.'));
+        }
+
+        if (Hash::check($request->password, $user->password)) {
+            return back()->with('info', __('Your new password is your current password.'));
         }
 
         $user->update([

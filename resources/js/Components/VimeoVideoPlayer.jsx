@@ -6,14 +6,20 @@ import axios from 'axios';
 import { PostsContext } from '../Store/PostsProvider';
 import { useContext } from "react";
 
-const VimeoVideoPlayer = ({ videoId , lesson_id , setVideoReady }) => {
+const VimeoVideoPlayer = ({progress, videoId , lesson_id , setVideoReady }) => {
  
   const { get } = useForm();
   // const { setVideoReady } = useContext(PostsContext);
 
   const playerRef = useRef(null);
+
+
+  
+
+
   let renderedPlayerRef = useRef(null);
   let durationRef = useRef(null);
+  
 
 const [duration, setDuration] = useState(null);
  
@@ -21,7 +27,8 @@ const [timerId, setTimerId] = useState(null);
 
   const sendProgressToServer = (progress) => {
 
- 
+//  console.log('durationRef.current' , durationRef.current)
+
 if (durationRef.current) {
 
   const progressPercentage = (progress / durationRef.current) * 100;
@@ -30,8 +37,8 @@ if (durationRef.current) {
 
   // console.log( 'progress Percentage' , progressPercentage)
 
-if (progressPercentage > 99 ) {
-  console.log('run')
+if (progressPercentage > 99.99999 ) {
+ 
    get(route("lessons.complete", lesson_id))
 }
  
@@ -61,30 +68,34 @@ if (progressPercentage > 99 ) {
   useEffect(() => {
       renderedPlayerRef.current = new VimeoPlayer(playerRef.current, {
       id: vimeoVideoId,
-      // id:'871122886'
+      // id:'4057751'
     }); 
 
 
 
     renderedPlayerRef.current.ready().then(function() {   
       setVideoReady(true)   
-      console.log('Video Ready play func');
+      // console.log('Video Ready play func');
     }).catch(function(error) {
       console.error('Error in ready function:', error);  
     });
     
 
+   
+
       // Event listener for 'play' event
       renderedPlayerRef.current.on('play', () => {
         // console.log('Video is playing.');
-        console.log('in play func')
+       
+    
+        // console.log('in play func')
         // Start the timer for sending progress every 10 seconds
         const intervalId = setInterval(() => {
           renderedPlayerRef.current.getCurrentTime().then((seconds) => {
             // console.log('Current time:', seconds); 
             sendProgressToServer(seconds);
           });
-        }, 10000); // 10 seconds interval
+        }, durationRef?.current > 180 ? 10000 : 4500); // 10 seconds interval
   
         setTimerId(intervalId);
       });
@@ -123,7 +134,13 @@ if (progressPercentage > 99 ) {
     };
   }, []);
 
-
+useEffect(() => {
+  const percentage = progress;
+  renderedPlayerRef.current.getDuration().then(duration => {
+    const startTime = (percentage / 100) * duration;
+    renderedPlayerRef.current.setCurrentTime(startTime);
+  });
+}, [])
 
   return <div ref={playerRef}></div>;
 };

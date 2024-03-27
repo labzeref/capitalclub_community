@@ -16,6 +16,7 @@ use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SingleLiveStreamController;
 use App\Http\Controllers\StreamMessageController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ThreadCommentController;
@@ -27,6 +28,8 @@ use App\Http\Controllers\UnlockController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Middleware\RedirectIfSubscribeMiddleware;
+use App\Http\Middleware\RequestLogMiddleware;
 use App\Http\Middleware\SiteLockMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -81,12 +84,12 @@ Route::middleware(['auth', 'auth.session', 'destroyDeactivateUserSession'])->gro
     /**
      * Subscription and chargebee routes
      */
-    Route::middleware(SiteLockMiddleware::class)->controller(SubscriptionController::class)->prefix('/payment')
+    Route::middleware([SiteLockMiddleware::class])->controller(SubscriptionController::class)->prefix('/payment')
         ->name('subscription.')->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-            Route::get('/verify-coupon/{couponCode}', 'verifyCouponCode')->name('verify-coupon-code');
-            Route::get('/payment-intent/{couponCode?}', 'paymentIntent')->name('payment-intent');
+            Route::get('/', 'index')->name('index')->middleware(RedirectIfSubscribeMiddleware::class);
+            Route::post('/', 'store')->name('store')->middleware(RedirectIfSubscribeMiddleware::class);
+            Route::get('/verify-coupon/{couponCode}', 'verifyCouponCode')->name('verify-coupon-code')->middleware(RedirectIfSubscribeMiddleware::class);
+            Route::get('/payment-intent/{couponCode?}', 'paymentIntent')->name('payment-intent')->middleware(RedirectIfSubscribeMiddleware::class);
             Route::get('/status', 'status')->name('status');
         });
 
@@ -258,7 +261,7 @@ Route::middleware(['auth', 'auth.session', 'destroyDeactivateUserSession'])->gro
                     Route::post('courses/{course}', 'course')->name('courses');
                     Route::post('lessons/{lesson}', 'lesson')->name('lessons');
                     Route::post('live-training/{liveTraining}', 'liveTraining')->name('live-training');
-                    Route::post('live-stream/{liveStream}', 'liveStream')->name('live-stream');
+//                    Route::post('live-stream/{liveStream}', 'liveStream')->name('live-stream');
                 });
 
             /**
@@ -267,6 +270,7 @@ Route::middleware(['auth', 'auth.session', 'destroyDeactivateUserSession'])->gro
             Route::controller(LessonController::class)->middleware('shouldEnrolledInLesson')
                 ->prefix('/lessons/{lesson}')->name('lessons.')->group(function () {
                     Route::get('/play', 'play')->name('play');
+                    Route::get('/note', 'getNote')->name('get-note');
                     Route::post('/note', 'storeNote')->name('notes.store');
                     Route::get('/complete', 'complete')->name('complete');
                     Route::get('/skip-quiz', 'skipQuiz')->name('skip-quiz');
@@ -282,10 +286,11 @@ Route::middleware(['auth', 'auth.session', 'destroyDeactivateUserSession'])->gro
             /**
              * Marketplace page
              */
-            Route::controller(MarketplaceController::class)->prefix('/marketplace')
-                ->name('marketplace.')->group(function () {
-                    Route::get('/', 'index')->name('index');
-                });
+//            Route::controller(MarketplaceController::class)->prefix('/marketplace')
+//                ->name('marketplace.')->group(function () {
+//                    Route::get('/', 'index')->name('index')
+//                        ->middleware(RequestLogMiddleware::class);
+//                });
 
             /**
              * Toggle reaction
@@ -340,6 +345,8 @@ Route::middleware(['auth', 'auth.session', 'destroyDeactivateUserSession'])->gro
                 ->group(function () {
                     Route::post('/courses/{course}', 'storeForCourse')->name('courses.store');
                 });
+
+//            Route::get('/live-stream/{singleLiveStream:uuid}', SingleLiveStreamController::class);
         });
     });
 });
@@ -362,3 +369,5 @@ Route::inertia('/error-403', 'Error/Error403')->name('error-403');
 Route::inertia('/error-429', 'Error/Error429')->name('error-429');
 
 Route::inertia('/error-405', 'Error/Error405')->name('error-405');
+// marketplace
+//Route::inertia('/marketplace-profile', 'Marketplace/MarketplaceProfile')->name('marketplace-profile');

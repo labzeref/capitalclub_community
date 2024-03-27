@@ -45,8 +45,7 @@ import { Suspense } from "react";
 import Xmark from "@/Components/Xmark";
 const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
     const controls = useDragControls()
-    console.log('lesson')
-    console.log(lesson)
+   
     const { toggleStudyMode, setCourseId, setStudyMoodOn, studyMoodOn, isPlayPage, setIsPlayPage } = useContext(PostsContext);
 
 

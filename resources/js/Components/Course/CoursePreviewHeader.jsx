@@ -3,15 +3,38 @@ import React from 'react'
 import LiveBadge from '../LiveBadge'
 import Badge from '../Badge'
 import { useState } from 'react'
+import { useEffect } from 'react'
 
 const CoursePreviewHeader = ({ className = '', upcomming, live ,badge, instructor, user_id, desktop_image  , mobile_image, title, courses, category, ...props }) => {
-    const [imageLoaded, setImageLoaded] = useState(false);
-    // console.log('preview header: ' , desktop_image)
+    // const [imageLoaded, setImageLoaded] = useState(false);
+    // // console.log('preview header: ' , desktop_image)
+    // useEffect(() => {
+    //     const blurDivs = document.querySelectorAll(".blur-load");
+    
+    //     blurDivs.forEach((div) => {
+    //       const img = div.querySelector("img");
+    
+    //       function loaded() {
+    //         div.classList.add("loaded");
+    //       }
+    
+    //       if (img.complete) {
+    //         loaded();
+    //       } else {
+    //         img.addEventListener("load", loaded);
+    //       }
+    
+    //       return () => {
+    //         // Cleanup: Remove the event listener when the component unmounts
+    //         img.removeEventListener("load", loaded);
+    //       };
+    //     });
+    //   }, []); 
     return (
         <div>
-            <div className={className + "  large-card-hover-div  bg-cover bg-center relative   "}  >
-                <img src={ imageLoaded ?  desktop_image?.original?.url : desktop_image?.original?.url }  onLoad={() => setImageLoaded(true)} className="desktop hidden md:block h-100 w-100 header-image border-rounded-10" />
-                <img src={ imageLoaded ?  mobile_image?.original?.url : mobile_image?.original?.url }  onLoad={() => setImageLoaded(true)} className="mobile md:hidden block h-100 w-100 header-image border-rounded-10 " />
+            <div className={className + "  large-card-hover-div  bg-cover bg-center relative"}  >
+                <img src={ desktop_image?.original?.url }  loading="lazy"  className="desktop hidden md:block h-100 w-100 header-image border-rounded-10" />
+                <img src={ mobile_image?.original?.url }  loading="lazy"  className="mobile md:hidden block h-100 w-100 header-image border-rounded-10 " />
                 {upcomming ?
                     <Badge className={badge }>upcomming</Badge>
                  :

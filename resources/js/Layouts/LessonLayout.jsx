@@ -13,7 +13,10 @@ import ToastNotification from "@/Components/ToastNotification";
 import { useRef } from "react";
 const LessonLayout = ({ children }) => {
     useEffect(() => {
-        AOS.init();        
+        AOS.init()  
+        setTimeout(() => {
+            window.scrollTo(0, -165);
+        }, 0);
     }, [])
   
     const { contextNotify, studymode } = useContext(PostsContext);

@@ -23,11 +23,13 @@
         "maatwebsite/excel": "^3.1",
         "maize-tech/laravel-markable": "^2.0",
         "meilisearch/meilisearch-php": "^1.2.1",
+        "morrislaptop/laravel-queue-clear": "^1.2",
         "php-ffmpeg/php-ffmpeg": "^1.1",
         "pusher/pusher-php-server": "7.0.2",
         "spatie/laravel-medialibrary": "*",
         "spatie/laravel-permission": "^5.10",
         "spatie/laravel-responsecache": "^7.4",
+        "stevebauman/location": "^7.1",
         "tightenco/ziggy": "^1.6",
         "torann/geoip": "^3.0"
     },

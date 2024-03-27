@@ -36,9 +36,8 @@ class LessonController extends Controller
 
         $course = $lesson->course()->with([
             'lessons' => fn($query) => $query->orderBy('serial_number')->with([
-                'resources',
                 'enrolledUsers',
-                'note' => fn($query) => $query->where('user_id', _user()->id),
+                'progress' => fn ($progress) => $progress->where('user_id', $user->id)
             ]),
         ])->first();
 
@@ -54,7 +53,14 @@ class LessonController extends Controller
 
         $modules = ModuleResource::collection($course->modules);
 
-        $lesson = new LessonResource($course->lessons->where('id', $lesson->id)->first());
+        $currentLesson = $course
+            ->lessons
+            ->where('id', $lesson->id)
+            ->first();
+
+        $currentLesson->load('resources');
+
+        $lesson = new LessonResource($currentLesson);
         $course = new CourseResource($course);
 
         $takeReview = $user->hasCompletedCourse($course->id) && !$course->hasReviewForUser($user->id);
@@ -305,5 +311,14 @@ class LessonController extends Controller
         ]);
 
         return $this->sendResponse();
+    }
+
+    public function getNote(Lesson $lesson)
+    {
+        $note = $lesson->notes()->whereUserId(_user()->id)->first();
+        $content = $note?->content ?? "";
+        $response = compact('content');
+
+        return $this->sendResponse($response);
     }
 }

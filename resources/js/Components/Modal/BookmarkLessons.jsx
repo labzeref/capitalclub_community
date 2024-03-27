@@ -13,7 +13,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import Xmark from "../Xmark";
 export default function BookmarkLessons({ setShowModal, showModal, favLessons }) {
 
- useEffect(() => {
+    useEffect(() => {
         if (showModal) {
             document.body.style.overflow = 'hidden';
         } else {
@@ -27,7 +27,7 @@ export default function BookmarkLessons({ setShowModal, showModal, favLessons })
 
 
 
- 
+
 
 
     const [isOpen, setIsOpen] = useState(false);
@@ -48,8 +48,8 @@ export default function BookmarkLessons({ setShowModal, showModal, favLessons })
 
     const [selectedIndex, setSelectedIndex] = useState(
         favLessons?.modules.find(module => module?.serial_number === favLessons?.lesson?.module?.serial_number)
-        );
- 
+    );
+
     const [filteredLesson, setFilteredLesson] = useState([]);
     useEffect(() => {
         const filterdLessonModule = favLessons?.lessons?.filter((lesson) => lesson?.module?.serial_number == selectedModuleId)
@@ -59,8 +59,6 @@ export default function BookmarkLessons({ setShowModal, showModal, favLessons })
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
-
-
 
 
 
@@ -167,7 +165,7 @@ export default function BookmarkLessons({ setShowModal, showModal, favLessons })
                                             <div className="flex justify-between items-center">
                                                 <p className="uppercase text-[20px] md:text-[25px] lg:leading-[2px] lg:py-[18px] fw-bold">{favLessons?.title}</p>
 
-                                                {favLessons?.modules?.length > 0 &&  <div className="custom-dropdown ">
+                                                {favLessons?.modules?.length > 0 && <div className="custom-dropdown ">
 
                                                     <button className="dropdown-button" onClick={toggleDropdown}>
                                                         <span className="mt-[2px]">  {isOpen ? 'SELECT' : `MODULE ${selectedModuleId}`} </span>
@@ -183,45 +181,59 @@ export default function BookmarkLessons({ setShowModal, showModal, favLessons })
                                                         </svg>
                                                     </button>
                                                     <div className="relative">
-                                                    {isOpen && (
-                                                       <div className="absolute w-full z-[9999]">
+                                                        {isOpen && (
+                                                            <div className="absolute w-full z-[9999]">
 
-                                                            <div onScroll={handleScrollModules}  className="dropdown-options">
-                                                                <div className={`interests-shadow module-top ${showTopShadow ? '' : 'shadow-off'}`}></div>
-                                                                <div className={`interests-shadow module-bottom ${showBottomShadow ? '' : 'shadow-off'}`}></div>
+                                                                <div onScroll={handleScrollModules} className="dropdown-options">
+                                                                    <div className={`interests-shadow module-top ${showTopShadow ? '' : 'shadow-off'}`}></div>
+                                                                    <div className={`interests-shadow module-bottom ${showBottomShadow ? '' : 'shadow-off'}`}></div>
 
-                                                                {favLessons?.modules?.map((module, index) => (
-                                                                    <div key={index + 3} onClick={() => { setSelectedIndex(module?.serial_number), setSelectedModuleId(module?.serial_number), setIsOpen(false) }} className="option">
-                                                                        MODULE &nbsp; {module?.serial_number}
-                                                                        <svg width="5" height="6" viewBox="0 0 5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <path d="M0.902344 5.77588L4.82789 3.2984L0.902343 0.820925L0.902344 5.77588Z" fill="white" />
-                                                                        </svg>
+                                                                    {favLessons?.modules?.map((module, index) => (
+                                                                        <div key={index + 3} onClick={() => { setSelectedIndex(module?.serial_number), setSelectedModuleId(module?.serial_number), setIsOpen(false) }} className="option">
+                                                                            MODULE &nbsp; {module?.serial_number}
+                                                                            <svg width="5" height="6" viewBox="0 0 5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                <path d="M0.902344 5.77588L4.82789 3.2984L0.902343 0.820925L0.902344 5.77588Z" fill="white" />
+                                                                            </svg>
 
-                                                                    </div>
-                                                                ))}
-                                                    </div>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
                                                             </div>
 
-                                                    )}
-                                                   </div>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            }
+                                                }
 
                                             </div>
                                             <div className="relative mobile-height md:h-[460px] lg:h-[410px] border-rounded-10 overflow-hidden mt-4">
-                                                <div  className={"grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-x-[30px] gap-y-3 xl:gap-x-[30px] lg:gap-y-5 play-lessons-wrapper-favourite content-start"}
+                                                <div className={"grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-x-[30px] gap-y-3 xl:gap-x-[30px] lg:gap-y-5 play-lessons-wrapper-favourite content-start"}
 
                                                 >
                                                     {filteredLesson?.map((data, index) => (
                                                         <Link key={index + 3} href={!data?.locked && route('lessons.play', data?.id)}>
-                                                            <div
-                                                                className={` ${data?.locked && "opacity-50"}   border-rounded-10 cursor-pointer`}  >
+                                                            <div className={` ${data?.locked && "opacity-50"}   border-rounded-10 cursor-pointer`}  >
                                                                 <div className="flex flex-col items-start gap-2.5">
-                                                                    <div className="relative w-full">
-                                                                        <img src={data?.thumbnail?.original?.url}
-                                                                            className=" border-rounded-10  playlist-lesson-thumbnail-favourite  object-cover object-center"
-                                                                            alt=""
-                                                                        />
+                                                                    <div className="relative w-full ">
+                                                                        <div className="relative border-rounded-10 overflow-hidden">
+
+                                                                            <div className="w-[100%] h-[5px] bg-[#1a1a1a] bottom-0 absolute">
+
+                                                                                <div style={{ width: data?.duration_watched + '%' }} className={`h-[5px] bg-[#ffffff]   `}></div>
+                                                                            </div>
+
+                                                                            <img src={data?.thumbnail?.original?.url}
+                                                                                className=" border-rounded-10  playlist-lesson-thumbnail-favourite  object-cover object-center"
+                                                                                alt=""
+                                                                            />
+
+
+                                                                        </div>
+
+
+                                                                        {/* <div
+                                                                            style={{ width: data.duration_watched + '%' }}
+                                                                            className={`h-1 bg-[#7E0606]  bottom-0 absolute `}></div> */}
                                                                     </div>
                                                                     <div>
                                                                         <p className="video-description">
@@ -238,22 +250,6 @@ export default function BookmarkLessons({ setShowModal, showModal, favLessons })
                                                 </div>
                                             </div>
                                         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

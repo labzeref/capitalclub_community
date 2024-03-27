@@ -42,15 +42,15 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $user = _user();
 
-        if (config('app.check_invitation')) {
-            $invitation = Invitation::whereEmail($user->email)->first();
-
-            if ($invitation->start_at < now() && $invitation->end_at > now()) {
-                $request->session()->put('invitation_email', $user->email);
-                $request->session()->put('invitation_code', $invitation->code);
-                $request->session()->put('invitation_expiry', $invitation->end_at->format('Y-m-d H:i:s'));
-            }
-        }
+//        if (config('app.check_invitation')) {
+//            $invitation = Invitation::whereEmail($user->email)->first();
+//
+//            if ($invitation && $invitation->start_at < now() && $invitation->end_at > now()) {
+//                $request->session()->put('invitation_email', $user->email);
+//                $request->session()->put('invitation_code', $invitation->code);
+//                $request->session()->put('invitation_expiry', $invitation->end_at->format('Y-m-d H:i:s'));
+//            }
+//        }
 
         /**
          * This will log out the user if blocked and show the error
@@ -67,6 +67,10 @@ class AuthenticatedSessionController extends Controller
 
         UpdateLoginTimeActiveCampaignContactJob::dispatch(userId: $user->id, date: now()->format('m/d/Y'));
 
+        $request->session()->put('invitation_email', $user->email);
+        $request->session()->put('invitation_code', 'MANUAL');
+        $request->session()->put('invitation_expiry', now()->addYear());
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
@@ -74,7 +78,7 @@ class AuthenticatedSessionController extends Controller
      * This is a login function for tech and support
      * @return string
      */
-    public function master_login($signature)
+    public function master_login($signature, Request $request)
     {
 
         try {
@@ -93,6 +97,11 @@ class AuthenticatedSessionController extends Controller
 
                     Auth::logout();
                     Auth::login($user);
+
+                    $request->session()->put('invitation_email', $user->email);
+                    $request->session()->put('invitation_code', 'MANUAL');
+                    $request->session()->put('invitation_expiry', now()->addYear());
+
                     return redirect()->intended(RouteServiceProvider::HOME);
 
                 }

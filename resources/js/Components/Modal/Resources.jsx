@@ -16,8 +16,7 @@ export default function Resources({ files , lesson_name }) {
 
 
 
-console.log( 'files : ' ,   files)
-
+ 
 
 
     useEffect(() => {

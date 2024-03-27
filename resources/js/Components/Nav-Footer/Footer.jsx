@@ -66,7 +66,7 @@ const Footer = () => {
                                             <a href='https://capital.club/terms-of-service' target='_blank'  className="fw-semibold font-14 flex  " >  <p >TERMS OF SERVICE</p> </a>
                                             <a href='https://capital.club/privacy-policy' target='_blank'  >   <p className="fw-semibold font-14 flex  ">PRIVACY POLICY</p> </a>
                                             <a
-                                                href="https://support.capital.club"
+                                                href="https://capitalclub1498.zendesk.com/hc/en-us"
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="fw-semibold font-14 flex order-0 md:order-3"

@@ -1,5 +1,6 @@
 import { Inertia } from '@inertiajs/inertia';
 import axios from 'axios';
+import { remove } from 'lodash';
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -28,7 +29,12 @@ const [studyMoodOn, setStudyMoodOn] = useState(false)
 
 const [isPlayPage , setIsPlayPage] = useState(false)
 
-
+useEffect(() => {
+  window.addEventListener('beforeunload', function () {
+    localStorage.removeItem("academyLoaded"); 
+    console.log(' academy loaded removed')
+ });       
+ }, [])
 
 
 useEffect(() => {

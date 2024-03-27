@@ -38,7 +38,7 @@ class CreateActiveCampaignContactJob implements ShouldQueue
             'contact' => [
                 'email' => $user->email,
                 'first_name' => $user->first_name,
-                '$this->last_name' => $user->last_name,
+                'last_name' => $user->last_name,
                 'phone' => $user->billingAddress?->phone_number,
                 'fieldValues' => [[
                     'field' => config('active-campaign.fields.GLITCH_NUMBER'),

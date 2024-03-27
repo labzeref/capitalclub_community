@@ -42,7 +42,7 @@ const PlyrComponent = ({ source, thumbnail }) => {
     return (
         <div className="border-rounded-10 overflow-hidden">
 
-            <video ref={videoRef} poster={thumbnail}>
+            <video className="w-full h-full" ref={videoRef} poster={thumbnail}>
                 <source src={source} type="video/mp4" />
                 <track
                     kind="captions"

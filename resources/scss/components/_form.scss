@@ -553,3 +553,57 @@ input::-webkit-inner-spin-button {
   margin-top: 50px;
 }
 }
+
+.marketplace-search-wrapper{
+border-radius: 50px;
+
+input{
+  font-family: $font-input-family;
+  font-size: $font-input-size;
+  text-align: left; 
+  border: none !important;
+  border-radius: 20px;
+  color: $primary-color !important;
+  outline: transparent !important; 
+  // height: 2.5rem;
+  display: flex;
+  justify-items: center;
+  align-items: center; 
+  overflow: hidden;
+  background-color: #1A1A1A !important;  
+  background-repeat: repeat;
+  background-position: 0, 0;
+  background-size: 17.5rem 17.5rem;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+
+
+
+  &:focus,
+  &:active {
+    color: $primary-color !important;
+    border: none !important;
+    box-shadow: inset 0 0 0 1px #ffffff00 !important;
+    -webkit-box-shadow: inset 0 0 0 1px #ffffff00 !important;
+    outline: transparent !important;
+
+    overflow: hidden;
+    background-color: #ffffff00 !important;
+    // background-image: url("../../assets/Noise\ 20.webp") !important ;
+    background-repeat: repeat;
+    background-position: 0, 0;
+    background-size: 17.5rem 17.5rem;
+  }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active,
+  &:-internal-autofill-selected,
+  &:-internal-autofill-previewed {
+    transition: all 5000s ease-in-out 0s !important;
+  }
+
+}
+
+}

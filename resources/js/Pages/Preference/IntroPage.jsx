@@ -179,7 +179,7 @@ const IntroPage = ({ hideButton, videoAsset }) => {
         const handleVideoLoaded = () => {
             // This function will be called when the video is loaded and ready to play
             setVideoLoaded(true)
-            console.log('Video is loaded and ready to play');
+            // console.log('Video is loaded and ready to play');
         };
 
         if (videoRef.current) {
@@ -196,31 +196,7 @@ const IntroPage = ({ hideButton, videoAsset }) => {
     }, []);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
 
 
     const routTimeRef = useRef(0)

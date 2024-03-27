@@ -3,9 +3,44 @@ import React from 'react'
 import LiveBadge from '../LiveBadge'
 import Badge from '../Badge'
 import { useState } from 'react'
+import { useEffect } from 'react'
 
-const AcademyLargeCard = ({ className = '', upcomming, live, badge, instructor, user_id, desktop_image, mobile_image, title, courses, routeToPlay = '', isLock = '', isLockedIcon = '', category, ...props }) => {
+import placeholderImg from '../../../scss/components/coursePlaceholder.svg'
+
+const AcademyLargeCard = ({ className = '', lessonProgress = 0, upcomming, live, badge, instructor, user_id, desktop_image, mobile_image, title, courses, routeToPlay = '', isLock = '', isLockedIcon = '', category, ...props }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
+
+    // useEffect(() => {
+    //     // Get all images on the page
+    //     // document.getElementById('preloader').style.display = 'none';
+    //     const images = document.querySelectorAll('img[data-src]');
+
+    //     // Function to load images sequentially
+    //     function loadImagesSequentially(index) {
+    //       if (index < images.length) {
+    //         // console.log('Adding images');
+    //         const img = images[index];
+
+    //         // Create a new Image object
+    //         const newImg = new Image();
+
+    //         // Set the src attribute of the new Image object to trigger the loading
+    //         newImg.src = img.getAttribute('data-src');
+
+    //         // console.log(img);
+
+    //         // Once the image is loaded, attach it to the DOM and load the next one
+    //         newImg.onload = function () {
+    //             // console.log('Image loaded successfully:', newImg.src);
+    //           img.src = newImg.src;
+    //           loadImagesSequentially(index + 1);
+    //         };
+    //       }
+    //     }
+
+    //     // Start loading images sequentially, starting from the first image
+    //     loadImagesSequentially(0);
+    //   }, []); // Empty dependency array to mimic componentDidMount
 
 
     return (
@@ -14,10 +49,19 @@ const AcademyLargeCard = ({ className = '', upcomming, live, badge, instructor, 
                 routeToPlay
                     ?
                     <Link preserveScroll href={routeToPlay} className={isLock} >
-                        <div className={className + "coming-soon-linear  large-card-hover-div   relative  "}  >
+                        <div className={className + "coming-soon-linear  large-card-hover-div object-cover  relative   "}  >
                             {/* <div className="academy-top-inst-img top-instructor-overlay absolute top-0 left-0 w-full"></div> */}
-                            <img src={imageLoaded ? desktop_image?.original?.url : desktop_image?.original?.url} onLoad={() => setImageLoaded(true)} loading="lazy" className="h-100 w-100 hide-sm-img header-image input-shadow" />
-                            <img src={imageLoaded ? mobile_image?.original?.url : mobile_image?.original?.url} onLoad={() => setImageLoaded(true)} loading="lazy" className="h-100 w-100 hide-md-img header-image input-shadow" />
+                            {/* <img
+        data-src={desktop_image?.original?.url}
+        src={placeholderImg}
+        alt="Course Image"
+      /> */}
+                            <img
+                                // data-src={desktop_image?.original?.url}
+                                src={desktop_image?.original?.url} className="h-[100%] w-full hide-sm-img header-image input-shadow" />
+                            <img
+                                // data-src={mobile_image?.original?.url} 
+                                src={mobile_image?.original?.url} className="h-[100%] w-full hide-md-img header-image input-shadow" />
                             {upcomming ?
                                 <Badge className={badge}>upcomming</Badge>
                                 :
@@ -184,17 +228,31 @@ const AcademyLargeCard = ({ className = '', upcomming, live, badge, instructor, 
 
                             </div>
                             }
+                            {/* **** Lesson progress bar ****   */}
+
+                            {lessonProgress > 0 && <div className="w-[130%] h-[10px] bg-[#1a1a1a] bottom-0 absolute">
+
+                                <div style={{ width: lessonProgress + '%' }} className={`h-[10px] bg-[#ffffff]    `}></div>
+                            </div>
+                            }
+
 
 
                         </div>
                         {/* <div className='academy-new-shadow bottom -mt-[10rem]  md:-mt-[15rem] lg:-mt-[14rem] static -z-[9999]'></div> */}
                     </Link>
+
                     :
+
                     <div href={routeToPlay}>
                         <div className={className + "  large-card-hover-div   relative  "}  >
                             {/* <div className="academy-top-inst-img top-instructor-overlay absolute top-0 left-0 w-full"></div> */}
-                            <img src={imageLoaded ? desktop_image?.original?.url : desktop_image?.original?.url} onLoad={() => setImageLoaded(true)} loading="lazy" className="h-100 w-100 hide-sm-img header-image input-shadow" />
-                            <img src={imageLoaded ? mobile_image?.original?.url : mobile_image?.original?.url} onLoad={() => setImageLoaded(true)} loading="lazy" className="h-100 w-100 hide-md-img header-image input-shadow" />
+                            <img
+                                // data-src={desktop_image?.original?.url} 
+                                src={desktop_image?.original?.url} className="h-[100%] w-full hide-sm-img header-image input-shadow" />
+                            <img
+                                // data-src={desktop_image?.original?.url} 
+                                src={desktop_image?.original?.url} className="h-[100%] w-full hide-md-img header-image input-shadow" />
                             {upcomming ?
                                 <Badge className={badge}>upcomming</Badge>
                                 :

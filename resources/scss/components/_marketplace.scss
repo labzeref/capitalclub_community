@@ -1,0 +1,207 @@
+.search-w {
+    min-width: 270px;
+    width: 60%;
+
+    @include for_breakpoint(mobile) {
+        width: 100%;
+    }
+
+    @include for_breakpoint(tablet) {
+        width: 100%;
+    }
+}
+
+.marketplace-dots .owl-dots {
+    position: relative;
+    z-index: 99999;
+    margin-top: -80px !important;
+
+    @include for_breakpoint(mobile) {
+        margin-top: -30px !important; 
+    }
+
+    @include for_breakpoint(tablet) {
+        margin-top: -50px !important;
+    }
+}
+
+.marketplace-card {
+    border-radius: 20px;
+    padding: 32px 50px;
+
+    @include for_breakpoint(mobile) {
+        padding: 20px 30px;
+        border-radius: 10px;
+    }
+}
+
+.mk-text-color {
+    color: #A3A3A3;
+}
+
+.market-profile-des {
+
+    border-radius: 20px;
+    background-color: #161616;
+    padding: 41px 27px 46px 70px;
+
+
+    @include for_breakpoint(mobile) {
+        margin-top: 16px;
+        border-radius: 10px;
+        padding: 21px 27px 20px 30px;
+    }
+
+    @include for_breakpoint(tablet) {
+        margin-top: 16px;
+        border-radius: 10px;
+    }
+
+}
+
+.mk-links{ 
+    background: #161616;
+    border-radius: 20px;    
+}
+.mk-single-link{ 
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:45px;
+    width: 45px;
+    padding: 8px;
+    background-color: #303030;
+    border-radius: 50px;
+    @include for_breakpoint(mobile) {
+        padding: 8px;
+        height:35px;
+        width: 35px;
+    }
+    @include for_breakpoint(tablet) {
+        padding: 8px;
+        height:35px;
+        width: 35px;
+    }
+    @include for_breakpoint(laptop) {
+        padding: 8px;
+        height:35px;
+        width: 35px;
+    }
+}
+
+.mk-discount-card {
+    padding: 20px;
+    background-color: #161616;
+    border-radius: 20px;
+    border-style: dashed;
+    border-width: 2px;
+    border-color: white;
+
+     
+    @include for_breakpoint(mobile) {
+        margin-top: 16px;
+        border-radius: 10px;
+    }
+}
+.mk-social{ 
+    padding: 32px 8px 32px 8px;
+    background-color: #161616;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+
+    @include for_breakpoint(mobile) { 
+        border-radius: 10px;
+    }
+}
+
+.mk-desk-wrapper{
+    // absolute  hide-sm-img max-w-[280px] md:max-w-[600px] w-[40%] right-[7%] md:right-[10%] top-[10%] md:top-[20%] lg:top-[25%]
+    position: absolute;
+    max-width: 280px;
+    width: 40%;
+    right: 10%;
+    top: 22%;
+    max-width: 600px ;
+    // @include for_breakpoint(mobile) { 
+    //     top :10%;
+    //     right: 7%;
+    //     max-width: 600px ;
+    // }
+    @include for_breakpoint(tablet) { 
+        top :16%;
+        right: 10%; 
+    }
+    @include for_breakpoint(laptop) { 
+        top :20%;
+        right: 10%;
+        max-width: 600px ;
+    }
+    @include for_breakpoint(desktop) { 
+        top :25%;
+        right: 10%;
+        max-width: 600px ;
+    }
+
+}
+
+.mk-desk-slide-logo{
+height: 130px !important;
+object-fit: contain !important;
+
+@include for_breakpoint(tablet) { 
+    height: 40px !important;
+}
+@include for_breakpoint(laptop) { 
+    height: 60px !important;
+}
+@include for_breakpoint(desktop) { 
+    height: 80px !important;
+}
+}
+
+
+.mk-desk-slide-p{ 
+    font-size: 18px;
+    font-weight: 400;
+    text-align: center;
+    margin: 2rem auto;
+    @include for_breakpoint(mobile) { 
+        font-size: 14px;
+        margin: 0.5rem auto;
+    }
+    @include for_breakpoint(tablet) { 
+        margin: 0.5rem auto;
+        font-size: 14px;
+    }
+    @include for_breakpoint(desktop) { 
+        margin: 1rem auto;
+    }
+}
+
+.mk-mobile-slide-logo{
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+        height: 26px !important;
+}
+
+.mk-mobile-slide-p{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20vw;
+    width: 60%;
+    text-align: center;
+    font-size: 12px;
+}
+
+// img{ 
+// }
+// p{
+//     position: absolute;
+//     top: 100px;
+// }
+

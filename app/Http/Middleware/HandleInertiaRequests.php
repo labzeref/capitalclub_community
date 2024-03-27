@@ -35,6 +35,7 @@ class HandleInertiaRequests extends Middleware
                 : null,
             'csrf_token' => csrf_token(),
             'toastMessage' => $this->getToastMessage(),
+            'isHardRefreshed' => $request->header('X-Inertia') != true,
             'anyLiveTraining' => $this->anyLiveTraining(),
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [

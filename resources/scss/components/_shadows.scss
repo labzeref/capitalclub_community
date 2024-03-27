@@ -39,8 +39,7 @@
 
 
 
-.interests-shadow {
-    z-index: 10000;
+.interests-shadow { 
     height: 50px;
     position: absolute;
     left: 0;
@@ -109,7 +108,7 @@
                 rgba(13, 13, 13, 0) 100%
         );
         bottom: 0;
-        z-index: 10000;
+        z-index: 100;
         height: 120px;
         border-radius: 8px;
 

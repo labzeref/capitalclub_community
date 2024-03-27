@@ -165,7 +165,7 @@ const Security = () => {
                                                 data?.password_confirmation !=
                                                 "" && (
                                                     <p className="fs-tiny fw-regular text-center ">
-                                                        Password is Matched
+                                                        Password Matches
                                                     </p>
                                                 )}
                                             {/* }   */}

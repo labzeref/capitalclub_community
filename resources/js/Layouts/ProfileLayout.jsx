@@ -31,9 +31,9 @@ const ProfileLayout = ({ children, pageTitle }) => {
     }
 
     const handleContextMenu = (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
       };
-      
+
     return (
         <div onContextMenu={handleContextMenu} className={`profile-layout-margin ${currentPage == 'progress' ? 'auto' : 'max-w-[600px]'}  mx-auto px-1 `}>
             {currentPage != 'progress' && <p className=" fav-heading progress-mobile-title  pb-[1rem] choice-text-options fw-bold text-center"> SETTINGS</p>}
@@ -60,14 +60,14 @@ const ProfileLayout = ({ children, pageTitle }) => {
                         <div className="containerMedium flex align-items-center justify-center gap-x-2 px-3 ">
 
                             <Link href={route('profile.personal')} className="w-full">
-                                <TabButton className={`mx-3      ${route().current('profile.personal') && 'active'}     glitch   uppercase`} activeBottom={route().current('profile.personal') && 'active-tab-block'} >  PROFILE  </TabButton>
+                                <TabButton className={`mx-3      ${route().current('profile.personal') && 'active pointer-events-none'}     glitch   uppercase`} activeBottom={route().current('profile.personal') && 'active-tab-block'} >  PROFILE  </TabButton>
                             </Link>
                             <Link href={route('profile.payment')} className="w-full">
-                                <TabButton className={`mx-3      ${route().current('profile.payment') && 'active'} glitch   uppercase`} activeBottom={route().current('profile.payment') && 'active-tab-block'} >  BILLING  </TabButton>
+                                <TabButton className={`mx-3      ${route().current('profile.payment') && 'active pointer-events-none'} glitch   uppercase`} activeBottom={route().current('profile.payment') && 'active-tab-block'} >  BILLING  </TabButton>
                             </Link>
 
                             <Link href={route('profile.security')} className="w-full">
-                                <TabButton className={`mx-3      ${route().current('profile.security') && 'active'}   glitch   uppercase`} activeBottom={route().current('profile.security') && 'active-tab-block'}>  ACCOUNT  </TabButton>
+                                <TabButton className={`mx-3      ${route().current('profile.security') && 'active pointer-events-none'}   glitch   uppercase`} activeBottom={route().current('profile.security') && 'active-tab-block'}>  ACCOUNT  </TabButton>
                             </Link>
                         </div>
                     </div>
@@ -162,7 +162,7 @@ const ProfileLayout = ({ children, pageTitle }) => {
                                 }
 
                                 <a onClick={() => { setOpenMobileMenu(false) }}
-                                    className="w-full" href="https://support.capital.club" target="_blank">  <button className="notification-btn flex justify-center gap-x-1.5 text-[10px]  items-center px-[9px] fw-bold bg-[#1c1c1e] text-[#fff] w-full rounded-[10px] h-[47px] pt-[1px]">
+                                    className="w-full" href="https://capitalclub1498.zendesk.com/hc/en-us" target="_blank">  <button className="notification-btn flex justify-center gap-x-1.5 text-[10px]  items-center px-[9px] fw-bold bg-[#1c1c1e] text-[#fff] w-full rounded-[10px] h-[47px] pt-[1px]">
                                        <span className="pt-[2px] support-font-size "> SUPPORT</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 15 14" fill="none">
                                             <path d="M12.6693 7.12833C12.6693 3.92583 10.1843 1.75 7.41927 1.75C4.68344 1.75 2.16927 3.87917 2.16927 7.16333C1.81927 7.36167 1.58594 7.735 1.58594 8.16667V9.33333C1.58594 9.975 2.11094 10.5 2.7526 10.5C3.07344 10.5 3.33594 10.2375 3.33594 9.91667V7.11083C3.33594 4.87667 5.05677 2.9225 7.29094 2.85833C9.60094 2.78833 11.5026 4.64333 11.5026 6.94167V11.0833H7.41927C7.09844 11.0833 6.83594 11.3458 6.83594 11.6667C6.83594 11.9875 7.09844 12.25 7.41927 12.25H11.5026C12.1443 12.25 12.6693 11.725 12.6693 11.0833V10.3717C13.0134 10.1908 13.2526 9.835 13.2526 9.415V8.07333C13.2526 7.665 13.0134 7.30917 12.6693 7.12833Z" fill="white" />

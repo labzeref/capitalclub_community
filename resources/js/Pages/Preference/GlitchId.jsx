@@ -130,14 +130,10 @@ const GlitchId = ({ videoAsset }) => {
 
     const routTimeRef = useRef(0)
 
-
     useEffect(() => {
-
-
         if (RoutTime > 300) {
             localStorage.removeItem("welcomeVideoTime")
         }
-
         if (RoutTime > 377) {
             // localStorage.setItem("watched", 'watched');
             Inertia.visit(route('preference.index'), {

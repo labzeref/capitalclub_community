@@ -141,13 +141,39 @@ class ChargeBeeService
             'lastName' => $user->last_name,
             'email' => $user->email,
             'locale' => 'en',
-            'billingAddress' => [
+            'billing_address' => [
                 'firstName' => $user->first_name,
                 'lastName' => $user->last_name,
-                'line1' => $billingAddress->phone_number,
+                'line1' => $billingAddress->street_address,
+                'phone' => $billingAddress->phone_number,
                 'city' => $billingAddress->city,
                 'state' => $billingAddress->state,
                 'zip' => $billingAddress->zip_code,
+                'country' => $billingAddress->country_iso,
+            ],
+        ]);
+
+        return $response->customer();
+    }
+
+    public function getCustomer(User $user){
+        return Customer::retrieve($user->charge_bee_id)->customer();
+    }
+    public function updateCustomerBilling(User $user, ?BillingAddress $billingAddress = null): mixed
+    {
+        if (! $billingAddress) {
+            $billingAddress = $user->billingAddress;
+        }
+
+        $response = Customer::updateBillingInfo($user->charge_bee_id, [
+            'billing_address' => [
+                'firstName' => $user->first_name,
+                'lastName' => $user->last_name,
+                'line1' => $billingAddress->street_address,
+                'phone' => $billingAddress->phone_number,
+                'city' => $billingAddress->city,
+                'state' => $billingAddress->state,
+                'zip' => ''.$billingAddress->zip_code.'',
                 'country' => $billingAddress->country_iso,
             ],
         ]);
