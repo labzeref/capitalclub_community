@@ -14,20 +14,12 @@
 
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/favicon.png') }}">
 
-{{--    <script src="https://www.google.com/recaptcha/enterprise.js?render={{config('recaptcha.key')}}"></script>--}}
-{{--    <script src="https://www.google.com/recaptcha/enterprise.js?&render=explicit"></script>--}}
-
     <!-- Scripts -->
     @routes
     @viteReactRefresh
     @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
     @inertiaHead
 
-{{--    <link--}}
-{{--            rel="stylesheet"--}}
-{{--            href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"--}}
-{{--    />--}}
-{{--    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>--}}
 <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
 
 <style>
@@ -88,13 +80,6 @@ animation_preloader.addEventListener("complete", () => {
     window._base_url = '{{ route('welcome') }}';
 </script>
 <script src="https://js.chargebee.com/v2/chargebee.js"></script>
-{{-- <script>
-    var head = document.head;
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = "https://t.capital.club/v1/lst/universal-script?ph=b4826bd3f6cd3cabfc8d900f12a3e8419f100f7e42d86c8c4dc0006604e866f1&tag=!clicked&ref_url=" + encodeURI(document.URL) ;
-    head.appendChild(script);
-</script> --}}
 
 </body>
 
