@@ -28,6 +28,9 @@ RUN docker-php-ext-configure gd \
     pdo_pgsql \
     pgsql
 
+# Increase PHP Memory limit
+RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/memory-limit.ini
+
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
