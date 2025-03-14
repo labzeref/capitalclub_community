@@ -65,7 +65,7 @@ class AuthenticatedSessionController extends Controller
 
         Auth::logoutOtherDevices($request->password);
 
-        UpdateLoginTimeActiveCampaignContactJob::dispatch(userId: $user->id, date: now()->format('m/d/Y'));
+//        UpdateLoginTimeActiveCampaignContactJob::dispatch(userId: $user->id, date: now()->format('m/d/Y'));
 
         $request->session()->put('invitation_email', $user->email);
         $request->session()->put('invitation_code', 'MANUAL');

@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             'email' => 'student@system.com',
             'about' => 'Testing user',
             'email_verified_at' => now(),
-            'password' => Hash::make('zPtoKolhb91PDIH'), // password
+            'password' => Hash::make('password'), // password
             'remember_token' => Str::random(10),
             'subscribed' => true,
         ]);

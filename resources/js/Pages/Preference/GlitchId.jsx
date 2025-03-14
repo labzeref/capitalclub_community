@@ -196,16 +196,16 @@ const GlitchId = ({ videoAsset }) => {
 
     const [orientation, setOrientation] = useState(
         window.matchMedia('(orientation: portrait)').matches ? 'portrait':'landscape');
-    
+
       useEffect(() => {
         const handleOrientationChange = () => {
           setOrientation(
             window.matchMedia('(orientation: portrait)').matches
               ? 'portrait' : 'landscape' );};
-    
+
         // Add an event listener for changes in orientation
         window.addEventListener('resize', handleOrientationChange);
-    
+
         // Clean up the event listener when the component unmounts
         return () => {
           window.removeEventListener('resize', handleOrientationChange);
@@ -213,7 +213,7 @@ const GlitchId = ({ videoAsset }) => {
       }, []);
 
       const handleContextMenu = (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
       };
 
     return (
@@ -277,19 +277,19 @@ const GlitchId = ({ videoAsset }) => {
 
                         <div className=" w-full ">
                             <div className="container mx-auto  ">
-                                <div className="flex justify-center mb-[5vh] md:mb-[9vh] cursor-pointer ">
+                                <Link href={route('preference.index')} className="flex justify-center mb-[5vh] md:mb-[9vh] cursor-pointer ">
 
 
                                     <svg
                                         className={" mb-[5vh] md:mb-[9vh] cursor-pointer w-[28px] md:w-[34px] "}
-                                        onClick={() => { startTrackingProgress(), playVideo(), setHideGlitchPage(true) }}
+                                        // onClick={() => { playVideo() }}
                                         viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <circle cx="14" cy="14" r="14" fill="white" />
                                         <path d="M7 13.75H21.5" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                                         <path d="M14.25 6.5L21.5 13.75L14.25 21" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
 
-                                </div>
+                                </Link>
                             </div> </div> </div>
 
                     {/* } */}

@@ -86,7 +86,7 @@ class PreferenceController extends Controller
         DB::commit();
 
         AttachAvatarToUserJob::dispatchSync(userId: _user()->id, avatarId: $request->avatar_id);
-        UpdateActiveCampaignContactJob::dispatch(userId: $user->id);
+//        UpdateActiveCampaignContactJob::dispatch(userId: $user->id);
 
         return to_route('preference.transition');
     }

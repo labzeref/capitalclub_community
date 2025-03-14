@@ -3,6 +3,7 @@
 use App\Models\User;
 use Aws\CloudFront\UrlSigner;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Carbon;
 
 /**
  * This files add in autoload and all this function is accessible everywhere in project
@@ -19,6 +20,8 @@ function _serverErrorMessage(): string
 
 function _getSignedUrl($path): string
 {
+    return _getTemUrl($path);
+
     $accessKey = config('cloudfront.key_pair_id');
     $secretKey = base_path(config('cloudfront.private_key_path'));
     $distributionUrl = config('cloudfront.url').'/'.$path;
@@ -39,6 +42,29 @@ function _getSignedUrl($path): string
     Cache::put($cacheKey, $signedUrl, $cacheExpiry);
 
     return $signedUrl;
+}
+
+function _getTemUrl(string $path, Carbon $expiry = null): string
+{
+    if (! $path or empty($path)) {
+        return '';
+    }
+
+    if (! $expiry) {
+        $expiry = now()->addDays(7);
+    }
+
+    $url = Cache::get($path);
+
+    if ($url) {
+        return $url;
+    }
+
+    $url = Storage::temporaryUrl($path, $expiry);
+
+    Cache::put($path, $url, now()->diffInSeconds($expiry));
+
+    return $url;
 }
 
 function _defaultDp(): stdClass
