@@ -29,8 +29,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             //            LiveTrainingSeeder::class,
             CourseSeeder::class,
-            PremiumUserSeeder::class,
-            InvitationSeeder::class,
+            // PremiumUserSeeder::class,
+            // InvitationSeeder::class,
         ]);
     }
 }
