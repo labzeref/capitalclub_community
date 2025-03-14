@@ -23,21 +23,6 @@
     @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
     @inertiaHead
 
-    <!-- Google Tag Manager -->
-    <script>(function (w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({
-                'gtm.start':
-                    new Date().getTime(), event: 'gtm.js'
-            });
-            var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src =
-                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-MP2C6FH');</script>
-    <!-- End Google Tag Manager -->
 {{--    <link--}}
 {{--            rel="stylesheet"--}}
 {{--            href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"--}}
@@ -93,16 +78,9 @@ animation_preloader.addEventListener("complete", () => {
 
 </script>
 
-<!-- Google Tag Manager (noscript) -->
-<noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MP2C6FH"
-            height="0" width="0" style="display:none;visibility:hidden"></iframe>
-</noscript>
-<!-- End Google Tag Manager (noscript) -->
-
-<!-- Privado Notice start -->
+{{-- <!-- Privado Notice start -->
 <script src=“https://www.cdn.privado.ai/8bff03d134124133b97f5269f7850993.js” type=“text/javascript” ></script>
-<!-- Privado Notice end -->
+<!-- Privado Notice end --> --}}
 
 
 <script>
@@ -110,13 +88,13 @@ animation_preloader.addEventListener("complete", () => {
     window._base_url = '{{ route('welcome') }}';
 </script>
 <script src="https://js.chargebee.com/v2/chargebee.js"></script>
-<script>
+{{-- <script>
     var head = document.head;
     var script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = "https://t.capital.club/v1/lst/universal-script?ph=b4826bd3f6cd3cabfc8d900f12a3e8419f100f7e42d86c8c4dc0006604e866f1&tag=!clicked&ref_url=" + encodeURI(document.URL) ;
     head.appendChild(script);
-</script>
+</script> --}}
 
 </body>
 
