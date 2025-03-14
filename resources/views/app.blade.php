@@ -70,10 +70,6 @@ animation_preloader.addEventListener("complete", () => {
 
 </script>
 
-{{-- <!-- Privado Notice start -->
-<script src=“https://www.cdn.privado.ai/8bff03d134124133b97f5269f7850993.js” type=“text/javascript” ></script>
-<!-- Privado Notice end --> --}}
-
 
 <script>
     window._assets = '{{ asset('') }}';
