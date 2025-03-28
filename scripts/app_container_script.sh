@@ -12,6 +12,13 @@ else
     composer install
 fi
 
+# Cache Stuff
+echo "-----------Cache Stuff-----------"
+php artisan route:cache
+php artisan config:cache
+php artisan view:cache
+php artisan event:cache
+
 # Running services
 echo "-----------Running services-----------"
 php artisan ser --host 0.0.0.0 --port 8002
