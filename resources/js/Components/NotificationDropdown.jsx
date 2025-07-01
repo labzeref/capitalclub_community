@@ -9,7 +9,7 @@ import ReactToast from './ReactToast';
 import { useEffect } from 'react';
 import { AnimatePresence, motion } from "framer-motion"
 import Xmark from './Xmark';
-const NotificationDropdown = ({ setOpenDropDownNotification, openDropDownNotification , setShowBlink , showBlink }) => {
+const NotificationDropdown = ({ setOpenDropDownNotification, openDropDownNotification, setShowBlink, showBlink }) => {
   const { toastNotify } = useContext(PostsContext);
 
   // notifications.index
@@ -20,37 +20,33 @@ const NotificationDropdown = ({ setOpenDropDownNotification, openDropDownNotific
 
     Echo.private(`App.Models.User.${auth.user.id}`)
       .notification((notification) => {
-        // console.log("notification")
-        // console.log(notification)
-        // ReactToast('success', notification?.title)
+
         setShowBlink(true)
         refreshNotificationList()
-        // toastNotify(notification)
       })
-      
-    }, [])
- 
- 
-    const [allNotificatios, setAllNotifications] = useState([])
-    
+
+  }, [])
+
+
+  const [allNotificatios, setAllNotifications] = useState([])
+
   useEffect(() => {
-    refreshNotificationList() 
+    refreshNotificationList()
   }, [])
 
   useEffect(() => {
-    
-    const unreadNotification = allNotificatios.find((data)=>data?.read == null )
- if (unreadNotification) {
-  setShowBlink(true)
- } else {
-  setShowBlink(false)
- } 
+
+    const unreadNotification = allNotificatios?.find((data) => data?.read == null)
+    if (unreadNotification) {
+      setShowBlink(true)
+    } else {
+      setShowBlink(false)
+    }
   }, [allNotificatios])
 
   const refreshNotificationList = async () => {
     try {
       const response = await axios.get(route("notifications.index"));
-      // console.log(" getting all notifications successfully:", response.data?.payload);
       setAllNotifications(response.data?.payload)
     } catch (error) {
       console.error("Error while getting notifications:", error);
@@ -73,10 +69,9 @@ const NotificationDropdown = ({ setOpenDropDownNotification, openDropDownNotific
 
 
 
- 
+
 
   const [openMobileMenu, setOpenMobileMenu] = useState(false)
-  // console.log("listner", `App.Models.User.${auth.user.id}`)
 
   useEffect(() => {
     if (openDropDownNotification) {
@@ -116,7 +111,7 @@ const NotificationDropdown = ({ setOpenDropDownNotification, openDropDownNotific
               <div className="   flex justify-center">
 
 
-                <div className="fixed md:absolute right-0 -mt-10 md:-mt-6 lg:-mt-8 md:-mr-3 lg:-mr-3 bg-[#121212] border-rounded-17 shadow-lg overflow-hidden z-20 w-full  pt-[8px] pb-[14px] px-[12px]"  >
+                <div className="fixed md:absolute right-0 -mt-10 md:-mt-6 lg:-mt-[1.89rem] md:-mr-3 lg:-mr-3 bg-[#121212] border-rounded-17 shadow-lg overflow-hidden z-20 w-full  pt-[8px] pb-[14px] px-[12px]"  >
                   <div className=" ">
 
                     <ul className="   flex flex-col text-left   w-full text-base cursor-pointer ">
@@ -152,8 +147,8 @@ const NotificationDropdown = ({ setOpenDropDownNotification, openDropDownNotific
 
                                 <p className='font-size-10 fw-semibold py-1'>{data?.title}</p>
                               </div>
-                             
-                             <a href={data?.link} target='_blank' > <svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                              <a href={data?.link} target='_blank' > <svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M20 10C20 4.48 15.52 0 10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10ZM10 12.79V11H7C6.45 11 6 10.55 6 10C6 9.45 6.45 9 7 9H10V7.21C10 6.76 10.54 6.54 10.85 6.86L13.64 9.65C13.84 9.85 13.84 10.16 13.64 10.36L10.85 13.15C10.54 13.46 10 13.24 10 12.79Z" fill="#EBEBEB" />
                               </svg></a>
                             </li>
@@ -166,16 +161,25 @@ const NotificationDropdown = ({ setOpenDropDownNotification, openDropDownNotific
 
                     </div>
 
-                    {allNotificatios?.length > 0 && <>
+                    {/* {allNotificatios?.length > 0 && <> */}
 
-                      <div>
-                        <div onClick={() => { clearNotificationList() }} className="  cursor-pointer   w-full text-center  mt-[10%] ">
-                          <p className="notification-btn flex justify-center border-rounded-10 bg-white text-black py-3 font-size-12 fw-bold uppercase" >    CLEAR NOTIFICATIONS
+                    <div>
+                      <div onClick={() => { clearNotificationList() }} className="  cursor-pointer   w-full text-center  mt-[10%] ">
+                        <li className="notification-click flex justify-center items-center bg-white text-black rounded-[8px] h-12 mt-6  uppercase w-full text-center font-size-12 fw-bold ">
+                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.99865 4.82166L10.1236 0.696655L11.302 1.87499L7.17698 5.99999L11.302 10.125L10.1236 11.3033L5.99865 7.17832L1.87365 11.3033L0.695312 10.125L4.82031 5.99999L0.695312 1.87499L1.87365 0.696655L5.99865 4.82166Z" fill="#121212" />
+                          </svg>
+                          <p className="menu-support-button pt-0.5 " >
+
+
+
+                            Clear All
                           </p>
-                        </div>
+                        </li>
                       </div>
-                    </>
-                    }
+                    </div>
+                    {/* </>
+                    } */}
                   </div>
 
                 </div>

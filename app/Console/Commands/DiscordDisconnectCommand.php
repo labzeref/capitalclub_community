@@ -15,7 +15,7 @@ class DiscordDisconnectCommand extends Command
 
     public function handle(): void
     {
-        $userId = $this->ask("Please enter the user id");
+        $userId = $this->ask('Please enter the user id');
 
         $user = User::find($userId);
 
@@ -23,6 +23,7 @@ class DiscordDisconnectCommand extends Command
             $this->info('User founded successfully.');
         } else {
             $this->error('User does not found.');
+
             return;
         }
 
@@ -30,6 +31,7 @@ class DiscordDisconnectCommand extends Command
             $this->info('User has discord integrated.');
         } else {
             $this->error('User does not has integrated discord.');
+
             return;
         }
 

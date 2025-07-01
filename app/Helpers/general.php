@@ -44,7 +44,7 @@ function _getSignedUrl($path): string
 function _defaultDp(): stdClass
 {
     $object = new stdClass();
-    $object->url = asset('/assets/img/default-dp.png');
+    $object->url = asset('/assets/img/avatars/alian.png');
 
     return $object;
 }
@@ -104,5 +104,6 @@ function _getPageRemainingSeconds(): int
     if ($upcoming < $now) {
         $upcoming = $upcoming->addDay();
     }
+
     return $now->diffInSeconds($upcoming, false);
 }

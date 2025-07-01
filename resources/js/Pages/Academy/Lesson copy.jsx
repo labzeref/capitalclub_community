@@ -45,7 +45,7 @@ import { Suspense } from "react";
 import Xmark from "@/Components/Xmark";
 const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
     const controls = useDragControls()
-   
+
     const { toggleStudyMode, setCourseId, setStudyMoodOn, studyMoodOn, isPlayPage, setIsPlayPage } = useContext(PostsContext);
 
 
@@ -452,14 +452,14 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                         <div className="flex  gap-x-4 gap-y-2 items-center justify-end">
                                             {lesson?.resources.length > 0 &&
                                                 <div className={` w-[24%] `}>
-                                                    <Resources files={lesson?.resources}  />
+                                                    <Resources files={lesson?.resources} />
                                                 </div>
                                             }
                                             <button onClick={handleBookmarkToggle} className="academy-icon-button h-30 lesson-btn-p secondary w-[24%]">
                                                 <div className="button_container lesson-btn-p">FAVORITE
                                                     {lessonBookmark
                                                         ? <svg width="12" height="12" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <g clip-path="url(#clip0_9001_21340)">
+                                                            <g clipPath="url(#clip0_9001_21340)">
                                                                 <path d="M6.39721 6.29981L8.5004 1.9004L11.3047 6.29981L15.511 7.03305L12.0057 10.6992L12.7068 15.8319L8.5004 13.6322L4.29402 15.8319L4.99508 10.6992L1.48976 6.29981H6.39721Z" fill="white" />
                                                                 <path d="M16.0963 5.68976L11.2894 5.25348L9.41227 0.631041C9.07459 -0.210347 7.92251 -0.210347 7.58483 0.631041L5.70773 5.26387L0.910698 5.68976C0.0367052 5.76247 -0.320838 6.9051 0.344589 7.50757L3.98954 10.8108L2.89705 15.7137C2.69841 16.607 3.62206 17.3134 4.37687 16.8356L8.49855 14.2387L12.6202 16.8459C13.375 17.3238 14.2987 16.6174 14.1 15.7241L13.0076 10.8108L16.6525 7.50757C17.3179 6.9051 16.9703 5.76247 16.0963 5.68976ZM8.49855 12.2962L4.76421 14.6542L5.75739 10.2083L2.46005 7.21672L6.81015 6.82199L8.49855 2.63583L10.1969 6.83238L14.547 7.22711L11.2496 10.2187L12.2428 14.6646L8.49855 12.2962Z" fill="white" />
                                                             </g>

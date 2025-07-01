@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CourseCompactResource;
 use App\Http\Resources\CourseResource;
+use App\Http\Resources\Lesson\LessonCompactResource;
 use App\Models\Course;
-use Illuminate\Support\Facades\Cache;
-use Inertia\Inertia;
+use App\Models\Lesson;
 use Inertia\Response;
-use Inertia\ResponseFactory;
 
 class AcademyController extends Controller
 {
@@ -18,57 +18,45 @@ class AcademyController extends Controller
      */
     public function __invoke()
     {
-        $featuredCourses = CourseResource::collection(Course::featured()->get());
+        $featuredCourses = CourseCompactResource::collection(Course::featured()->get());
 
-        $generalCourses = CourseResource::collection(
+        $generalCourses = CourseCompactResource::collection(
             Course::query()
-                ->where('title', '!=', 'DATA SETS')
-                ->where('title', '!=', 'MASTER THE ART OF PERFORMANCE CREATIVE')
-                ->where('title', '!=', 'MONEY TALKS')
-                ->where('title', '!=', 'ENTREPRENEUR FIT')
-                ->where('title', '!=', 'TIKTOK DROPSHIPPING BOOTCAMP')
-                ->where('title', '!=', 'CREATE. MULTIPLY. PRESERVE.')
-                ->where('title', '!=', 'Confessions of a Central Banker')
-                ->withCount('lessons')
+                ->where('exclusive', '=', 'FALSE')
+                ->where('is_coming_soon', '=' , 'FALSE')
                 ->orderBy('id')
                 ->get()
         );
 
-        $exclusiveCourses = CourseResource::collection(
+        $exclusiveCourses = CourseCompactResource::collection(
             Course::query()
-                ->whereIn('title', [
-                    'Confessions of a Central Banker',
-                    'CREATE. MULTIPLY. PRESERVE.'
-                ])
-                ->orderBy('id','desc')
+                ->where('exclusive', '=', 'TRUE')
+                ->where('is_coming_soon', '=' , 'FALSE')
+                ->orderBy('id')
                 ->get()
         );
 
         $moneyTalkCourse = new CourseResource(
             Course::query()
                 ->where('title', 'MONEY TALKS')
-                ->with([
-                    'lessons' => fn($lessons) => $lessons->with([
-                        'progress' => fn($progress) => $progress->where('user_id', _user()->id)
-                    ])
-                ])
+                ->where('is_coming_soon', '=' , 'FALSE')
+                ->with('lessons')
                 ->first()
         );
 
-        $exclusiveCourses2 = CourseResource::collection(
+        $continueWatch = LessonCompactResource::collection(
+            Lesson::with('progress')
+                ->whereHas('progress', function ($query) {
+                $query->where('progress', '<=', 95.00)
+                    ->where('user_id', auth()->id());
+            })->get()
+        );
+
+        $comingSoonCourses = CourseCompactResource::collection(
             Course::query()
-                ->whereIn('title', [
-                    'ENTREPRENEUR FIT',
-                    'TIKTOK DROPSHIPPING BOOTCAMP',
-                    'MASTER THE ART OF PERFORMANCE CREATIVE'
-                ])
-                ->orderByRaw("
-                    CASE
-                        WHEN title = 'TIKTOK DROPSHIPPING BOOTCAMP' THEN 1
-                        WHEN title = 'ENTREPRENEUR FIT' THEN 2
-                        WHEN title = 'MASTER THE ART OF PERFORMANCE CREATIVE' THEN 3
-                    END
-                ")
+                ->Upcoming()
+                ->where('is_coming_soon', '=' , 'TRUE')
+                ->orderBy('id')
                 ->get()
         );
 
@@ -77,7 +65,8 @@ class AcademyController extends Controller
             'generalCourses',
             'moneyTalkCourse',
             'exclusiveCourses',
-            'exclusiveCourses2',
+            'continueWatch',
+            'comingSoonCourses',
         ]));
     }
 }

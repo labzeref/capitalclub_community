@@ -7,23 +7,31 @@ use App\Http\Requests\Profile\AccountProfileRequest;
 use App\Http\Requests\Profile\PersonalProfileRequest;
 use App\Http\Resources\Asset\CountryResource;
 use App\Http\Resources\AvatarResource;
+use App\Http\Resources\CheckoutChampCardResource;
+use App\Http\Resources\CheckoutChampOrderResource;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\InvoiceResource;
-use App\Http\Resources\Lesson\LessonResource;
-use App\Http\Resources\LiveStreamResource;
+use App\Http\Resources\LiveStream\LiveStreamResource;
 use App\Http\Resources\User\UserResource;
+use App\Jobs\Klaviyo\UpdateProfileDataToKlaviyoJob;
 use App\Models\Avatar;
+use App\Models\CheckoutChampUserCard;
 use App\Models\Country;
 use App\Models\Course;
 use App\Models\Invoice;
 use App\Models\Lesson;
-use App\Services\ChargeBeeService;
+use App\Models\LiveStream\LiveStream;
+use App\Services\CheckoutChampService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\SlackTestNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 use Inertia\Response;
 use Inertia\ResponseFactory;
 
@@ -42,11 +50,11 @@ class ProfileController extends Controller
             'bookmarkedLessons',
             'bookmarkedCourses',
             'enrolledCourses',
-            'bookmarkedLiveStream.liveSeries.instructors',
+            'bookmarkedLiveStream',
         ]);
 
-//        $bookmarkedLiveStream = LiveStreamResource::collection($user->bookmarkedLiveStream);
-//        $bookmarkedLessons = LessonResource::collection($user->bookmarkedLessons);
+        //        $bookmarkedLiveStream = LiveStreamResource::collection($user->bookmarkedLiveStream);
+        //        $bookmarkedLessons = LessonResource::collection($user->bookmarkedLessons);
         $bookmarkedCourses = CourseResource::collection(
             Course::query()
                 ->whereHas(
@@ -59,12 +67,19 @@ class ProfileController extends Controller
                         ->whereIn('id', $user->bookmarkedLessons->pluck('id')->toArray())
                         ->orderBy('serial_number')
                         ->with([
-                        'progress' => fn($progress) => $progress->where('user_id', $user->id)
-                    ]),
+                            'progress' => fn($progress) => $progress->where('user_id', $user->id),
+                        ]),
                 ])
                 ->get()
         );
-//        $enrolledCourses = CourseResource::collection($user->enrolledCourses);
+
+        $bookmarkedLivestream = LiveStreamResource::collection(
+            LiveStream::query()
+                ->whereIn('id', $user->bookmarkedLiveStream->pluck('id')->toArray())
+                ->get()
+        );
+
+        //        $enrolledCourses = CourseResource::collection($user->enrolledCourses);
         $needToLoadModuleIds = Lesson::query()
             ->whereIn('id', $user->notes()->get(['lesson_id'])->pluck('lesson_id')->toArray())
             ->get(['module_id'])
@@ -77,16 +92,17 @@ class ProfileController extends Controller
                     'lessons',
                     fn($lessons) => $lessons->orderBy('id')->withWhereHas(
                         'note',
-                        fn($note) => $note->where('user_id', $user->id)->whereRaw('CHAR_LENGTH(content) > 1')
+                        fn($note) => $note->where('user_id', $user->id)->whereRaw('CHAR_LENGTH(content) > 0')
                     )
                 )
                 ->with([
-                    'modules' => fn($modules) => $modules->whereIn('id', $needToLoadModuleIds)
+                    'modules' => fn($modules) => $modules->whereIn('id', $needToLoadModuleIds),
                 ])
                 ->get()
         );
 
         return inertia('Profile/Progress', compact([
+            'bookmarkedLivestream',
             'bookmarkedCourses',
             'notedCourses',
         ]));
@@ -173,52 +189,186 @@ class ProfileController extends Controller
 
         DB::commit();
 
+        $user->refresh();
+
+        UpdateProfileDataToKlaviyoJob::dispatch(user: $user);
+
         return back()->with('success', __('Profile updated successfully.'));
     }
 
     /**
      * Show the subscription payment screen
-     *
-     * @return Response|ResponseFactory
      */
-    public function payment(ChargeBeeService $chargeBeeService)
+    public function payment()
     {
         $user = _user();
-        $invoices = InvoiceResource::collection($user->invoices);
 
-        $chargeBeeSite = config('chargbee.site');
-        $chargeBeePublicKey = config('chargbee.public_key');
+//        if (!$user->checkout_champ_id){
+//             abort(404);
+//        }
 
-        return inertia('Profile/Payment', compact([
-            'invoices',
-            'chargeBeeSite',
-            'chargeBeePublicKey',
-        ]));
+        $orders = CheckoutChampOrderResource::collection(
+            _user()->orders()->with(['product', 'card'])->latest('id')->get()
+        );
+
+        $orderModel = _user()->orders()->with(['product', 'card'])->where('end_at', '>', now())->latest('id')->first();
+
+        if ($orderModel) {
+            $order = new CheckoutChampOrderResource($orderModel);
+        } else {
+            $inactiveOrder = _user()->orders()->with(['product', 'card'])->latest('id')->first();
+            if (!$inactiveOrder) {
+                $order = null;
+            } else {
+                $order = new CheckoutChampOrderResource($inactiveOrder);
+            }
+        }
+
+        $card = CheckoutChampUserCard::where('user_id', $user->id)->latest('id')->first();
+
+
+        if ($user->checkout_champ_id && !$card) {
+
+            $service = new CheckoutChampService();
+
+            $customerResponse = $service->getCustomerByCustomerId(customerId: $user->checkout_champ_id);
+
+            if ($customerResponse->successful()) {
+                if ($customerResponse->json()['result'] == 'SUCCESS') {
+
+                    $customer = $customerResponse['message']['data'][0];
+
+                    if (isset($customer['cardType']) && isset($customer['cardLast4']) && isset($customer['cardExpiryDate']) && isset($customer['paySourceId'])) {
+
+                        $card = CheckoutChampUserCard::updateOrCreate([
+                            'user_id' => $user->id
+                        ], [
+                            'user_id' => $user->id,
+                            'type' => $customer['cardType'],
+                            'last_4' => $customer['cardLast4'],
+                            'expiry' => $customer['cardExpiryDate'],
+                            'pay_source_id' => $customer['paySourceId'],
+                        ]);
+
+                    }
+
+
+                }
+            }
+        }
+
+
+        if ($card) {
+
+            $card = [
+                'type' => $card->type,
+                'last_4' => $card->last_4,
+                'expiry' => $card->expiry,
+            ];
+        }
+
+
+        return inertia('Profile/Payment', compact(['order', 'orders', 'card']));
     }
 
-    /**
-     * Give the invoice download link getting from chargebee
-     *
-     * @return JsonResponse
-     */
-    public function invoiceDownload(Invoice $invoice, ChargeBeeService $chargeBeeService)
+    public function addCard(Request $request, CheckoutChampService $service)
     {
-        abort_if($invoice->user_id != _user()->id, 404);
+        $request->validate([
+            'number' => 'required',
+            'month' => 'required',
+            'year' => 'required',
+            'cvv' => 'required',
+        ]);
 
-        $chargeBeeInvoice = $chargeBeeService->downloadInvoicePdf($invoice->charge_bee_id);
-        $response = ['download_url' => $chargeBeeInvoice->downloadUrl];
+        if (!$request->user()->checkout_champ_id) {
+            return back()->with('error', __('You cannot update the default card.'));
+        }
 
-        return $this->sendResponse($response);
-    }
+        $customerResponse = $service->getCustomerByCustomerId(customerId: $request->user()->checkout_champ_id);
 
-    /**
-     * Create portal session from chargebee
-     *
-     * @return mixed
-     */
-    public function createPortalSession(ChargeBeeService $chargeBeeService)
-    {
-        return $chargeBeeService->createPortalSession(_user()->charge_bee_id)->toJson();
+        if (!$customerResponse->successful()) {
+            Log::channel('checkout-champ')->info('----------------------------------------------------------------------------------------------------------------------------------------------');
+            Log::channel('checkout-champ')->error("Error in getting customer by customer id. User id: {$request->user()->id}, in profile");
+            Log::channel('checkout-champ')->error($customerResponse->json());
+
+            return back()->with('error', __('You cannot update the default card.'));
+        }
+
+        if ($customerResponse->json()['result'] != 'SUCCESS') {
+            Log::channel('checkout-champ')->info('----------------------------------------------------------------------------------------------------------------------------------------------');
+            Log::channel('checkout-champ')->error("Error in result of customer. User id: {$request->user()->id}, in profile");
+            Log::channel('checkout-champ')->error($customerResponse->json());
+
+            return back()->with('error', __('You cannot update the default card. at the moment'));
+        }
+
+        $card = CheckoutChampUserCard::where('user_id', $request->user()->id)->latest('id')->first();
+
+        $response = $service->addCard(
+            cardNumber: $request->number,
+            cardMonth: $request->month,
+            cardYear: $request->year,
+            cardSecurityCode: $request->cvv,
+            paySourceId: $card?->pay_source_id,
+            customerId: $request->user()->checkout_champ_id,
+        );
+
+
+        if ($response->successful()) {
+            Log::channel('checkout-champ')->info('----------------------------------------------------------------------------------------------------------------------------------------------');
+            Log::channel('checkout-champ')->error("Success api of add card. User id: {$request->user()->id}, in profile");
+            Log::channel('checkout-champ')->error($customerResponse->json());
+
+            if ($response->json()['result'] != 'SUCCESS') {
+                Log::channel('checkout-champ')->info('----------------------------------------------------------------------------------------------------------------------------------------------');
+                Log::channel('checkout-champ')->error("Error in result of customer. User id: {$request->user()->id}, in profile");
+                Log::channel('checkout-champ')->error($customerResponse->json());
+
+                $message = $response->json()['message'];
+
+                if (!is_string($message)) {
+                    $message = 'Unable to update default payment method';
+                }
+
+                return back()->with('error', __($message));
+            }
+
+            $user = $request->user();
+
+            // Calling again the api for confirmation that the card is added successfully in checkout champ
+            $customerResponse = $service->getCustomerByCustomerId(customerId: $user->checkout_champ_id);
+
+            if ($customerResponse->successful()) {
+                if ($customerResponse->json()['result'] == 'SUCCESS') {
+
+                    $customer = $customerResponse['message']['data'][0];
+
+                    if (isset($customer['cardType']) && isset($customer['cardLast4']) && isset($customer['cardExpiryDate']) && isset($customer['paySourceId'])) {
+
+                        $card = CheckoutChampUserCard::updateOrCreate([
+                            'user_id' => $user->id
+                        ], [
+                            'user_id' => $user->id,
+                            'type' => $customer['cardType'],
+                            'last_4' => $customer['cardLast4'],
+                            'expiry' => $customer['cardExpiryDate'],
+                            'pay_source_id' => $customer['paySourceId'],
+                        ]);
+
+                    }
+
+
+                }
+            }
+
+            return back()->with('success', __('Card added successfully.'));
+        } else {
+            Log::channel('checkout-champ')->info('----------------------------------------------------------------------------------------------------------------------------------------------');
+            Log::channel('checkout-champ')->error("Error in getting customer by customer id. User id: {$request->user()->id}, in profile");
+            Log::channel('checkout-champ')->error($customerResponse->json());
+        }
+
+        return back()->with('error', __('Unable to update default payment method.'));
     }
 
     /**

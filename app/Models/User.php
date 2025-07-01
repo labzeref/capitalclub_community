@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserStatusEnum;
 use App\Models\Asset\Category;
+use App\Models\LiveStream\LiveStream;
 use App\Notifications\ResetPasswordNotification;
 use App\Services\DiscordService;
 use App\Traits\AddDummyImageTrait;
@@ -13,12 +14,10 @@ use Exception;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,7 +50,6 @@ class User extends Authenticatable implements HasMedia
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'status' => UserStatusEnum::class,
-        'subscribed' => 'bool',
         'verified_by_webhook' => 'bool',
         'discord_access_token_expiry' => 'datetime',
         'discord_roles' => 'array',
@@ -62,8 +60,13 @@ class User extends Authenticatable implements HasMedia
     protected $appends = ['full_name'];
 
     protected array $cascadeDeletes = [
-        'socialMedia', 'threads', 'reports', 'subscriptions', 'billingAddress', 'invoices',
+        'socialMedia', 'reports', 'subscriptions', 'billingAddress', 'invoices',
     ];
+
+    public function ChargebeeCustomer(): HasOne
+    {
+        return $this->hasOne(ChargeBeeCustomer::class);
+    }
 
     protected static function boot(): void
     {
@@ -143,11 +146,6 @@ class User extends Authenticatable implements HasMedia
         return $this->morphedByMany(LiveStream::class, 'markable', 'markable_bookmarks');
     }
 
-    public function bookmarkedLiveSeries(): MorphToMany
-    {
-        return $this->morphedByMany(LiveSeries::class, 'markable', 'markable_bookmarks');
-    }
-
     public function bookmarkedCourses(): MorphToMany
     {
         return $this->morphedByMany(Course::class, 'markable', 'markable_bookmarks');
@@ -210,16 +208,6 @@ class User extends Authenticatable implements HasMedia
         return $this->hasOne(DeactivateReason::class);
     }
 
-    public function threads(): HasMany
-    {
-        return $this->hasMany(Thread::class);
-    }
-
-    public function followingThreads(): BelongsToMany
-    {
-        return $this->belongsToMany(Thread::class, 'thread_followers');
-    }
-
     public function badges(): BelongsToMany
     {
         return $this->belongsToMany(Badge::class);
@@ -230,25 +218,16 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Report::class);
     }
 
-    /**
-     * The users which the current user follows
-     */
-    public function followingUsers(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'user_followers', 'follower_id', 'followed_id');
-    }
-
-    /**
-     * The followers of current user
-     */
-    public function followerUsers(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'user_followers', 'followed_id', 'follower_id');
-    }
-
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function hasActiveChargebeeSubscription()
+    {
+        return $this->subscriptions()->where('status','active')->where('next_billing_at','>',now())->count() > 0;
+
+
     }
 
     public function billingAddress(): HasOne
@@ -284,6 +263,26 @@ class User extends Authenticatable implements HasMedia
     public function notes(): HasMany
     {
         return $this->hasMany(LessonNote::class);
+    }
+
+    public function liveStreamNotes(): HasMany
+    {
+        return $this->hasMany(LessonNote::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(CheckoutChampOrder::class);
+    }
+
+    public function cards(): HasMany
+    {
+        return $this->hasMany(CheckoutChampCard::class);
+    }
+
+    public function primaryCard(): HasOne
+    {
+        return $this->hasOne(CheckoutChampCard::class)->where('is_primay', true);
     }
 
     /**
@@ -330,7 +329,8 @@ class User extends Authenticatable implements HasMedia
     public function enrolledInLesson(int $lessonId, int $courseId): void
     {
         if ($this->hasEnrolledInLesson($lessonId)) {
-            Log::create(['name' => _user()->id . "user is a-e in l-$lessonId of c-$courseId"]);
+            Log::create(['name' => _user()->id."user is a-e in l-$lessonId of c-$courseId"]);
+
             return;
         }
 
@@ -343,7 +343,7 @@ class User extends Authenticatable implements HasMedia
     }
 
     /**
-     * Make user enrolled in live training
+     * Make user enrolled in live stream
      */
     public function enrolledInLiveStream(int $liveStreamId): void
     {
@@ -421,16 +421,12 @@ class User extends Authenticatable implements HasMedia
 
     /**
      * Will update the last visit lesson in database
-     *
-     * @param int $courseId
-     * @param int $lessonId
-     * @return void
      */
     public function updateLastVisitLessonData(int $courseId, int $lessonId): void
     {
         if ($this->lastVisitLessonData()->where('course_id', $courseId)->exists()) {
             $this->lastVisitLessonData()->where('course_id', $courseId)->update([
-                'lesson_id' => $lessonId
+                'lesson_id' => $lessonId,
             ]);
         } else {
             $this->lastVisitLessonData()->create([
@@ -442,9 +438,6 @@ class User extends Authenticatable implements HasMedia
 
     /**
      * Get last visit lesson id against course id
-     *
-     * @param int $courseId
-     * @return int
      */
     public function getLastVisitLessonId(int $courseId): int
     {
@@ -461,11 +454,16 @@ class User extends Authenticatable implements HasMedia
 
     public function getGlitchId(): string
     {
-        return 'GLITCH #' .str_pad($this->id, 4, '0', STR_PAD_LEFT);
+        return 'GLITCH #'.str_pad($this->id, 4, '0', STR_PAD_LEFT);
     }
 
     public function getDiscordFormatNameId(): string
     {
-        return "$this->discord_display_name #" .str_pad($this->id, 4, '0', STR_PAD_LEFT);
+        return "$this->discord_display_name #".str_pad($this->id, 4, '0', STR_PAD_LEFT);
+    }
+
+    public function chargebeePayource(): HasOne
+    {
+        return $this->hasOne(ChargeBeePaySources::class);
     }
 }

@@ -41,16 +41,16 @@ const UpdateRegister = ({ countries, billingAddress, user, userData, setUserData
 
 
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
-        email: userData?.email ? userData?.email : user?.email ,
-        first_name: userData?.first_name ? userData?.first_name : user?.first_name ,
-        last_name: userData?.last_name ?userData?.last_name : user?.last_name ,
-        invite_code: invite_code ,
-        phone_number:  userData?.billingAddress?.phone_number ? userData?.billingAddress?.phone_number : billingAddress?.phone_number,
-        street_address: userData?.billingAddress?.street_address ? userData?.billingAddress?.street_address : billingAddress?.street_address ,
-        city: userData?.billingAddress?.city ? userData?.billingAddress?.city : billingAddress?.city  ,
-        zip_code: userData?.billingAddress?.zip_code ? userData?.billingAddress?.zip_code : billingAddress?.zip_code ,
-        state:  userData?.billingAddress?.state ? userData?.billingAddress?.state : billingAddress?.state ,
-        country_iso: userData?.billingAddress?.country_iso ? userData?.billingAddress?.country_iso : billingAddress?.country_iso  ,
+        email: userData?.email ? userData?.email : user?.email,
+        first_name: userData?.first_name ? userData?.first_name : user?.first_name,
+        last_name: userData?.last_name ? userData?.last_name : user?.last_name,
+        invite_code: invite_code,
+        phone_number: userData?.billingAddress?.phone_number ? userData?.billingAddress?.phone_number : billingAddress?.phone_number,
+        street_address: userData?.billingAddress?.street_address ? userData?.billingAddress?.street_address : billingAddress?.street_address,
+        city: userData?.billingAddress?.city ? userData?.billingAddress?.city : billingAddress?.city,
+        zip_code: userData?.billingAddress?.zip_code ? userData?.billingAddress?.zip_code : billingAddress?.zip_code,
+        state: userData?.billingAddress?.state ? userData?.billingAddress?.state : billingAddress?.state,
+        country_iso: userData?.billingAddress?.country_iso ? userData?.billingAddress?.country_iso : billingAddress?.country_iso,
         // recaptcha: null,
         // recaptcha_version: null
     });
@@ -99,7 +99,7 @@ const UpdateRegister = ({ countries, billingAddress, user, userData, setUserData
                     console.error("Error while posting data:", error);
                     ReactToast('error', error.response.data?.metadata?.message)
 
-                    if (error?.response?.status === 401){
+                    if (error?.response?.status === 401) {
                         window.location.href = '/checkout';
                     }
                     setProcess(false)
@@ -198,7 +198,7 @@ const UpdateRegister = ({ countries, billingAddress, user, userData, setUserData
                 // Get the formatted phone number with the country code
                 const formattedPhoneNumber = intlTelInputInstance.getNumber();
 
-                 // console.log('Formatted phone number:', formattedPhoneNumber);
+                // console.log('Formatted phone number:', formattedPhoneNumber);
                 setData('phone_number', formattedPhoneNumber);
             } else {
                 // console.log('correct phone')
@@ -210,8 +210,8 @@ const UpdateRegister = ({ countries, billingAddress, user, userData, setUserData
     };
 
     const handleContextMenu = (e) => {
-        e.preventDefault(); 
-      };
+        e.preventDefault();
+    };
 
     return (
         <>
@@ -352,7 +352,7 @@ const UpdateRegister = ({ countries, billingAddress, user, userData, setUserData
                                                 // className={'input-text w-full'}
                                                 type="tel"
                                                 id="phone"
-                                                defaultValue={ userData?.billingAddress?.phone_number ? userData?.billingAddress?.phone_number : user?.phone_number}
+                                                defaultValue={userData?.billingAddress?.phone_number ? userData?.billingAddress?.phone_number : user?.phone_number}
                                                 onChange={handlePhoneInputChange}
                                             />
 
@@ -488,7 +488,7 @@ const UpdateRegister = ({ countries, billingAddress, user, userData, setUserData
                                                     name="selectedOption"
                                                     value={data?.country_iso || ''}
                                                     onChange={(e) => { clearErrors('country_iso'); setData("country_iso", e.target.value) }}
-                                                    className="appearance-none w-full text-center text-gray-50 rounded-[20px] border-0  text-10  font-normal bg-[#1A1A1A] outline-none register-country-height px-6   focus:shadow-none focus:ring-transparent focus:border focus:border-[#0000001a]"
+                                                    className="appearance-none w-full text-center text-gray-50 border-rounded-8 border-0  text-10  font-normal bg-[#1A1A1A] outline-none register-country-height px-6   focus:shadow-none focus:ring-transparent focus:border focus:border-[#0000001a]"
                                                     id="frm-whatever">
                                                     <option value="" disabled className="text-center">
                                                         Country

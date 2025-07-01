@@ -29,7 +29,7 @@ const LiveSession = ({ liveTraining, liveSeries, liveStream, liveTrainingGroup, 
     }
 
     const handleLiveStreamBookmarkToggle = () => {
-        post(route('bookmark-toggle.live-stream', liveStream?.id), {
+        post(route('bookmark-toggle.livestream', liveStream?.id), {
             preserveScroll: true
         });
     }
@@ -89,7 +89,7 @@ const LiveSession = ({ liveTraining, liveSeries, liveStream, liveTrainingGroup, 
         } else {
             try {
                 const response = await axios.post(
-                    route("live-stream.chat", id?.id),
+                    route("livestream.chat", id?.id),
                     {
                         value: inputValue,
                         mentioned_message_id: replyId,
@@ -138,7 +138,7 @@ const LiveSession = ({ liveTraining, liveSeries, liveStream, liveTrainingGroup, 
 
         if (liveStream) {
 
-            const channel = Echo.join(`live-stream.${liveStream?.id}`)
+            const channel = Echo.join(`livestream.${liveStream?.id}`)
             channel.here((users) => {
                 setAllParticipant(users)
             });
@@ -155,7 +155,7 @@ const LiveSession = ({ liveTraining, liveSeries, liveStream, liveTrainingGroup, 
                 const updatedParticipants = allParticipant.filter((participant) => participant.id !== user?.id);
                 setAllParticipant(updatedParticipants);
             });
-            channel.listen('.live-stream', (event) => {
+            channel.listen('.livestream', (event) => {
                 const newMessage = event.message;
                 setMessage(prevMessages => [newMessage, ...prevMessages]);
             });
@@ -204,7 +204,7 @@ const LiveSession = ({ liveTraining, liveSeries, liveStream, liveTrainingGroup, 
     }, [message]);
 
     const handleContextMenu = (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
       };
 
     return (
@@ -422,11 +422,11 @@ const LiveSession = ({ liveTraining, liveSeries, liveStream, liveTrainingGroup, 
                                                             <div className="w-full">
                                                                 <div
                                                                     className=" flex items-center justify-between mb-2">
-                                                                   
+
                                                                         <div className="flex items-center gap-2">
                                                                             <p className="fs-small fw-medium">{msg?.user?.full_name}</p>
                                                                             {/* <img className="h-4 w-4" src={top50} alt="" /> */}
-                                                                        </div> 
+                                                                        </div>
                                                                     <p className="fs-tiny fw-regular opacity-50">{msg?.send_at}</p>
                                                                 </div>
                                                                 {msg?.mentioned_message?.value &&

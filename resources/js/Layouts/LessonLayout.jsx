@@ -9,27 +9,45 @@ import { usePage } from "@inertiajs/react";
 import AppLayout from "./AppLayout";
 import { PostsContext } from '../Store/PostsProvider';
 import { useContext } from "react";
-import ToastNotification from "@/Components/ToastNotification"; 
+import ToastNotification from "@/Components/ToastNotification";
 import { useRef } from "react";
+import axios from "axios";
+import { GTMLogs } from "@/utils/GTMLogs";
 const LessonLayout = ({ children }) => {
     useEffect(() => {
-        AOS.init()  
+        AOS.init()
         setTimeout(() => {
             window.scrollTo(0, -165);
         }, 0);
     }, [])
-  
+
     const { contextNotify, studymode } = useContext(PostsContext);
     useEffect(() => {
         //    console.log("notificatoin in   layout ****" , contextNotify)
-    }, [contextNotify]) 
-    
+    }, [contextNotify])
+
     const topElementRef = useRef(null);
     useEffect(() => {
         if (topElementRef.current) {
             topElementRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, []);
+
+    // google GTM 
+    useEffect(() => {
+        axios.get(route('get-auth-user'))
+            .then((response) => {
+                const user = response?.data?.payload;
+                GTMLogs(
+                    {
+                        'email': user?.email,
+                        'phone_number': user?.phone_number,
+                        'customer_id': user?.id,
+                        'country': user?.country_iso,
+                    }
+                )
+            })
+    }, [])
 
     return (
         <div>
@@ -46,7 +64,7 @@ const LessonLayout = ({ children }) => {
                         </Suspense>
                     </div>
                 </div>
-                 
+
             </div>
         </div>
     );

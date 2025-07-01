@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Resources\Lesson\LessonResourceResource;
 use App\Models\Lesson;
 use Illuminate\Console\Command;
 
@@ -14,9 +13,9 @@ class UpdateSerialNumberCommand extends Command
 
     public function handle(): void
     {
-        $courseId = $this->ask("Enter course id");
+        $courseId = $this->ask('Enter course id');
 
-        if (!$courseId) {
+        if (! $courseId) {
             return;
         }
 
@@ -26,6 +25,6 @@ class UpdateSerialNumberCommand extends Command
             $lesson->updateSerialNumber();
         }
 
-        info("All lessons serial number updated.");
+        info('All lessons serial number updated.');
     }
 }

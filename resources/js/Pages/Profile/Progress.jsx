@@ -22,20 +22,21 @@ import { PostsContext } from '../../Store/PostsProvider';
 import { useContext } from "react";
 
 const Progress = ({
+    bookmarkedLivestream,
     bookmarkedCourses,
     notedCourses,
 }) => {
 
-    const {scrollToNotes , setScrollToNotes } = useContext(PostsContext);
+    const { scrollToNotes, setScrollToNotes } = useContext(PostsContext);
     // console.log("bookmarkedCourses");
     // console.log(bookmarkedCourses);
     // console.log("bookmarkedLessons");
     // console.log(bookmarkedLessons);
     // console.log("notedCourses");
     // console.log(notedCourses);
-    // console.log(" enrolledCourses");
-    // console.log(enrolledCourses);
- 
+    // console.log(" bookmarkedLivestream");
+    // console.log(bookmarkedLivestream);
+
 
     const [styleState, setStyleState] = useState({
         options: {
@@ -85,7 +86,7 @@ const Progress = ({
 
 
     const handleBookmarkLiveToggle = (id) => {
-        post(route("bookmark-toggle.live-stream", id), {
+        post(route("bookmark-toggle.livestream", id), {
             preserveScroll: true,
         });
     };
@@ -113,9 +114,9 @@ const Progress = ({
 
 
     useEffect(() => {
-    setTimeout(() => {
-        setScrollToNotes(false)
-    }, 2000);
+        setTimeout(() => {
+            setScrollToNotes(false)
+        }, 2000);
     }, [])
 
 
@@ -127,44 +128,44 @@ const Progress = ({
 
     const notesSectionRef = useRef(null);
     useEffect(() => {
-        if (scrollToNotes && notesSectionRef.current ) {
-          notesSectionRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, [scrollToNotes]);
-
-
-
-
-      useEffect(() => {
         if (scrollToNotes && notesSectionRef.current) {
-          // Scroll to the 5th section
-          notesSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+            notesSectionRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-      }, [scrollToNotes]);
+    }, [scrollToNotes]);
 
-      useEffect(() => {
-        if(scrollToNotes){
+
+
+
+    useEffect(() => {
+        if (scrollToNotes && notesSectionRef.current) {
+            // Scroll to the 5th section
+            notesSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [scrollToNotes]);
+
+    useEffect(() => {
+        if (scrollToNotes) {
             window.scrollTo(0, document.getElementById('second-section').offsetTop);
         }
-      }, []);
+    }, []);
 
 
 
-console.log('bookmarkedCourses' , bookmarkedCourses)
+    // console.log('bookmarkedCourses', bookmarkedCourses)
 
     return (
         <div className={`profile-margin ${bookmarkedCourses.length > 0 || notedCourses.length > 0 ? 'h-[100%]' : 'h-[75vh]'} `} style={{ maxHeight: '-webkit-fill-available' }}>
             <Head>
                 <title>Favorites</title>
             </Head>
-           
+
             <div className="container mx-auto px-4 lg:px-0 ">
                 <div data-aos="fade-in" data-aos-delay="100" data-aos-easing="ease" data-aos-duration="300" className=" md:pb-[1rem]  md:px-3">
 
+                    {/* **********FAVORITE COURSES ************* */}
                     <div className="lesson-notes-wrapper border-rounded-15 favourites-card-padding  ">
-                        {/* **********COURSES ************* */}
                         <>
-                         <p className="progress-headings  ">FAVORITES </p>
+                            <p className="progress-headings  ">FAVORITES COURSES </p>
 
                             <div className="grid grid-cols-12 gap-y-4 md:gap-y-7 lg:gap-y-10 gap-x-2.5 md:gap-x-5 lg:gap-x-6 mt-4">
 
@@ -192,27 +193,66 @@ console.log('bookmarkedCourses' , bookmarkedCourses)
                         </>
 
                         {/* **********RELATED LESSONS************* */}
-
-                      
-
-
                     </div>
 
+
+
+
+
+                    <div className="lesson-notes-wrapper border-rounded-15 favourites-card-padding mt-[1rem] md:mt-[2.2rem] ">
+                        <>
+                            <p className="progress-headings  ">FAVORITE LIVESTREAMS </p>
+
+                            <div className="grid grid-cols-12 gap-y-4 md:gap-y-7 lg:gap-y-10 gap-x-2.5 md:gap-x-5 lg:gap-x-6 mt-4">
+
+                                {bookmarkedLivestream?.length > 0 ? <>
+                                    {bookmarkedLivestream?.map((data, index) => (
+
+                                        <div key={index + 3}
+                                            className="col-span-4 md:col-span-4 lg:col-span-3  ">
+
+
+                                            <div className={"cursor-pointer academy-small-card  is-favorites large-card-hover-div rounded-[8px] relative  "}>
+                                                <Link href={route('livestream.show', data?.id)} >
+                                                    <img src={data?.mobileBanner} className="  w-full hide-sm-img desktop " />
+                                                    <img src={data?.mobileBanner} className=" w-full hide-md-img mobile " />
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </> : <div className="col-span-12 text-center opacity-50 text-[10px] md:text-[14px] lg:text-[20px]">
+                                    Each livestream you favorite will appear here
+                                </div>
+                                }
+
+                            </div>
+                        </>
+
+                        {/* **********RELATED LESSONS************* */}
+                    </div>
+
+
+
+
+
+
+
+
                     {/* ************ NEW NOTES ****************  */}
- 
+
 
                     <div id="second-section" ref={notesSectionRef} className="lesson-notes-wrapper border-rounded-15 favourites-card-padding  md:mx-0 mt-[1rem] md:mt-[2.2rem]">
-                      
+
 
                         <p className="progress-headings  ">NOTES </p>
 
                         <div className="grid grid-cols-12 gap-y-4 md:gap-y-7 lg:gap-y-10 gap-x-2.5 lg:gap-x-6 mt-4">
                             {notedCourses?.length < 1
-                            ?
-                            <div className="col-span-12 text-center opacity-50 text-[10px] md:text-[14px] lg:text-[20px]">
-                                Notes you take on each lesson will appear here
-                            </div>
-                             :
+                                ?
+                                <div className="col-span-12 text-center opacity-50 text-[10px] md:text-[14px] lg:text-[20px]">
+                                    Notes you take on each lesson will appear here
+                                </div>
+                                :
 
                                 <>
                                     {notedCourses?.map((data, index) => (
@@ -233,21 +273,21 @@ console.log('bookmarkedCourses' , bookmarkedCourses)
                 </div>
             </div>
             <>
-                            <AnimatePresence>
-                                {showModal &&
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <BookmarkLessons setShowModal={setShowModal} showModal={showModal} favLessons={favLessons} />
-                                    </motion.div>
-                                }
-                            </AnimatePresence>
+                <AnimatePresence>
+                    {showModal &&
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <BookmarkLessons setShowModal={setShowModal} showModal={showModal} favLessons={favLessons} />
+                        </motion.div>
+                    }
+                </AnimatePresence>
 
 
-                        </>
+            </>
         </div>
     );
 };

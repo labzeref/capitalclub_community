@@ -28,15 +28,14 @@ class CreateMasterLogin extends Command
         $email = $this->ask('email');
         $signature = encrypt($email.'++=='.now()->addMinute());
 
-        if ($this->confirm('Production?')){
+        if ($this->confirm('Production?')) {
 
             $this->info('https://members.capital.club/master-login/'.$signature);
 
-        }else{
+        } else {
 
-            $this->info(route('master.login',['signature' => $signature]));
+            $this->info(route('master.login', ['signature' => $signature]));
         }
-
 
     }
 }

@@ -26,7 +26,7 @@ class RegisteredUserRequest extends FormRequest
             'country_iso' => 'required|string|exists:countries,iso',
             'first_name' => 'required|max:60',
             'last_name' => 'required|max:60',
-//            'invite_code' => 'required|max:60',
+            //            'invite_code' => 'required|max:60',
             'email' => 'required|email:rfc,dns|max:255',
             'phone_number' => 'required|max:20',
             'street_address' => 'required|string|max:255',

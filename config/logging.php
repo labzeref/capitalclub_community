@@ -97,6 +97,22 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'checkout-champ' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/checkout-champ/checkout-champ.log'),
+            'level' => 'info',
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
+        'klaviyo' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/klaviyo/klaviyo.log'),
+            'level' => 'info',
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

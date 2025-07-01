@@ -10,9 +10,10 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class UserPasswordMail extends Mailable implements ShouldQueue
+class UserPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
+    protected $tries = 5;
 
     public function __construct(private readonly User $user, private readonly string $password)
     {

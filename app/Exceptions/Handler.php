@@ -25,7 +25,7 @@ class Handler extends ExceptionHandler
         $response = parent::render($request, $e);
 
         if (
-            !app()->environment(['local', 'testing']) &&
+            ! app()->environment(['local', 'testing']) &&
             in_array($response->status(), [403, 404, 405, 419, 429, 500])
         ) {
             return match ($response->status()) {

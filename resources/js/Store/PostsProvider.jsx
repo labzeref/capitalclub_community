@@ -10,45 +10,48 @@ const PostsContext = createContext();
 
 const PostsProvider = ({ children }) => {
   const [contextPosts, setContextPosts] = useState([]);
-  const [currentPage , setCurrentPage] = useState();
+  const [currentPage, setCurrentPage] = useState();
   const [CourseId, setCourseId] = useState();
 
   const [contextNotify, setContextNotifiy] = useState({});
 
-const toastNotify =(e)=>{
-setContextNotifiy(e)
-}
+  const toastNotify = (e) => {
+    setContextNotifiy(e)
+  }
 
-const [studymode, setStudyMode] = useState(false);
+  const [studymode, setStudyMode] = useState(false);
 
-const [userData, setUserData] = useState([]);
+  const [userData, setUserData] = useState([]);
 
-const [scrollToNotes , setScrollToNotes] = useState(false);
+  const [scrollToNotes, setScrollToNotes] = useState(false);
 
-const [studyMoodOn, setStudyMoodOn] = useState(false)
+  const [studyMoodOn, setStudyMoodOn] = useState(false)
 
-const [isPlayPage , setIsPlayPage] = useState(false)
+  const [isPlayPage, setIsPlayPage] = useState(false)
 
-useEffect(() => {
-  window.addEventListener('beforeunload', function () {
-    localStorage.removeItem("academyLoaded"); 
-    console.log(' academy loaded removed')
- });       
- }, [])
+  const [featuredLiveStream, setFeaturedLiveStream] = useState();
 
 
-useEffect(() => {
-if (currentPage!='play') {
-  setStudyMode(false)
-}
-}, [currentPage])
+  useEffect(() => {
+    window.addEventListener('beforeunload', function () {
+      localStorage.removeItem("academyLoaded");
+      // console.log(' academy loaded removed')
+    });
+  }, [])
 
-const toggleStudyMode = () => {
-  setStudyMode(!studymode);
-};
+
+  useEffect(() => {
+    if (currentPage != 'play') {
+      setStudyMode(false)
+    }
+  }, [currentPage])
+
+  const toggleStudyMode = () => {
+    setStudyMode(!studymode);
+  };
 
   return (
-    <PostsContext.Provider value={{  isPlayPage, setIsPlayPage ,  scrollToNotes ,  setScrollToNotes, studymode, studyMoodOn, setStudyMoodOn, toggleStudyMode , setCourseId,CourseId, toastNotify , contextNotify, contextPosts  , setCurrentPage      }}>
+    <PostsContext.Provider value={{ featuredLiveStream, setFeaturedLiveStream, isPlayPage, setIsPlayPage, scrollToNotes, setScrollToNotes, studymode, studyMoodOn, setStudyMoodOn, toggleStudyMode, setCourseId, CourseId, toastNotify, contextNotify, contextPosts, setCurrentPage }}>
       {children}
     </PostsContext.Provider>
   );

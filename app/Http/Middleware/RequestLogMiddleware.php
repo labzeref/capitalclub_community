@@ -3,10 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use GeoIp2\Exception\AddressNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Stevebauman\Location\Facades\Location;
-use Torann\GeoIP\Facades\GeoIP;
 
 class RequestLogMiddleware
 {
@@ -22,21 +22,26 @@ class RequestLogMiddleware
             'updated_at' => $now,
         ];
 
-        $currentUserInfo = Location::get($request->ip());
+//        try {
+//            $currentUserInfo = Location::get($request->ip());
+//
+//            if ($currentUserInfo) {
+//                if ($currentUserInfo->countryName) {
+//                    $attributes['country'] = $currentUserInfo->countryName;
+//                }
+//
+//                if ($currentUserInfo->cityName) {
+//                    $attributes['city'] = $currentUserInfo->cityName;
+//                }
+//
+//                if ($currentUserInfo->zipCode) {
+//                    $attributes['zip'] = $currentUserInfo->zipCode;
+//                }
+//            }
+//        }catch (AddressNotFoundException $e) {
+//
+//        }
 
-        if ($currentUserInfo) {
-            if ($currentUserInfo->countryName) {
-                $attributes['country'] = $currentUserInfo->countryName;
-            }
-
-            if ($currentUserInfo->cityName) {
-                $attributes['city'] = $currentUserInfo->cityName;
-            }
-
-            if ($currentUserInfo->zipCode) {
-                $attributes['zip'] = $currentUserInfo->zipCode;
-            }
-        }
 
         try {
             $attributes['device'] = gethostname();

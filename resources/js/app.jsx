@@ -9,8 +9,9 @@ import { useEffect } from 'react';
 
 
 
+
 const appName =
-window.document.getElementsByTagName("title")[0]?.innerText || "Captial Club";
+    window.document.getElementsByTagName("title")[0]?.innerText || "Captial Club";
 
 createInertiaApp({
     title: (title) => `${title} ${title ? '-' : ''} ${appName}`,
@@ -22,13 +23,13 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
         // const handleContextMenu = (e) => {
-            //     e.preventDefault(); 
-            //   };
-            
-            
-            
-            
-            root.render(
+        //     e.preventDefault(); 
+        //   };
+
+
+
+
+        root.render(
             <div>
                 <PostsProvider>
                     <App {...props} />

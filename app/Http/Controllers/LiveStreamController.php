@@ -2,34 +2,159 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\LiveStreamResource;
-use App\Http\Resources\StreamMessageResource;
-use App\Models\LiveStream;
-use Inertia\Response;
-use Inertia\ResponseFactory;
+use App\Http\Resources\LiveStream\LiveStreamResource;
+use App\Models\LiveStream\LiveStream;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class LiveStreamController extends Controller
 {
-    /**
-     * Show the live training play screen
-     *
-     * @return Response|ResponseFactory
-     */
-    public function play(LiveStream $liveStream)
+    public function index()
     {
-        $user = _user();
-        $streamChat = [];
-        if (! $user->hasEnrolledInLiveStream($liveStream->id)) {
-            $user->enrolledInLiveStream($liveStream->id);
+        $featuredLiveStream = LiveStream::query()
+
+        ->with(['category', 'instructor'])
+            // ->where('live_at', '>', now())
+            ->whereNull('live_end_at')
+            ->orderBy('live_at')
+            ->first();
+
+        if ($featuredLiveStream) {
+            $featuredLiveStream = new LiveStreamResource($featuredLiveStream);
         }
 
-        if ($liveStream->chat_enabled) {
-            $chat = $liveStream->streamMessages()->orderBy('id', 'DESC')->limit(100)->get();
-            $streamChat = StreamMessageResource::collection($chat);
+        return inertia('LiveStream/LiveStream', compact(['featuredLiveStream']));
+    }
+
+    public function show(LiveStream $liveStream)
+    {
+        _user()->load(['bookmarkedLiveStream']);
+
+        $selected_livestream = LiveStream::where('id',$liveStream->id)->first();
+        if($selected_livestream->disabled == true){
+            return redirect()->route('livestream.index');
         }
 
-        $liveStream = new LiveStreamResource($liveStream->load('liveSeries'));
+        $selected_livestream = LiveStream::where('id',$liveStream->id)->first();
+        if($selected_livestream->disabled == true){
+            return redirect()->route('livestream.index');
+        }
 
-        return inertia('Live/LiveSession', compact('liveStream', 'streamChat'));
+        $liveStream = new LiveStreamResource(
+            $liveStream->load([
+                'category',
+                'instructor',
+                'note' => fn ($note) => $note->where('user_id', _user()->id)
+            ])
+        );
+
+        return inertia('LiveStream/LiveStreamSession', compact(['liveStream']));
+    }
+
+    public function getUpcoming()
+    {
+        $now = Carbon::now('America/New_York');
+
+        // $response = LiveStreamResource::collection(
+        //     LiveStream::whereNull('live_end_at')->where('live_at', '>', now())->with(['category', 'instructor'])->orderBy('live_at')->get()
+        // );
+
+        // all livestreams whop are not ended whether date has passed or not
+        $response = LiveStreamResource::collection(
+            LiveStream::whereNull('live_end_at')->with(['category', 'instructor'])->orderBy('live_at')->get()
+        );
+
+        return $this->sendResponse($response);
+    }
+
+    // sing page link
+
+    // public function getPast(Request $request)
+    // {
+    //     $order = $request->query('order', 'asc');
+
+    //     if (!in_array($order, ['asc', 'desc'])) {
+    //         $order = 'asc';
+    //     }
+
+    //     $response = LiveStreamResource::collection(
+    //         LiveStream::whereNotNull('live_end_at')->with(['category', 'instructor'])
+    //             ->orderBy('live_at', $order)
+    //             ->paginate(12)
+    //     )->resource;
+    //     $url = route('livestream.index');
+    //      $response->withPath($url);
+
+    //     return $this->sendResponse($response);
+    // }
+
+    public function Past(Request $request)
+    {
+        $featuredLiveStream = LiveStream::query()
+
+        ->with(['category', 'instructor'])
+            // ->where('live_at', '>', now())
+            ->whereNull('live_end_at')
+            ->orderBy('live_at')
+            ->first();
+
+        if ($featuredLiveStream) {
+            $featuredLiveStream = new LiveStreamResource($featuredLiveStream);
+        }
+
+        // Fetch past live streams
+        //     $pastLiveStreams = LiveStreamResource::collection(
+        //     LiveStream::query()
+        //     ->whereNotNull('live_end_at')->with(['category', 'instructor'])
+        //     ->orderBy('live_at', 'desc')
+        //     ->paginate(12)
+        // )->resource;
+        // if ($request->wantsJson()) {
+        //     return $this->sendResponse($pastLiveStreams);
+        // }
+
+        return inertia('LiveStream/PastLiveStream', compact(['featuredLiveStream']));
+    }
+
+    public function getPast(Request $request)
+    {
+
+
+        $order = $request->query('order', 'desc');
+        $page = $request->query('page', 1);
+
+            $response = LiveStreamResource::collection(
+                LiveStream::query()
+                ->whereNotNull('live_end_at')->with(['category', 'instructor'])
+                ->orderBy('live_at', $order)
+                ->skip(12*($request->page-1))
+                ->take(12)
+                ->get()
+            )->resource;
+            // $url = route('livestream.past');
+            //  $response->withPath($url);
+            $next_page = Null;
+            if(!empty($response)){
+            $next_page = $page+1;
+            }
+            return $this->sendResponse(['data' => $response , 'next_page' => $next_page ]);
+        }
+
+
+
+
+    public function storeNote(Request $request, LiveStream $liveStream)
+    {
+        $request->validate([
+            'content' => 'nullable|string',
+        ]);
+
+        $liveStream->note()->updateOrCreate([
+            'user_id' => $request->user()->id
+        ], [
+            'content' => $request->input('content'),
+        ]);
+
+        return $this->sendResponse([], __('Notes Saved.'));
     }
 }

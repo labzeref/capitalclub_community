@@ -5,22 +5,19 @@ import Toast from "@/Components/Toast/Toast.jsx";
 import React, { lazy, Suspense, useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { usePage } from "@inertiajs/react";
 import AppLayout from "./AppLayout";
 import { PostsContext } from '../Store/PostsProvider';
 import { useContext } from "react";
 import ToastNotification from "@/Components/ToastNotification";
-import logo from "../../assets/logo.svg";
 import { useRef } from "react";
+import { GTMLogs } from "@/utils/GTMLogs";
+import axios from "axios";
 const Layout = ({ children }) => {
-
-   
-
 
     useEffect(() => {
         AOS.init();
     }, [])
-  
+
     const { contextNotify, studymode } = useContext(PostsContext);
 
     useEffect(() => {
@@ -34,7 +31,22 @@ const Layout = ({ children }) => {
     // Get the last segment
     const currentPage = segments[segments.length - 1];
 
-console.log(currentPage)
+    const currentUrl = window.location.href;
+    const extractMarketplaceSegment = (url) => {
+        const parsedUrl = new URL(url);
+        const pathname = parsedUrl.pathname;
+        const segments = pathname.split('/');
+        const marketplaceIndex = segments.findIndex(segment => segment.toLowerCase() === 'marketplace');
+        if (marketplaceIndex !== -1) {
+            return segments[marketplaceIndex];
+        } else {
+            return null;
+        }
+    };
+
+    const marketplaceSegment = extractMarketplaceSegment(currentUrl);
+
+
 
     const topElementRef = useRef(null);
     useEffect(() => {
@@ -43,10 +55,27 @@ console.log(currentPage)
         }
     }, []);
     const handleContextMenu = (e) => {
-        e.preventDefault(); 
-      };
+        e.preventDefault();
+    };
+
+    useEffect(() => {
+        axios.get(route('get-auth-user'))
+            .then((response) => {
+                const user = response?.data?.payload;
+                GTMLogs(
+                    {
+                        'email': user?.email,
+                        'phone_number': user?.phone_number,
+                        'customer_id': user?.id,
+                        'country': user?.country_iso,
+                    }
+                )
+            })
+    }, [currentPage])
+
+
     return (
-        <div onContextMenu={handleContextMenu}> 
+        <div onContextMenu={handleContextMenu}>
             <ToastNotification />
             <div ref={topElementRef} className="flex justify-between flex-col h-[98vh]">
                 <div>
@@ -60,7 +89,7 @@ console.log(currentPage)
                         </Suspense>
                     </div>
                 </div>
-                {currentPage == 'academy' || currentPage == 'marketplace' || currentPage == 'marketplace-profile' ?
+                {currentPage == 'academy' || currentPage == 'livestream' || marketplaceSegment == 'marketplace' ?
                     <Footer /> :
                     <>
                         {currentPage == 'play' && studymode ?

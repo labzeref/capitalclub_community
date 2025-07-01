@@ -28,7 +28,7 @@ class RemoveTagFromActiveCampaignContactJob implements ShouldQueue
     {
         $user = User::find($this->userId);
 
-        if (!$user) {
+        if (! $user) {
             return;
         }
 
@@ -36,16 +36,15 @@ class RemoveTagFromActiveCampaignContactJob implements ShouldQueue
 
             $removableTagId = $this->getRemovableTagId(user: $user);
 
-            if (!$removableTagId) {
-                $this->log("User does not has CC - Yearly-Member tag", $user->email);
-            }else{
+            if (! $removableTagId) {
+                $this->log('User does not has CC - Yearly-Member tag', $user->email);
+            } else {
                 try {
                     $this->removeTag(tagId: $removableTagId);
-                }catch (\Exception $exception){
+                } catch (\Exception $exception) {
 
                 }
             }
-
 
             $this->assignRefundTag(user: $user);
         } else {
@@ -73,12 +72,12 @@ class RemoveTagFromActiveCampaignContactJob implements ShouldQueue
             return $tag ? $tag['id'] : null;
         }
 
-        $this->log("While getting removable tag id", $user->email, $response);
+        $this->log('While getting removable tag id', $user->email, $response);
 
         return null;
     }
 
-    private function removeTag(string $tagId) : void
+    private function removeTag(string $tagId): void
     {
         $url = "$this->baseUrl/contactTags/$tagId";
 
@@ -87,12 +86,12 @@ class RemoveTagFromActiveCampaignContactJob implements ShouldQueue
             'Api-Token' => config('active-campaign.token'),
         ])->delete($url);
 
-        if (!$response->ok()) {
-            $this->log("While removing tag", $this->userId, $response);
+        if (! $response->ok()) {
+            $this->log('While removing tag', $this->userId, $response);
         }
     }
 
-    private function assignRefundTag(User $user) : void
+    private function assignRefundTag(User $user): void
     {
         $url = "$this->baseUrl/contactTags";
 
@@ -103,15 +102,15 @@ class RemoveTagFromActiveCampaignContactJob implements ShouldQueue
             'contactTag' => [
                 'contact' => $user->active_campaign_id,
                 'tag' => config('active-campaign.tags.CC-Cancellations-Refunded'),
-            ]
+            ],
         ]);
 
-        if (!$response->successful()) {
-            $this->log("While assigning refund tag", $user->email, $response);
+        if (! $response->successful()) {
+            $this->log('While assigning refund tag', $user->email, $response);
         }
     }
 
-    private function log(string $message, string $identifier, ?Response $response = null): void
+    private function log(string $message, string $identifier, Response $response = null): void
     {
         Log::channel('active-campaign')->info($message);
         Log::channel('active-campaign')->info($identifier);
@@ -119,6 +118,6 @@ class RemoveTagFromActiveCampaignContactJob implements ShouldQueue
             Log::channel('active-campaign')->info($response->body());
             Log::channel('active-campaign')->info($response->status());
         }
-        Log::channel('active-campaign')->info("----------------------------------------------------------------------------------------------------------");
+        Log::channel('active-campaign')->info('----------------------------------------------------------------------------------------------------------');
     }
 }

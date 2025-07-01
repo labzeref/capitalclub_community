@@ -12,38 +12,38 @@ const AcademySmallCard = ({ className = '', routeToPlay = '', isLock = '', isLoc
 
     useEffect(() => {
         const blurDivs = document.querySelectorAll(".blur-load");
-    
+
         blurDivs.forEach((div) => {
-          const img = div.querySelector("img");
-    
-          function loaded() {
-            div.classList.add("loaded");
-          }
-    
-          if (img.complete) {
-            loaded();
-          } else {
-            img.addEventListener("load", loaded);
-          }
-    
-          return () => {
-            // Cleanup: Remove the event listener when the component unmounts
-            img.removeEventListener("load", loaded);
-          };
+            const img = div.querySelector("img");
+
+            function loaded() {
+                div.classList.add("loaded");
+            }
+
+            if (img.complete) {
+                loaded();
+            } else {
+                img.addEventListener("load", loaded);
+            }
+
+            return () => {
+                // Cleanup: Remove the event listener when the component unmounts
+                img.removeEventListener("load", loaded);
+            };
         });
-      }, []); 
+    }, []);
 
 
     return (
         <>
             <Link preserveScroll href={routeToPlay} className={isLock} >
                 <div className={className + " large-card-hover-div bg-cover bg-center rounded-lg relative  blur-load bg-img"}
-                    // style={{ backgroundImage: `url(${placeholder}) ` }}
+                // style={{ backgroundImage: `url(${placeholder}) ` }}
                 >
 
                     <img src={imageLoaded ? desktop_image?.original?.url : desktop_image?.original?.url} onLoad={() => setImageLoaded(true)} loading="lazy" className="  w-full hide-sm-img desktop " />
                     <img src={imageLoaded ? mobile_image?.original?.url : mobile_image?.original?.url} onLoad={() => setImageLoaded(true)} loading="lazy" className=" w-full hide-md-img mobile " />
-                    
+
                     <div className="card-overlay"></div>
 
                     {upcomming && <Badge className={badge}>upcomming</Badge>}
@@ -51,7 +51,7 @@ const AcademySmallCard = ({ className = '', routeToPlay = '', isLock = '', isLoc
                     {liveBadge &&
                         <LiveBadge LiveClass="absolute" />
                     }
-                  
+
                     {bookMark && (
                         <div onClick={() => { handleBookmarkToggle(id) }} className="absolute z-[9999] top-[2px] right-[2px] md:top-4 md:right-4">
                             {" "}
@@ -73,7 +73,7 @@ const AcademySmallCard = ({ className = '', routeToPlay = '', isLock = '', isLoc
                     }
                     <div className={` progrss-bar  absolute  -mt-1   `}
                         style={{ width: videoProgress + '%' }} ></div>
-                </div> 
+                </div>
             </Link>
         </>
     )

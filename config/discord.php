@@ -15,6 +15,7 @@ return [
     'serverLink' => env('DISCORD_SERVER_LINK'),
     'defaultRoleId' => env('DISCORD_DEFAULT_ROLE_ID'),
     'guestRoleId' => env('DISCORD_GUEST_ROLE_ID'),
+    'recurringRoleId' => env('DISCORD_RECURRING_ROLE_ID'),
     'botToken' => env('DISCORD_BOT_TOKEN'),
     'scopes' => ['identify', 'email', 'guilds.join'],
 ];

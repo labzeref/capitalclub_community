@@ -11,12 +11,17 @@ import IconButton from "../IconButton";
 import { PostsContext } from '../../Store/PostsProvider';
 import { useContext } from "react";
 import logo from "../../../assets/svg/nav-logo.svg"
+import roadIcon from "../../../assets/roadmap/road2.svg"
+
 import ArrowMark from "../ArrowMark";
 import Xmark from "../Xmark";
 import axios from "axios";
 
 import Lottie from "react-lottie-player";
 import WELCOME_LOTTIE from "@/Components/welcome.json";
+import { GTMLogs } from "@/utils/GTMLogs";
+import CC_LOTTIE from "@/Components/CC_LOTTIE_V01.json";
+import SearchDropdown from "../SearchDropdown";
 
 const Navbar = () => {
     useEffect(() => {
@@ -33,7 +38,7 @@ const Navbar = () => {
     const [openDropDownMenu, setOpenDropDownMenu] = useState(false)
 
     const [openDropDownNotification, setOpenDropDownNotification] = useState(false)
-
+    const [openSearchDropDown, setOpenSearchDropDown] = useState(false)
     const pageData = usePage();
     const url = pageData?.url;
     useEffect(() => {
@@ -70,7 +75,8 @@ const Navbar = () => {
 
 
     useEffect(() => {
-        if (openMobileMenu || openDropDownMenu) {
+        if (openMobileMenu) {
+
             document.body.style.overflow = "hidden";
         } else {
             document.body.style.overflow = "auto";
@@ -79,7 +85,23 @@ const Navbar = () => {
         return () => {
             document.body.style.overflow = "auto";
         };
-    }, [openMobileMenu, openDropDownMenu]);
+    }, [openMobileMenu]);
+
+
+
+    useEffect(() => {
+        if (openDropDownMenu) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [openDropDownMenu]);
+
+
 
     const { post, processing, errors } = useForm();
 
@@ -95,13 +117,34 @@ const Navbar = () => {
     // Get the last segment
     const currentPage = segments[segments.length - 1];
 
-    // console.log('current Page : ', currentPage)
 
-    function goBack() {
-        window.history.back();
-    }
+    const currentUrl = window.location.href;
+    const extractMarketplaceSegment = (url) => {
+        const parsedUrl = new URL(url);
+        const pathname = parsedUrl.pathname;
+        const segments = pathname.split('/');
+        const marketplaceIndex = segments.findIndex(segment => segment.toLowerCase() === 'marketplace');
+        if (marketplaceIndex !== -1) {
+            return segments[marketplaceIndex];
+        } else {
+            return null;
+        }
+    };
+    const marketplaceSegment = extractMarketplaceSegment(currentUrl);
 
 
+
+    const extractFirstSegment = (url) => {
+        const parsedUrl = new URL(url);
+        const pathname = parsedUrl.pathname;
+        const segments = pathname.split('/').filter(segment => segment.trim() !== ''); // Remove any empty segments
+        // Assuming you always want the first segment after the domain
+        return segments.length > 0 ? segments[0] : null;
+    };
+
+    const currentPageSegment = extractFirstSegment(currentUrl);
+
+    // console.log('currentPageSegment : ', currentPageSegment)
 
     const [isSticky, setIsSticky] = useState(true);
 
@@ -150,38 +193,22 @@ const Navbar = () => {
 
 
 
-    const isHardRefreshed = usePage().props.isHardRefreshed;
+    let isHardRefreshed = usePage().props.isHardRefreshed;
     const [isDocumentReady, setDocumentReady] = useState(false);
     const isLoaded = localStorage.getItem("academyLoaded", true);
 
-// console.log('document.readyState' , document.readyState)
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     console.log(' 111 DOMContentLoaded')
-//     setDocumentReady(true);
-// });
-
-// window.addEventListener('load', function () {
-//     // Code to run after all assets have been loaded
-//     console.log('All assets are loaded!');
-// });
 
 
 
     const handleLottieComplete = () => {
-        // console.log('academy page added Function ')
-        localStorage.setItem("academyLoaded", true);
+        // localStorage.setItem("academyLoaded", true);
         if (document.readyState === 'complete') {
             setTimeout(() => {
                 setDocumentReady(true);
+                localStorage.setItem("academyLoaded", true)
+                isHardRefreshed = false;
             }, 1000);
-
         } else {
-
-            // If document is not ready yet, listen for the DOMContentLoaded event
-            // document.addEventListener('DOMContentLoaded', () => {
-            //     setDocumentReady(true);
-            // });
             setTimeout(() => {
                 handleLottieComplete()
             }, 500);
@@ -190,7 +217,7 @@ const Navbar = () => {
 
     useEffect(() => {
 
-        if (currentPage == 'academy' && isHardRefreshed ) {
+        if (currentPage == 'academy' && isHardRefreshed) {
             localStorage.setItem("academyLoaded", true);
         }
 
@@ -203,32 +230,64 @@ const Navbar = () => {
     }, []);
 
 
+    // google Discord GTM
+    const handleDiscordGTM = () => {
+        if (discordUrl) {
+            GTMLogs(
+                {
+                    'event': 'GTMevent',
+                    'event_name': 'discord_external_page',
+                    'event_id': '10012',
+                }
+            )
+
+        } else {
+            GTMLogs(
+                {
+                    'event': 'GTMevent',
+                    'event_name': 'discord_page',
+                    'event_id': '10011',
+                }
+            )
+        }
+    }
+
+
+
 
     return (
         <>
             <div onContextMenu={handleContextMenu} className={` navbar-main ${studymode && currentPage == 'play' ? 'hidden' : 'block'} container flex flex-wrap flex-col md:flex-row md:items-center   px-4 lg:px-3 z-[999] relative  ${currentPage == 'play' || currentPage == 'preview' ? ' navbar-arrow' : ''}`}>
 
 
-                {!isLoaded && currentPage == 'academy' &&
-                    <>
-                        {!isHardRefreshed && <div className={`academy-preloader ${isDocumentReady && 'hide-loader'}`}>
-                            <Lottie
-                                loop={false}
-                                animationData={WELCOME_LOTTIE}
-                                onComplete={handleLottieComplete}
-                                play
-                                height='100px'
-                                className='play-page-animation'
-                            />
-                        </div>
-                        }
-                    </>
-                }
+                {/*{!isLoaded && currentPage == 'academy' &&*/}
+                {/*    <>*/}
+                {/*        {!isHardRefreshed && <div className={`academy-preloader ${isDocumentReady && 'hide-loader'}`}>*/}
+                {/*            /!* <Lottie*/}
+                {/*                loop={false}*/}
+                {/*                animationData={WELCOME_LOTTIE}*/}
+                {/*                onComplete={handleLottieComplete}*/}
+                {/*                play*/}
+                {/*                height='100px'*/}
+                {/*                className='play-page-animation'*/}
+                {/*            /> *!/*/}
+                {/*            <Lottie*/}
+                {/*                loop={false}*/}
+                {/*                animationData={CC_LOTTIE}*/}
+                {/*                play*/}
+                {/*                height='75px'*/}
+                {/*                className='play-page-animation'*/}
+                {/*                onComplete={handleLottieComplete}*/}
+                {/*            />*/}
+                {/*        </div>*/}
+                {/*        }*/}
+                {/*    </>*/}
+                {/*}*/}
 
                 <nav className="w-full  ">
                     <div className="container m-auto">
                         <div className="flex justify-between items-center">
-                            {currentPage == 'academy' || currentPage == 'marketplace' || currentPage == 'setup' ?
+                            {currentPage == 'academy' || currentPage == 'setup' || currentPageSegment == 'marketplace' || currentPageSegment == 'livestream' ?
                                 <Link href={route("academy")} className="">
                                     <div className={`  ${!isSticky ? 'md:invisible' : ''} title-font -z-10 `}>
                                         {/* <img className="h-10 md:h-9 w-full" src={logo} alt="" /> */}
@@ -266,35 +325,76 @@ const Navbar = () => {
                                 </>
                             }
 
-                            <div className={` ${currentPage == 'academy' || currentPage == 'marketplace' || currentPage == 'setup' ? 'visible' : 'invisible'}  w-full flex justify-center`}>
-                                <div className={` ${!isSticky ? 'md:invisible   ' : ''} hidden lg:flex md:mx-auto item-center gap-x-4   text-base font-semibold cursor-pointer `}>
+                            <div className={` ${currentPage == 'academy' || currentPage == 'setup' || currentPageSegment == 'marketplace' || currentPageSegment == 'livestream' ? 'visible' : 'invisible'}  w-full flex justify-center`}>
+                                <div className={` ${!isSticky ? 'md:invisible   ' : ''} hidden lg:flex md:mx-auto item-center gap-x-2 xl:gap-x-4   text-base font-semibold cursor-pointer `}>
                                     <Link className={` ${currentPage == 'academy' && 'pointer-events-none'} desktop-nav-item  ${currentPage == 'academy' && 'active'} `} href={route("academy")}>
 
                                         Academy
 
                                     </Link>
 
+                                    <Link className={`   desktop-nav-item  ${currentPageSegment == 'livestream' && 'active'} `} href={route("livestream.index")}>
+                                        LIVESTREAM
+                                    </Link>
+
                                     {
                                         discordUrl ?
                                             <a href={discordUrl} target='_blank'>
-                                                <div className={`desktop-nav-item  ${currentPage == 'setup' && 'active'} `}>
+                                                <div onClick={() => handleDiscordGTM()} className={`desktop-nav-item  ${currentPage == 'setup' && 'active'} `}>
                                                     Discord
                                                 </div>
                                             </a>
                                             :
-                                            <Link className={`desktop-nav-item  ${currentPage == 'setup' && 'active'} ${currentPage == 'setup' && 'pointer-events-none'} `} href={route('discord.setup')}>
+                                            <Link onClick={() => handleDiscordGTM()} className={`desktop-nav-item  ${currentPage == 'setup' && 'active'} ${currentPage == 'setup' && 'pointer-events-none'} `} href={route('discord.setup')}>
 
                                                 Discord
 
                                             </Link>
                                     }
                                     {/* <Link href={route('discussion')}> */}
+                                    <Link onClick={() => {
+                                        GTMLogs({
+                                            'event': 'GTMevent',
+                                            'event_name': 'marketplace_link_click'
+                                        })
+                                    }} className={`desktop-nav-item  ${marketplaceSegment == 'marketplace' && 'active'} `} href={route("marketplace.index")}>
+
+                                        Marketplace
+
+                                    </Link>
                                 </div>
                             </div>
 
 
                             <div className="hidden md:block md:-mt-2 lg:mt-0">
                                 <div className="flex items-center justify-end rounded-full  ">
+
+
+                                    {/* <div className="notification-btn notification-icon  bg-1a cursor-pointer">
+                                        <div className="  group">
+                                            <span onClick={() => { setOpenSearchDropDown(true) }}>
+                                                <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M12.5706 11.4907L11.7823 11.4387L11.5207 11.1509C12.8101 9.83284 13.5544 7.96773 13.3486 5.91977C13.0624 3.11489 10.8934 0.747153 8.12177 0.223792C3.93511 -0.573199 0.14875 2.74503 0.389508 7.00007C0.544676 9.81637 2.60734 12.2773 5.35042 12.9291C7.35367 13.4018 9.3003 12.9087 10.7762 11.8034L11.0272 12.1005L10.9752 12.8888L14.9366 17.409C15.3188 17.8451 15.9873 17.8892 16.4234 17.507C16.8595 17.1249 16.9035 16.4563 16.5214 16.0202L12.5706 11.4907ZM6.5836 11.0962C4.09898 10.9325 2.22549 8.79467 2.3892 6.31005C2.55292 3.82544 4.69072 1.95195 7.17533 2.11566C9.65995 2.27937 11.5334 4.41718 11.3697 6.90179C11.206 9.3864 9.06821 11.2599 6.5836 11.0962Z" fill="white" />
+                                                </svg>
+
+
+                                            </span>
+
+                                            <div className=" flex justify-end">
+                                                <SearchDropdown
+                                                    setOpenSearchDropDown={setOpenSearchDropDown}
+                                                    openSearchDropDown={openSearchDropDown}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div> */}
+
+
+
+
+
+
+
                                     <div onClick={() => readNotification()} className="notification-btn notification-icon  bg-1a cursor-pointer">
                                         <div className="  group">
                                             <span onClick={() => { setOpenDropDownNotification(true) }}>
@@ -305,7 +405,7 @@ const Navbar = () => {
                                             </span>
 
                                             <div className=" flex justify-end">
-                                                {showBlink && <div class="circle-noti red-noti"></div>}
+                                                {showBlink && <div className="circle-noti red-noti"></div>}
                                                 <NotificationDropdown
                                                     setOpenDropDownNotification={setOpenDropDownNotification}
                                                     openDropDownNotification={openDropDownNotification}
@@ -321,7 +421,7 @@ const Navbar = () => {
 
                                     <div className="dropdown inline-block relative">
                                         <div onClick={() => setOpenDropDownMenu(true)} className="notification-btn text-white  h-[36px] w-[92px]  pl-3 pr-0.5 cursor-pointer inline-flex items-center bg-1a rounded-full outline-none">
-                                            <p className="fw-bold nav-glitch-id  pt-[3px]">  #{user.id.toString().padStart(4, '0')} </p>
+                                            <p className="fw-bold nav-glitch-id  pt-[3px]">  #{user?.id.toString().padStart(4, '0')} </p>
                                             <div
                                                 className="ml-2 rounded-full h-[24px] w-[24px] bg-[#000] md:h-[26px] md:w-[26px] lg:h-[32px] lg:w-[32px] flex items-center justify-center">
                                                 <img
@@ -355,10 +455,10 @@ const Navbar = () => {
                                                     transition={{ duration: 0.25 }}
                                                 >
 
-                                                    <div className={` absolute -top-[2px] -right-[2px]  w-[400px] ${innerHeight < 500 ? 'h-[300px] overflow-auto pb-3' : 'h-auto'}   bg-[#121212] border-rounded-17   z-[999] `}>
+                                                    <div className={` absolute -top-[2px] -right-[2px]  w-[428px] ${innerHeight < 500 ? 'h-[300px] overflow-auto pb-3' : 'h-auto'}   bg-[#121212] rounded-[16px]   z-[999] `}>
 
-                                                        <ul className="flex flex-col text-left   w-full text-base cursor-pointer pl-3 pt-3 pr-3 pb-[12px]">
-                                                            <li className="pb-5 ">
+                                                        <ul className="flex flex-col text-left   w-full text-base cursor-pointer p-4">
+                                                            <li className="pb-6 ">
                                                                 <div className="flex justify-between items-center" style={{ justifyContent: 'space-between' }}>
                                                                     <p className="fw-bold text-20 uppercase pt-0.5">menu</p>
                                                                     <div onClick={() => {
@@ -379,117 +479,146 @@ const Navbar = () => {
                                                                 </div>
                                                             </li>
 
-                                                            <div className="flex w-full gap-x-2">
+                                                            <div className="grid grid-cols-2 w-full gap-2 uppercase">
                                                                 <div onClick={() => { setOpenDropDownMenu(false) }}
-                                                                    className=" border-rounded-10 pt-4 pb-3 card-bg-discord input-shadow w-full notification-click">
+                                                                    className="   menu-4-cards-bg input-shadow w-full notification-click">
                                                                     <Link className={` ${currentPage == 'academy' && 'pointer-events-none'} w-full flex justify-center items-center `} href={route('academy')}>
                                                                         <div>
-                                                                            <svg
-                                                                                className="mx-auto"
-                                                                                width="24" height="20" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                <path d="M3.89382 13.618V17.4833C3.89382 18.4875 4.42951 19.4228 5.28662 19.9043L11.9828 23.6596C12.7863 24.1135 13.7506 24.1135 14.5541 23.6596L21.2503 19.9043C22.1074 19.4228 22.6431 18.4875 22.6431 17.4833V13.618L14.5541 18.1573C13.7506 18.6113 12.7863 18.6113 11.9828 18.1573L3.89382 13.618ZM11.9828 0.330133L0.693053 6.65769C-0.231018 7.1804 -0.231018 8.55595 0.693053 9.07867L11.9828 15.4062C12.7863 15.8602 13.7506 15.8602 14.5541 15.4062L25.3215 9.36753V17.4971C25.3215 18.2536 25.9242 18.8726 26.6608 18.8726C27.3973 18.8726 28 18.2536 28 17.4971V8.67975C28 8.1708 27.7322 7.71687 27.3036 7.46927L14.5541 0.330133C13.7506 -0.110044 12.7863 -0.110044 11.9828 0.330133Z" fill="white" />
+                                                                            <svg className="mx-auto" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                <path d="M4.57115 15.4157V18.7979C4.57115 19.6765 5.03988 20.495 5.78986 20.9163L11.649 24.2021C12.3521 24.5993 13.1958 24.5993 13.8989 24.2021L19.758 20.9163C20.508 20.495 20.9767 19.6765 20.9767 18.7979V15.4157L13.8989 19.3877C13.1958 19.7849 12.3521 19.7849 11.649 19.3877L4.57115 15.4157ZM11.649 3.78887L1.77048 9.32548C0.961922 9.78285 0.961922 10.9865 1.77048 11.4438L11.649 16.9804C12.3521 17.3776 13.1958 17.3776 13.8989 16.9804L23.3204 11.6966V18.8099C23.3204 19.4719 23.8477 20.0135 24.4922 20.0135C25.1367 20.0135 25.6641 19.4719 25.6641 18.8099V11.0948C25.6641 10.6494 25.4297 10.2523 25.0547 10.0356L13.8989 3.78887C13.1958 3.40371 12.3521 3.40371 11.649 3.78887Z" fill="#EBEBEB" />
                                                                             </svg>
-                                                                            <p className="fw-bold font-size-12 pt-2">Academy</p>
+
+                                                                            <p className="menu-cards-text">Academy</p>
                                                                         </div>
                                                                     </Link>
                                                                 </div>
 
 
 
+
+
+                                                                <div onClick={() => { setOpenDropDownMenu(false) }}
+                                                                    className="   menu-4-cards-bg input-shadow w-full notification-click">
+                                                                    <Link className={` ${currentPage == 'live-stream' && 'pointer-events-none'} w-full flex justify-center items-center `} href={route('livestream.index')}>
+                                                                        <div>
+                                                                            <svg className="mx-auto" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                <path d="M18.4891 13.3914C18.4891 15.2689 16.565 16.7829 15.6969 18.2149C15.3183 18.8394 14.6888 19.4525 13.9585 19.4525C13.2712 19.4525 12.6841 18.8753 12.3376 18.2817C11.4901 16.8299 9.50573 15.2981 9.50573 13.3914C9.50573 11.0518 11.5206 9.14859 13.9974 9.14859C16.4742 9.14859 18.4891 11.0518 18.4891 13.3914ZM26.8307 13.9975C26.8307 11.0154 25.6886 8.28791 23.8021 6.17864C23.4299 5.76648 22.7754 5.71799 22.3647 6.1059C22.0182 6.4332 21.9797 6.96658 22.2877 7.31813C23.9176 9.11222 24.9057 11.4518 24.9057 13.9975C24.9057 16.5432 23.9176 18.8828 22.2877 20.689C21.9669 21.0405 22.0182 21.5739 22.3647 21.9012C22.7754 22.2891 23.4299 22.2406 23.8021 21.8285C25.6886 19.7071 26.8307 16.9796 26.8307 13.9975ZM3.08906 13.9975C3.08906 11.4518 4.07723 9.11222 5.70706 7.30601C6.0279 6.95446 5.97656 6.42108 5.63006 6.09378C5.23223 5.71799 4.5649 5.75436 4.19273 6.16651C2.30623 8.28791 1.16406 11.0154 1.16406 13.9975C1.16406 16.9796 2.30623 19.7071 4.19273 21.8285C4.5649 22.2406 5.2194 22.2891 5.63006 21.9012C5.97656 21.5739 6.01506 21.0405 5.70706 20.689C4.07723 18.8828 3.08906 16.5432 3.08906 13.9975ZM21.0557 13.9975C21.0557 15.5491 20.4911 16.9917 19.5414 18.1312C19.2462 18.4827 19.2847 18.9919 19.6312 19.3192C20.0419 19.7071 20.7221 19.6707 21.0814 19.2343C22.2621 17.7918 22.9807 15.9734 22.9807 13.9975C22.9807 12.0216 22.2621 10.2032 21.0686 8.7728C20.7092 8.3364 20.0291 8.30003 19.6184 8.68794C19.2847 9.00312 19.2334 9.51226 19.5286 9.87593C20.4911 11.0033 21.0557 12.4458 21.0557 13.9975ZM8.3764 19.307C8.71006 18.9919 8.7614 18.4827 8.46623 18.1191C7.50373 16.9917 6.93906 15.5491 6.93906 13.9975C6.93906 12.4458 7.50373 11.0033 8.4534 9.8638C8.74856 9.51226 8.71006 9.00312 8.36356 8.67582C7.96573 8.30003 7.28556 8.3364 6.92623 8.76068C5.73273 10.2032 5.01406 12.0216 5.01406 13.9975C5.01406 15.9734 5.73273 17.7918 6.92623 19.2343C7.28556 19.6586 7.96573 19.695 8.3764 19.307Z" fill="#EBEBEB" />
+                                                                            </svg>
+
+
+                                                                            <p className="menu-cards-text">Livestream</p>
+                                                                        </div>
+                                                                    </Link>
+                                                                </div>
+
+
+
+
+
+
+                                                                <div onClick={() => {
+                                                                    GTMLogs({
+                                                                        'event': 'GTMevent',
+                                                                        'event_name': 'marketplace_link_click'
+                                                                    }); setOpenDropDownMenu(false)
+                                                                }}
+                                                                    className="notification-click pt-5 pb-3 menu-4-cards-bg input-shadow w-full ">
+
+                                                                    <Link onClick={() => { setOpenDropDownMenu(false) }} className={` w-full flex justify-center items-center`} href={route("marketplace.index")}  >
+                                                                        <div>
+                                                                            <svg className="mx-auto" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                <path d="M12.3447 2.92038L7.77629 10.3557C7.27278 11.1629 7.86225 12.2146 8.82015 12.2146H17.9447C18.9026 12.2146 19.4921 11.1629 18.9886 10.3557L14.4324 2.92038C13.9535 2.13771 12.8237 2.13771 12.3447 2.92038Z" fill="white" />
+                                                                                <path d="M20.143 25.6667C23.1951 25.6667 25.6693 23.2029 25.6693 20.1636C25.6693 17.1243 23.1951 14.6604 20.143 14.6604C17.0909 14.6604 14.6166 17.1243 14.6166 20.1636C14.6166 23.2029 17.0909 25.6667 20.143 25.6667Z" fill="white" />
+                                                                                <path d="M3.56401 25.0552H10.9324C11.6079 25.0552 12.1605 24.5049 12.1605 23.8323V16.4948C12.1605 15.8222 11.6079 15.2719 10.9324 15.2719H3.56401C2.88857 15.2719 2.33594 15.8222 2.33594 16.4948V23.8323C2.33594 24.5049 2.88857 25.0552 3.56401 25.0552Z" fill="white" />
+                                                                            </svg>
+
+                                                                            <p className="menu-cards-text">Marketplace</p>
+                                                                        </div>
+                                                                    </Link>
+                                                                </div>
 
                                                                 {discordUrl ?
 
                                                                     <a href={discordUrl} className="w-full">
-                                                                        <div onClick={() => { setOpenDropDownMenu(false) }}
-                                                                            className="notification-click border-rounded-10 pt-4 pb-3 card-bg-discord input-shadow w-full flex justify-center items-center">
+                                                                        <div onClick={() => { setOpenDropDownMenu(false); handleDiscordGTM() }}
+                                                                            className="notification-click   menu-4-cards-bg input-shadow w-full flex justify-center items-center">
                                                                             <div>
-                                                                                <svg className="mx-auto" width="24" height="22" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                    <path d="M18.3894 1.47065C16.9842 0.783615 15.4816 0.284309 13.9107 0C13.7178 0.364474 13.4924 0.8547 13.337 1.24467C11.6671 0.982255 10.0126 0.982255 8.3734 1.24467C8.21804 0.8547 7.98753 0.364474 7.79288 0C6.2203 0.284309 4.71601 0.78545 3.31076 1.47428C0.476366 5.94994 -0.291993 10.3144 0.092187 14.6169C1.97211 16.0839 3.79398 16.9751 5.58511 17.5582C6.02734 16.9222 6.42176 16.2461 6.76154 15.5336C6.11442 15.2766 5.49461 14.9596 4.90897 14.5914C5.06434 14.4712 5.21631 14.3454 5.36314 14.216C8.93515 15.9618 12.8162 15.9618 16.3456 14.216C16.4941 14.3454 16.6461 14.4712 16.7997 14.5914C16.2124 14.9614 15.5909 15.2784 14.9437 15.5354C15.2835 16.2461 15.6763 16.924 16.1202 17.56C17.913 16.9769 19.7366 16.0858 21.6165 14.6169C22.0673 9.62923 20.8465 5.30483 18.3894 1.47065ZM7.24818 11.9709C6.1759 11.9709 5.29654 10.9249 5.29654 9.65109C5.29654 8.37728 6.15712 7.32945 7.24818 7.32945C8.33927 7.32945 9.2186 8.37545 9.19982 9.65109C9.20152 10.9249 8.33927 11.9709 7.24818 11.9709ZM14.4605 11.9709C13.3883 11.9709 12.5089 10.9249 12.5089 9.65109C12.5089 8.37728 13.3694 7.32945 14.4605 7.32945C15.5516 7.32945 16.431 8.37545 16.4122 9.65109C16.4122 10.9249 15.5516 11.9709 14.4605 11.9709Z" fill="white" />
+                                                                                <svg className="mx-auto" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                    <path d="M22.6184 5.21575C20.9789 4.41422 19.2259 3.83169 17.3932 3.5C17.1682 3.92522 16.9052 4.49715 16.7239 4.95212C14.7757 4.64596 12.8454 4.64596 10.933 4.95212C10.7518 4.49715 10.4828 3.92522 10.2558 3.5C8.42108 3.83169 6.66608 4.41636 5.02662 5.22C1.71982 10.4416 0.823404 15.5335 1.27161 20.5531C3.46486 22.2646 5.59037 23.3042 7.68002 23.9846C8.19596 23.2426 8.65612 22.4538 9.05253 21.6225C8.29755 21.3227 7.57444 20.9528 6.89119 20.5233C7.07245 20.383 7.24976 20.2363 7.42106 20.0854C11.5884 22.1221 16.1163 22.1221 20.2339 20.0854C20.4072 20.2363 20.5845 20.383 20.7638 20.5233C20.0785 20.9549 19.3534 21.3249 18.5984 21.6247C18.9948 22.4538 19.453 23.2447 19.9709 23.9867C22.0626 23.3063 24.1901 22.2667 26.3833 20.5531C26.9092 14.7341 25.4849 9.68896 22.6184 5.21575ZM9.62027 17.4661C8.36928 17.4661 7.34336 16.2457 7.34336 14.7596C7.34336 13.2735 8.34737 12.051 9.62027 12.051C10.8932 12.051 11.9191 13.2714 11.8972 14.7596C11.8992 16.2457 10.8932 17.4661 9.62027 17.4661ZM18.0347 17.4661C16.7837 17.4661 15.7578 16.2457 15.7578 14.7596C15.7578 13.2735 16.7617 12.051 18.0347 12.051C19.3076 12.051 20.3335 13.2714 20.3116 14.7596C20.3116 16.2457 19.3076 17.4661 18.0347 17.4661Z" fill="white" />
                                                                                 </svg>
-                                                                                <p className="fw-bold font-size-12 pt-2">Discord</p>
+
+                                                                                <p className="menu-cards-text">Discord</p>
                                                                             </div>
                                                                         </div>
                                                                     </a>
-
                                                                     :
-
-                                                                    <div onClick={() => { setOpenDropDownMenu(false) }}
-                                                                        className="notification-click border-rounded-10 pt-4 pb-3 card-bg-discord input-shadow w-full ">
+                                                                    <div onClick={() => { setOpenDropDownMenu(false); handleDiscordGTM() }}
+                                                                        className="notification-click   menu-4-cards-bg input-shadow w-full ">
                                                                         <Link className={` ${currentPage == 'setup' && 'pointer-events-none'} w-full flex justify-center items-center`} href={route('discord.setup')}  >
 
                                                                             <div>
-                                                                                <svg className="mx-auto" width="24" height="22" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                    <path d="M18.3894 1.47065C16.9842 0.783615 15.4816 0.284309 13.9107 0C13.7178 0.364474 13.4924 0.8547 13.337 1.24467C11.6671 0.982255 10.0126 0.982255 8.3734 1.24467C8.21804 0.8547 7.98753 0.364474 7.79288 0C6.2203 0.284309 4.71601 0.78545 3.31076 1.47428C0.476366 5.94994 -0.291993 10.3144 0.092187 14.6169C1.97211 16.0839 3.79398 16.9751 5.58511 17.5582C6.02734 16.9222 6.42176 16.2461 6.76154 15.5336C6.11442 15.2766 5.49461 14.9596 4.90897 14.5914C5.06434 14.4712 5.21631 14.3454 5.36314 14.216C8.93515 15.9618 12.8162 15.9618 16.3456 14.216C16.4941 14.3454 16.6461 14.4712 16.7997 14.5914C16.2124 14.9614 15.5909 15.2784 14.9437 15.5354C15.2835 16.2461 15.6763 16.924 16.1202 17.56C17.913 16.9769 19.7366 16.0858 21.6165 14.6169C22.0673 9.62923 20.8465 5.30483 18.3894 1.47065ZM7.24818 11.9709C6.1759 11.9709 5.29654 10.9249 5.29654 9.65109C5.29654 8.37728 6.15712 7.32945 7.24818 7.32945C8.33927 7.32945 9.2186 8.37545 9.19982 9.65109C9.20152 10.9249 8.33927 11.9709 7.24818 11.9709ZM14.4605 11.9709C13.3883 11.9709 12.5089 10.9249 12.5089 9.65109C12.5089 8.37728 13.3694 7.32945 14.4605 7.32945C15.5516 7.32945 16.431 8.37545 16.4122 9.65109C16.4122 10.9249 15.5516 11.9709 14.4605 11.9709Z" fill="white" />
+                                                                                <svg className="mx-auto" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                    <path d="M22.6184 5.21575C20.9789 4.41422 19.2259 3.83169 17.3932 3.5C17.1682 3.92522 16.9052 4.49715 16.7239 4.95212C14.7757 4.64596 12.8454 4.64596 10.933 4.95212C10.7518 4.49715 10.4828 3.92522 10.2558 3.5C8.42108 3.83169 6.66608 4.41636 5.02662 5.22C1.71982 10.4416 0.823404 15.5335 1.27161 20.5531C3.46486 22.2646 5.59037 23.3042 7.68002 23.9846C8.19596 23.2426 8.65612 22.4538 9.05253 21.6225C8.29755 21.3227 7.57444 20.9528 6.89119 20.5233C7.07245 20.383 7.24976 20.2363 7.42106 20.0854C11.5884 22.1221 16.1163 22.1221 20.2339 20.0854C20.4072 20.2363 20.5845 20.383 20.7638 20.5233C20.0785 20.9549 19.3534 21.3249 18.5984 21.6247C18.9948 22.4538 19.453 23.2447 19.9709 23.9867C22.0626 23.3063 24.1901 22.2667 26.3833 20.5531C26.9092 14.7341 25.4849 9.68896 22.6184 5.21575ZM9.62027 17.4661C8.36928 17.4661 7.34336 16.2457 7.34336 14.7596C7.34336 13.2735 8.34737 12.051 9.62027 12.051C10.8932 12.051 11.9191 13.2714 11.8972 14.7596C11.8992 16.2457 10.8932 17.4661 9.62027 17.4661ZM18.0347 17.4661C16.7837 17.4661 15.7578 16.2457 15.7578 14.7596C15.7578 13.2735 16.7617 12.051 18.0347 12.051C19.3076 12.051 20.3335 13.2714 20.3116 14.7596C20.3116 16.2457 19.3076 17.4661 18.0347 17.4661Z" fill="white" />
                                                                                 </svg>
-                                                                                <p className="fw-bold font-size-12 pt-2">Discord</p>
+
+                                                                                <p className="menu-cards-text">Discord</p>
                                                                             </div>
                                                                         </Link>
                                                                     </div>
-
-
                                                                 }
 
-                                                                <div onClick={() => { setOpenDropDownMenu(false) }}
-                                                                    className="notification-click border-rounded-10 pt-5 pb-3 card-bg-discord input-shadow w-full ">
-                                                                    <Link onClick={() => { setOpenDropDownMenu(false)}} className={`  ${currentPage == 'progress' && 'pointer-events-none'} w-full flex justify-center items-center`} href={route("profile")}  >
-                                                                        <div>
-                                                                            <svg className="mx-auto" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                <g clipPath="url(#clip0_9431_21773)">
-                                                                                    <path fillRule="evenodd" clipRule="evenodd" d="M7.81736 0.0665255C7.4372 0.175932 7.01757 0.397229 6.71926 0.645666C6.40478 0.90751 6.03625 1.4207 5.92211 1.75562L5.84945 1.9689L5.27964 1.96918C4.96623 1.96932 4.63281 1.99084 4.53864 2.01695C4.3255 2.0762 4.04575 2.37704 4.00581 2.59009C3.9895 2.67699 3.98303 3.17921 3.99142 3.70613L4.0067 4.66421L4.15117 4.96904C4.32817 5.34254 4.64621 5.66935 5.00336 5.84467L5.27232 5.97671H8.48326H11.6942L11.9622 5.85109C12.4906 5.60345 12.8772 5.11126 12.9826 4.55237C13.0543 4.17174 13.0399 2.73442 12.9622 2.51659C12.81 2.08979 12.6171 1.99918 11.7971 1.96913L11.15 1.94546L11.0449 1.68653C10.7657 0.998447 10.1245 0.392494 9.40778 0.139182C9.03948 0.00905678 8.15711 -0.0313026 7.81736 0.0665255ZM2.06139 3.07435C1.29901 3.27545 0.620449 3.82721 0.279012 4.52359C-0.0188322 5.13099 -0.00392597 4.70949 0.0098084 12.1215L0.022324 18.8673L0.131683 19.159C0.423152 19.9367 1.06332 20.5767 1.84 20.8671L2.1317 20.9761L6.14214 20.9894L10.1525 21.0026L10.2388 20.4741C10.4497 19.1822 10.6045 18.8519 11.377 18.0456L11.9131 17.486L7.70209 17.4736L3.49107 17.4611L3.33803 17.3519C3.13412 17.2065 3.02945 16.9937 3.02851 16.7226C3.02762 16.4709 3.1247 16.3061 3.37342 16.1369L3.52839 16.0314H8.47871H13.429L15.2218 14.2382L17.0145 12.445V8.94882C17.0145 5.62056 17.0101 5.43526 16.9219 5.09059C16.7856 4.55757 16.5791 4.20099 16.1728 3.79703C15.6414 3.2687 15.0105 3.00015 14.3007 3.00015H13.9676V3.79473C13.9676 4.72951 13.9285 4.95812 13.682 5.4639C13.3713 6.10135 12.7726 6.62682 12.096 6.85581C11.7916 6.95888 11.7513 6.96024 8.64732 6.97431C5.13479 6.9902 5.13156 6.98996 4.48768 6.66784C4.04954 6.44865 3.55136 5.95632 3.33737 5.53103C3.08471 5.02885 3.03901 4.79354 3.01206 3.85562L2.98745 3.00015L2.65332 3.00324C2.46957 3.00493 2.20318 3.03695 2.06139 3.07435ZM3.43056 9.59396C2.87687 9.86682 2.88971 10.627 3.45282 10.9163C3.52665 10.9542 4.94031 10.9689 8.51532 10.9687C13.3821 10.9686 13.4783 10.9668 13.6282 10.8754C13.8739 10.7256 13.9757 10.5212 13.9562 10.2168C13.9363 9.90493 13.8312 9.74157 13.5661 9.61023C13.3787 9.51737 13.2941 9.51578 8.48017 9.51685C4.06089 9.51779 3.56982 9.52529 3.43056 9.59396ZM20.7074 11.7629C20.5858 11.8104 20.3854 11.9242 20.2621 12.0157C20.1388 12.1072 18.3158 13.9078 16.211 16.0169C13.2465 18.9875 12.373 19.8887 12.3352 20.0158C12.3083 20.106 12.166 20.8677 12.0189 21.7085C11.8348 22.7614 11.7615 23.2898 11.7834 23.4063C11.8448 23.7337 12.168 24.0002 12.5035 24.0002C12.6032 24.0002 13.3835 23.8761 14.2375 23.7244C15.3685 23.5236 15.8324 23.4224 15.9454 23.3519C16.0307 23.2987 17.8114 21.5402 19.9026 19.4441C24.2539 15.0825 23.9754 15.4136 23.9754 14.6017C23.9754 13.8887 23.9032 13.7641 22.9065 12.757C21.9658 11.8065 21.7557 11.6706 21.2333 11.6743C21.0532 11.6755 20.8381 11.7118 20.7074 11.7629ZM3.52928 12.8014C3.3235 12.8615 3.10473 13.0936 3.04511 13.3151C2.94395 13.6908 3.18203 14.1011 3.56031 14.203C3.68218 14.2358 5.34109 14.2477 8.61226 14.2393L13.4828 14.2267L13.6549 14.0954C14.0889 13.7643 14.075 13.2056 13.6244 12.8717C13.4922 12.7737 13.4844 12.7736 8.58531 12.7657C5.67015 12.761 3.61796 12.7755 3.52928 12.8014Z" fill="black" fillOpacity="0.349" />
-                                                                                    <path fillRule="evenodd" clipRule="evenodd" d="M8.0625 0.0321608C7.14206 0.186239 6.20344 0.956817 5.9287 1.78397L5.85183 2.0154H5.18288C4.56642 2.0154 4.50155 2.02369 4.35713 2.121C4.27092 2.17913 4.15706 2.3004 4.10409 2.39054C4.01456 2.54293 4.008 2.62697 4.01067 3.58571C4.01297 4.42674 4.02778 4.6538 4.09078 4.81669C4.28991 5.33124 4.7287 5.74885 5.23448 5.90508C5.52834 5.99583 5.66367 5.99977 8.47945 5.99977C11.7625 5.99977 11.7674 5.99935 12.2328 5.68219C12.3738 5.58615 12.5693 5.3926 12.6674 5.25207C12.9509 4.84585 12.9844 4.66571 12.9844 3.54615C12.9844 2.58535 12.9817 2.55816 12.8688 2.36546C12.6915 2.06297 12.5453 2.0154 11.7922 2.0154C11.225 2.0154 11.1503 2.00621 11.127 1.93336C11.1126 1.88827 11.0256 1.69411 10.9337 1.50193C10.4497 0.48938 9.1883 -0.156324 8.0625 0.0321608ZM2.07197 3.09455C1.57439 3.22491 1.19545 3.44447 0.820078 3.81985C0.438938 4.20094 0.224063 4.57622 0.0925781 5.09021C0.00253125 5.44229 0 5.63283 0 11.9998C0 18.3667 0.00253125 18.5573 0.0925781 18.9093C0.224063 19.4233 0.438938 19.7986 0.820078 20.1797C1.20117 20.5608 1.57645 20.7757 2.09044 20.9072C2.43652 20.9957 2.62181 20.9998 6.28786 20.9998H10.1232L10.1465 20.8943C10.1592 20.8363 10.2134 20.5357 10.2668 20.2263C10.4542 19.1405 10.6042 18.8394 11.332 18.0885C11.622 17.7892 11.8594 17.5308 11.8594 17.5142C11.8594 17.4977 9.98517 17.4841 7.69444 17.4841H3.5295L3.37453 17.3787C3.15019 17.226 3.0398 17.0547 3.01312 16.8181C2.98252 16.5465 3.12159 16.2671 3.36183 16.1178L3.53906 16.0076L8.48414 15.9959L13.4292 15.9842L15.2239 14.1912L17.0187 12.3982L17.004 8.83571C16.9879 4.90566 17.0041 5.1271 16.6861 4.49719C16.2585 3.64983 15.3915 3.08293 14.418 3.01425L14.0282 2.98674L14.0036 3.87216C13.9829 4.61724 13.9626 4.80586 13.8759 5.06227C13.5641 5.98411 12.8365 6.67566 11.9299 6.91182C11.5178 7.01916 5.50406 7.02005 5.08406 6.9128C4.57355 6.78249 4.2255 6.5776 3.81891 6.168C3.16678 5.5111 3.00178 5.03054 3.0007 3.78493L3 2.99977L2.70703 3.00235C2.54592 3.00375 2.26012 3.04529 2.07197 3.09455ZM3.37453 9.62086C3.15019 9.77354 3.0398 9.94482 3.01312 10.1815C2.98252 10.4531 3.12159 10.7324 3.36183 10.8818L3.53906 10.992L8.40591 11.0045C11.6301 11.0129 13.3331 11.0008 13.4516 10.9689C13.6926 10.904 13.9487 10.6168 13.9915 10.3633C14.0336 10.114 13.8745 9.77269 13.6454 9.62091L13.4861 9.51539H8.50781H3.5295L3.37453 9.62086ZM20.8259 11.7368C20.7173 11.7723 20.5274 11.8594 20.404 11.9303C20.1318 12.0866 12.5047 19.6809 12.4015 19.8984C12.3638 19.9779 12.2053 20.7676 12.0494 21.6534C11.7367 23.4294 11.7347 23.5073 11.996 23.7686C12.268 24.0406 12.3408 24.0398 14.0455 23.7452C14.8927 23.5988 15.6705 23.4487 15.774 23.4116C15.9243 23.3578 16.7434 22.5616 19.8582 19.4416C23.565 15.7287 23.7598 15.5251 23.8636 15.2576C23.9467 15.0434 23.973 14.8814 23.9738 14.5779C23.9747 14.2237 23.9577 14.143 23.8204 13.8513C23.6862 13.5661 23.5606 13.4185 22.8603 12.7223C21.9713 11.8385 21.7911 11.7188 21.3047 11.6893C21.1445 11.6796 20.9384 11.7001 20.8259 11.7368ZM3.44297 12.8157C3.00375 13.007 2.86556 13.6052 3.17545 13.9735C3.41962 14.2637 3.15047 14.2498 8.50819 14.2498C13.2917 14.2498 13.4144 14.2475 13.5909 14.1575C14.1165 13.8893 14.1165 13.1102 13.5909 12.8421C13.4143 12.752 13.2935 12.7498 8.49797 12.7516C4.52002 12.7531 3.55875 12.7653 3.44297 12.8157Z" fill="white" fillOpacity="0.988" />
-                                                                                </g>
-                                                                                <defs>
-                                                                                    <clipPath id="clip0_9431_21773">
-                                                                                        <rect width="24" height="24" fill="white" />
-                                                                                    </clipPath>
-                                                                                </defs>
-                                                                            </svg>
-                                                                            {/*<svg*/}
-                                                                            {/*    className="mx-auto" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
-                                                                            {/*    <path d="M10.2947 0.603774L5.59579 8.25157C5.07789 9.08176 5.68421 10.1635 6.66947 10.1635H16.0547C17.04 10.1635 17.6463 9.08176 17.1284 8.25157L12.4421 0.603774C11.9495 -0.201258 10.7874 -0.201258 10.2947 0.603774Z" fill="white" />*/}
-                                                                            {/*    <path d="M18.3158 24C21.4551 24 24 21.4658 24 18.3396C24 15.2135 21.4551 12.6792 18.3158 12.6792C15.1765 12.6792 12.6316 15.2135 12.6316 18.3396C12.6316 21.4658 15.1765 24 18.3158 24Z" fill="white" />*/}
-                                                                            {/*    <path d="M1.26316 23.3711H8.8421C9.53684 23.3711 10.1053 22.805 10.1053 22.1132V14.566C10.1053 13.8742 9.53684 13.3082 8.8421 13.3082H1.26316C0.568421 13.3082 0 13.8742 0 14.566V22.1132C0 22.805 0.568421 23.3711 1.26316 23.3711Z" fill="white" />*/}
-                                                                            {/*</svg>*/}
-                                                                            <p className="fw-bold font-size-12 pt-2">Notes</p>
-                                                                        </div>
-                                                                    </Link>
-                                                                </div>
+
+
+
+
                                                             </div>
 
 
-                                                            <div className=" rounded-[20px]   mt-[42px]">
+                                                            <div className=" rounded-[20px]   mt-[24px]">
+
+
+                                                                {/* <div onClick={() => { setOpenDropDownMenu(false), setScrollToNotes(true) }}>
+
+                                                                    <Link className={` ${currentPage == 'livestream' && 'pointer-events-none'} `} href={route('livestream.index')} >
+                                                                        <li className="notification-click mb-[14px] card-bg-discord flex justify-center items-center h-[39px]  input-shadow border-rounded-10   mt-3 uppercase w-full text-center font-size-12 fw-bold ">
+                                                                            Livestream
+                                                                        </li>
+                                                                    </Link>
+                                                                </div> */}
+
 
                                                                 <div onClick={() => { setOpenDropDownMenu(false), setScrollToNotes(true) }}>
 
                                                                     <Link className={` ${currentPage == 'progress' && 'pointer-events-none'} `} href={route('profile')} >
-                                                                        <li className="notification-click mb-[14px] card-bg-discord flex justify-center items-center h-[39px]  input-shadow border-rounded-10   mt-3 uppercase w-full text-center font-size-12 fw-bold ">
+                                                                        <li className="notification-click   menu-options-dropdown   ">
                                                                             notes
                                                                         </li>
                                                                     </Link>
                                                                 </div>
                                                                 <div onClick={() => { setOpenDropDownMenu(false) }}>
                                                                     <Link className={` ${currentPage == 'progress' && 'pointer-events-none'} `} href={route('profile')} >
-                                                                        <li className="notification-click mb-[14px] card-bg-discord flex justify-center items-center h-[39px]  input-shadow border-rounded-10   uppercase w-full text-center font-size-12 fw-bold ">
+                                                                        <li className="notification-click  menu-options-dropdown">
                                                                             favorites
                                                                         </li>
                                                                     </Link>
                                                                 </div>
                                                                 <div onClick={() => { setOpenDropDownMenu(false) }}>
                                                                     <Link className={` ${currentPage == 'personal' && 'pointer-events-none'} `} href={route('profile.personal')}  >
-                                                                        <li className="notification-click mb-[14px] my-3 card-bg-discord flex justify-center items-center h-[39px]  input-shadow border-rounded-10   uppercase w-full text-center font-size-12 fw-bold ">
+                                                                        <li className="notification-click menu-options-dropdown ">
                                                                             SETTINGS
                                                                         </li>
                                                                     </Link>
                                                                 </div>
                                                                 <a onClick={() => { setOpenDropDownMenu(false) }}
                                                                     href="https://capitalclub1498.zendesk.com/hc/en-us" target="_blank">
-                                                                    <li className="notification-click bg-white text-black border-rounded-10 mt-20 pt-3 pb-[10px] uppercase w-full text-center font-size-12 fw-bold ">
-                                                                        <p className="flex justify-center font-size-12 fw-bold" >    SUPPORT <svg className="m-1" width="13" height="12" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <li className="notification-click flex justify-center items-center bg-white text-black rounded-[8px] h-12 mt-6  uppercase w-full text-center font-size-12 fw-bold ">
+                                                                        <p className="menu-support-button" >    SUPPORT
+                                                                            {/* <svg className="m-1" width="13" height="12" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                             <path d="M11.6667 6.12833C11.6667 2.92583 9.18174 0.75 6.41674 0.75C3.6809 0.75 1.16674 2.87917 1.16674 6.16333C0.816738 6.36167 0.583405 6.735 0.583405 7.16667V8.33333C0.583405 8.975 1.1084 9.5 1.75007 9.5H2.3334V5.94167C2.3334 3.68417 4.15924 1.85833 6.41674 1.85833C8.67424 1.85833 10.5001 3.68417 10.5001 5.94167V10.0833H5.8334V11.25H10.5001C11.1417 11.25 11.6667 10.725 11.6667 10.0833V9.37167C12.0109 9.19083 12.2501 8.835 12.2501 8.415V7.07333C12.2501 6.665 12.0109 6.30917 11.6667 6.12833Z" fill="black" />
                                                                             <path d="M4.66674 7.16667C4.9889 7.16667 5.25007 6.9055 5.25007 6.58333C5.25007 6.26117 4.9889 6 4.66674 6C4.34457 6 4.0834 6.26117 4.0834 6.58333C4.0834 6.9055 4.34457 7.16667 4.66674 7.16667Z" fill="black" />
                                                                             <path d="M8.16674 7.16667C8.4889 7.16667 8.75007 6.9055 8.75007 6.58333C8.75007 6.26117 8.4889 6 8.16674 6C7.84457 6 7.5834 6.26117 7.5834 6.58333C7.5834 6.9055 7.84457 7.16667 8.16674 7.16667Z" fill="black" />
                                                                             <path d="M9.91674 5.43417C9.63674 3.77167 8.19007 2.5 6.4459 2.5C4.6784 2.5 2.77674 3.96417 2.9284 6.2625C4.36924 5.67333 5.45424 4.39 5.7634 2.82667C6.52757 4.36083 8.09674 5.41667 9.91674 5.43417Z" fill="black" />
-                                                                        </svg>
+                                                                        </svg> */}
                                                                         </p>
                                                                     </li>
                                                                 </a>
@@ -519,32 +648,60 @@ const Navbar = () => {
                                 {/* ${openMobileMenu && 'right-0' */}
 
 
-                                <button className="block md:hidden py-1 rounded  ">
+                                <button className="block md:hidden rounded  ">
 
                                     <div className="md:hidden block md:-mt-2 lg:mt-0">
                                         <div className="flex items-center justify-end  rounded-full">
-                                            <div onClick={() => readNotification()} className={` notification-icon ${currentPage == 'academy' ? 'block md:hidden ' : 'sm-d-none md:block'}  bg-1a `}>
-                                                <div className="   ">
-                                                    <span className="cursor-pointer" onClick={() => { setOpenDropDownNotification(true) }}>
-                                                        <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M18.4871 16.33L17.2508 15.0938V10.3021C17.2508 7.36 15.6792 4.89708 12.9383 4.24542V3.59375C12.9383 2.79833 12.2963 2.15625 11.5008 2.15625C10.7054 2.15625 10.0633 2.79833 10.0633 3.59375V4.24542C7.31293 4.89708 5.75084 7.35042 5.75084 10.3021V15.0938L4.51459 16.33C3.91084 16.9338 4.33251 17.9688 5.18543 17.9688H17.8067C18.6692 17.9688 19.0908 16.9338 18.4871 16.33ZM15.3342 16.0521H7.66751V10.3021C7.66751 7.92542 9.11459 5.98958 11.5008 5.98958C13.8871 5.98958 15.3342 7.92542 15.3342 10.3021V16.0521ZM11.5008 20.8438C12.555 20.8438 13.4175 19.9812 13.4175 18.9271H9.58418C9.58418 19.9812 10.4371 20.8438 11.5008 20.8438Z" fill="white" />
-                                                        </svg>
-                                                    </span>
+
+                                            {/* <div className="notification-btn notification-icon  bg-1a cursor-pointer">
+                                        <div className="  group">
+                                            <span onClick={() => { setOpenSearchDropDown(true) }}>
+                                                <svg width="17" height="18" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M12.5706 11.4907L11.7823 11.4387L11.5207 11.1509C12.8101 9.83284 13.5544 7.96773 13.3486 5.91977C13.0624 3.11489 10.8934 0.747153 8.12177 0.223792C3.93511 -0.573199 0.14875 2.74503 0.389508 7.00007C0.544676 9.81637 2.60734 12.2773 5.35042 12.9291C7.35367 13.4018 9.3003 12.9087 10.7762 11.8034L11.0272 12.1005L10.9752 12.8888L14.9366 17.409C15.3188 17.8451 15.9873 17.8892 16.4234 17.507C16.8595 17.1249 16.9035 16.4563 16.5214 16.0202L12.5706 11.4907ZM6.5836 11.0962C4.09898 10.9325 2.22549 8.79467 2.3892 6.31005C2.55292 3.82544 4.69072 1.95195 7.17533 2.11566C9.65995 2.27937 11.5334 4.41718 11.3697 6.90179C11.206 9.3864 9.06821 11.2599 6.5836 11.0962Z" fill="white" />
+                                                </svg>
+
+
+                                            </span>
+
+                                            <div className=" flex justify-end">
+                                                <SearchDropdown
+                                                    setOpenSearchDropDown={setOpenSearchDropDown}
+                                                    openSearchDropDown={openSearchDropDown}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div> */}
 
 
 
-                                                    <div className="w-full flex justify-end">
 
-                                                        {showBlink && <div class="circle-noti red-noti"></div>}
+                                            <div
+                                            // className={`${currentPage == 'academy' || currentPage == 'setup' || currentPage == 'marketplace' || currentPage == 'livestream' ? 'block md:hidden  ' : 'hidden md:block'} `}
+                                            >
 
-                                                        <NotificationDropdown
-                                                            setOpenDropDownNotification={setOpenDropDownNotification}
-                                                            openDropDownNotification={openDropDownNotification}
-                                                            setShowBlink={setShowBlink}
-                                                            showBlink={showBlink}
-                                                        />
+                                                <div onClick={() => readNotification()} className={` notification-icon bg-1a `}>
+                                                    <div className="   ">
+                                                        <span className="cursor-pointer" onClick={() => { setOpenDropDownNotification(true) }}>
+                                                            <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M18.4871 16.33L17.2508 15.0938V10.3021C17.2508 7.36 15.6792 4.89708 12.9383 4.24542V3.59375C12.9383 2.79833 12.2963 2.15625 11.5008 2.15625C10.7054 2.15625 10.0633 2.79833 10.0633 3.59375V4.24542C7.31293 4.89708 5.75084 7.35042 5.75084 10.3021V15.0938L4.51459 16.33C3.91084 16.9338 4.33251 17.9688 5.18543 17.9688H17.8067C18.6692 17.9688 19.0908 16.9338 18.4871 16.33ZM15.3342 16.0521H7.66751V10.3021C7.66751 7.92542 9.11459 5.98958 11.5008 5.98958C13.8871 5.98958 15.3342 7.92542 15.3342 10.3021V16.0521ZM11.5008 20.8438C12.555 20.8438 13.4175 19.9812 13.4175 18.9271H9.58418C9.58418 19.9812 10.4371 20.8438 11.5008 20.8438Z" fill="white" />
+                                                            </svg>
+                                                        </span>
+
+
+
+                                                        <div className={` w-full flex justify-end `}>
+
+                                                            {showBlink && <div className="circle-noti red-noti"></div>}
+
+                                                            <NotificationDropdown
+                                                                setOpenDropDownNotification={setOpenDropDownNotification}
+                                                                openDropDownNotification={openDropDownNotification}
+                                                                setShowBlink={setShowBlink}
+                                                                showBlink={showBlink}
+                                                            />
+                                                        </div>
+
                                                     </div>
-
                                                 </div>
                                             </div>
 
@@ -558,10 +715,10 @@ const Navbar = () => {
                                                     <p className={` ${currentPage == 'academy' ? 'block md:hidden  ' : 'hidden md:block'} fs-tiny fw-semibold pl-1 pt-[2px] pr-2 `}>
                                                         #{user.id.toString().padStart(4, '0')} </p>
                                                     <div
-                                                        className={`  md:ml-2    rounded-full  ${currentPage == 'academy' ? 'h-[30px] w-[30px] bg-[#000] ' : '  lg:h-[34px] lg:w-[34px] '}      flex items-center justify-center `}>
+                                                        className={`  md:ml-2    rounded-full  ${currentPage == 'academy' ? 'min-h-[30px] min-w-[30px] bg-[#000] ' : '  lg:h-[34px] lg:w-[34px] '}      flex items-center justify-center `}>
                                                         <img
                                                             src={user?.dp?.original?.url}
-                                                            className={` ${currentPage == 'academy' ? 'h-[18px] w-[18px]' : ' h-[24px] w-[26px]'}   h-[18px] w-[18px]  lg:h-[20px] lg:w-[20px] object-contain rounded-full `}
+                                                            className={` ${currentPage == 'academy' ? 'h-[18px] w-[18px]' : ' min-h-[24px] min-w-[26px]'}   h-[18px] w-[18px]  lg:h-[20px] lg:w-[20px] object-contain rounded-full `}
                                                         />
                                                     </div>
                                                 </div>
@@ -613,12 +770,10 @@ const Navbar = () => {
                                                 exit={{ opacity: 0 }}
                                                 transition={{ duration: 0.3 }}
                                             >
-
-
                                                 <div
                                                     className={` fixed top-0 ${orientation == 'landscape' ? 'overflow-auto h-[100vh] md:h-auto' : 'h-auto'}  w-full bg-[#121212] border-rounded-17    right-0   }
                                          transition-all duration-300 z-[100] `} style={{ maxHeight: '-webkit-fill-available' }}>
-                                                    <ul className="flex flex-col text-left   w-full text-base cursor-pointer pl-4 pt-6 pr-3 pb-[14px]">
+                                                    <ul className="flex flex-col text-left   w-full text-base cursor-pointer p-4">
                                                         <li className="pb-5 ">
                                                             <div className="flex justify-between" style={{ justifyContent: 'space-between' }}>
                                                                 <p className="fw-bold text-20 uppercase">menu</p>
@@ -639,48 +794,86 @@ const Navbar = () => {
                                                             </div>
                                                         </li>
 
-                                                        <div className="flex w-full gap-x-2">
+                                                        <div className="grid grid-cols-2 w-full gap-2 uppercase">
 
                                                             <div onClick={() => { setOpenMobileMenu(false) }}
-                                                                className=" border-rounded-10 pt-4 pb-3 card-bg-discord input-shadow w-full ">
+                                                                className="   menu-4-cards-bg   w-full ">
                                                                 <Link className={` ${currentPage == 'academy' && 'pointer-events-none'} w-full flex justify-center items-center`} href={route('academy')}   >
                                                                     <div>
-                                                                        <svg
-                                                                            className="mx-auto"
-                                                                            width="24" height="20" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <path d="M3.89382 13.618V17.4833C3.89382 18.4875 4.42951 19.4228 5.28662 19.9043L11.9828 23.6596C12.7863 24.1135 13.7506 24.1135 14.5541 23.6596L21.2503 19.9043C22.1074 19.4228 22.6431 18.4875 22.6431 17.4833V13.618L14.5541 18.1573C13.7506 18.6113 12.7863 18.6113 11.9828 18.1573L3.89382 13.618ZM11.9828 0.330133L0.693053 6.65769C-0.231018 7.1804 -0.231018 8.55595 0.693053 9.07867L11.9828 15.4062C12.7863 15.8602 13.7506 15.8602 14.5541 15.4062L25.3215 9.36753V17.4971C25.3215 18.2536 25.9242 18.8726 26.6608 18.8726C27.3973 18.8726 28 18.2536 28 17.4971V8.67975C28 8.1708 27.7322 7.71687 27.3036 7.46927L14.5541 0.330133C13.7506 -0.110044 12.7863 -0.110044 11.9828 0.330133Z" fill="white" />
+                                                                        <svg className="mx-auto" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            <path d="M4.57115 15.4157V18.7979C4.57115 19.6765 5.03988 20.495 5.78986 20.9163L11.649 24.2021C12.3521 24.5993 13.1958 24.5993 13.8989 24.2021L19.758 20.9163C20.508 20.495 20.9767 19.6765 20.9767 18.7979V15.4157L13.8989 19.3877C13.1958 19.7849 12.3521 19.7849 11.649 19.3877L4.57115 15.4157ZM11.649 3.78887L1.77048 9.32548C0.961922 9.78285 0.961922 10.9865 1.77048 11.4438L11.649 16.9804C12.3521 17.3776 13.1958 17.3776 13.8989 16.9804L23.3204 11.6966V18.8099C23.3204 19.4719 23.8477 20.0135 24.4922 20.0135C25.1367 20.0135 25.6641 19.4719 25.6641 18.8099V11.0948C25.6641 10.6494 25.4297 10.2523 25.0547 10.0356L13.8989 3.78887C13.1958 3.40371 12.3521 3.40371 11.649 3.78887Z" fill="#EBEBEB" />
                                                                         </svg>
-                                                                        <p className="fw-bold font-size-12 pt-2">Academy</p>
+                                                                        <p className="menu-cards-text">Academy</p>
                                                                     </div>
                                                                 </Link>
                                                             </div>
 
 
+                                                            <div onClick={() => { setOpenMobileMenu(false) }}
+                                                                className="   menu-4-cards-bg   w-full ">
+                                                                <Link className={` ${currentPage == 'live-stream' && 'pointer-events-none'} w-full flex justify-center items-center `} href={route('livestream.index')}>
+                                                                    <div>
+                                                                        <svg className="mx-auto" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            <path d="M18.4891 13.3914C18.4891 15.2689 16.565 16.7829 15.6969 18.2149C15.3183 18.8394 14.6888 19.4525 13.9585 19.4525C13.2712 19.4525 12.6841 18.8753 12.3376 18.2817C11.4901 16.8299 9.50573 15.2981 9.50573 13.3914C9.50573 11.0518 11.5206 9.14859 13.9974 9.14859C16.4742 9.14859 18.4891 11.0518 18.4891 13.3914ZM26.8307 13.9975C26.8307 11.0154 25.6886 8.28791 23.8021 6.17864C23.4299 5.76648 22.7754 5.71799 22.3647 6.1059C22.0182 6.4332 21.9797 6.96658 22.2877 7.31813C23.9176 9.11222 24.9057 11.4518 24.9057 13.9975C24.9057 16.5432 23.9176 18.8828 22.2877 20.689C21.9669 21.0405 22.0182 21.5739 22.3647 21.9012C22.7754 22.2891 23.4299 22.2406 23.8021 21.8285C25.6886 19.7071 26.8307 16.9796 26.8307 13.9975ZM3.08906 13.9975C3.08906 11.4518 4.07723 9.11222 5.70706 7.30601C6.0279 6.95446 5.97656 6.42108 5.63006 6.09378C5.23223 5.71799 4.5649 5.75436 4.19273 6.16651C2.30623 8.28791 1.16406 11.0154 1.16406 13.9975C1.16406 16.9796 2.30623 19.7071 4.19273 21.8285C4.5649 22.2406 5.2194 22.2891 5.63006 21.9012C5.97656 21.5739 6.01506 21.0405 5.70706 20.689C4.07723 18.8828 3.08906 16.5432 3.08906 13.9975ZM21.0557 13.9975C21.0557 15.5491 20.4911 16.9917 19.5414 18.1312C19.2462 18.4827 19.2847 18.9919 19.6312 19.3192C20.0419 19.7071 20.7221 19.6707 21.0814 19.2343C22.2621 17.7918 22.9807 15.9734 22.9807 13.9975C22.9807 12.0216 22.2621 10.2032 21.0686 8.7728C20.7092 8.3364 20.0291 8.30003 19.6184 8.68794C19.2847 9.00312 19.2334 9.51226 19.5286 9.87593C20.4911 11.0033 21.0557 12.4458 21.0557 13.9975ZM8.3764 19.307C8.71006 18.9919 8.7614 18.4827 8.46623 18.1191C7.50373 16.9917 6.93906 15.5491 6.93906 13.9975C6.93906 12.4458 7.50373 11.0033 8.4534 9.8638C8.74856 9.51226 8.71006 9.00312 8.36356 8.67582C7.96573 8.30003 7.28556 8.3364 6.92623 8.76068C5.73273 10.2032 5.01406 12.0216 5.01406 13.9975C5.01406 15.9734 5.73273 17.7918 6.92623 19.2343C7.28556 19.6586 7.96573 19.695 8.3764 19.307Z" fill="#EBEBEB" />
+                                                                        </svg>
+
+                                                                        <p className="menu-cards-text">Livestream</p>
+                                                                    </div>
+                                                                </Link>
+                                                            </div>
+
+
+
+
+
+                                                            <div onClick={() => {
+                                                                GTMLogs({
+                                                                    'event': 'GTMevent',
+                                                                    'event_name': 'marketplace_link_click'
+                                                                }); setOpenMobileMenu(false)
+                                                            }}
+                                                                className=" border-rounded-10 pt-4 pb-3 menu-4-cards-bg   w-full ">
+
+                                                                <Link onClick={() => { setOpenMobileMenu(false) }} className={`  ${currentPage == 'profile' && 'pointer-events-none'} w-full flex justify-center items-center`} href={route("marketplace.index")}>
+                                                                    <div>
+                                                                        <svg className="mx-auto" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            <path d="M12.3447 2.92038L7.77629 10.3557C7.27278 11.1629 7.86225 12.2146 8.82015 12.2146H17.9447C18.9026 12.2146 19.4921 11.1629 18.9886 10.3557L14.4324 2.92038C13.9535 2.13771 12.8237 2.13771 12.3447 2.92038Z" fill="white" />
+                                                                            <path d="M20.143 25.6667C23.1951 25.6667 25.6693 23.2029 25.6693 20.1636C25.6693 17.1243 23.1951 14.6604 20.143 14.6604C17.0909 14.6604 14.6166 17.1243 14.6166 20.1636C14.6166 23.2029 17.0909 25.6667 20.143 25.6667Z" fill="white" />
+                                                                            <path d="M3.56401 25.0552H10.9324C11.6079 25.0552 12.1605 24.5049 12.1605 23.8323V16.4948C12.1605 15.8222 11.6079 15.2719 10.9324 15.2719H3.56401C2.88857 15.2719 2.33594 15.8222 2.33594 16.4948V23.8323C2.33594 24.5049 2.88857 25.0552 3.56401 25.0552Z" fill="white" />
+                                                                        </svg>
+                                                                        <p className="menu-cards-text">Marketplace</p>
+                                                                    </div>
+                                                                </Link>
+                                                            </div>
+
+
+
+
                                                             {discordUrl ?
 
                                                                 <a href={discordUrl} className="w-full">
-                                                                    <div onClick={() => { setOpenMobileMenu(false) }}
-                                                                        className=" border-rounded-10 pt-4 pb-3 card-bg-discord input-shadow w-full flex justify-center items-center">
+                                                                    <div onClick={() => { setOpenMobileMenu(false); handleDiscordGTM() }}
+                                                                        className=" border-rounded-10   menu-4-cards-bg   w-full flex justify-center items-center">
                                                                         <div>
-                                                                            <svg className="mx-auto" width="24" height="22" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                <path d="M18.3894 1.47065C16.9842 0.783615 15.4816 0.284309 13.9107 0C13.7178 0.364474 13.4924 0.8547 13.337 1.24467C11.6671 0.982255 10.0126 0.982255 8.3734 1.24467C8.21804 0.8547 7.98753 0.364474 7.79288 0C6.2203 0.284309 4.71601 0.78545 3.31076 1.47428C0.476366 5.94994 -0.291993 10.3144 0.092187 14.6169C1.97211 16.0839 3.79398 16.9751 5.58511 17.5582C6.02734 16.9222 6.42176 16.2461 6.76154 15.5336C6.11442 15.2766 5.49461 14.9596 4.90897 14.5914C5.06434 14.4712 5.21631 14.3454 5.36314 14.216C8.93515 15.9618 12.8162 15.9618 16.3456 14.216C16.4941 14.3454 16.6461 14.4712 16.7997 14.5914C16.2124 14.9614 15.5909 15.2784 14.9437 15.5354C15.2835 16.2461 15.6763 16.924 16.1202 17.56C17.913 16.9769 19.7366 16.0858 21.6165 14.6169C22.0673 9.62923 20.8465 5.30483 18.3894 1.47065ZM7.24818 11.9709C6.1759 11.9709 5.29654 10.9249 5.29654 9.65109C5.29654 8.37728 6.15712 7.32945 7.24818 7.32945C8.33927 7.32945 9.2186 8.37545 9.19982 9.65109C9.20152 10.9249 8.33927 11.9709 7.24818 11.9709ZM14.4605 11.9709C13.3883 11.9709 12.5089 10.9249 12.5089 9.65109C12.5089 8.37728 13.3694 7.32945 14.4605 7.32945C15.5516 7.32945 16.431 8.37545 16.4122 9.65109C16.4122 10.9249 15.5516 11.9709 14.4605 11.9709Z" fill="white" />
+                                                                            <svg className="mx-auto" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                <path d="M22.6184 5.21575C20.9789 4.41422 19.2259 3.83169 17.3932 3.5C17.1682 3.92522 16.9052 4.49715 16.7239 4.95212C14.7757 4.64596 12.8454 4.64596 10.933 4.95212C10.7518 4.49715 10.4828 3.92522 10.2558 3.5C8.42108 3.83169 6.66608 4.41636 5.02662 5.22C1.71982 10.4416 0.823404 15.5335 1.27161 20.5531C3.46486 22.2646 5.59037 23.3042 7.68002 23.9846C8.19596 23.2426 8.65612 22.4538 9.05253 21.6225C8.29755 21.3227 7.57444 20.9528 6.89119 20.5233C7.07245 20.383 7.24976 20.2363 7.42106 20.0854C11.5884 22.1221 16.1163 22.1221 20.2339 20.0854C20.4072 20.2363 20.5845 20.383 20.7638 20.5233C20.0785 20.9549 19.3534 21.3249 18.5984 21.6247C18.9948 22.4538 19.453 23.2447 19.9709 23.9867C22.0626 23.3063 24.1901 22.2667 26.3833 20.5531C26.9092 14.7341 25.4849 9.68896 22.6184 5.21575ZM9.62027 17.4661C8.36928 17.4661 7.34336 16.2457 7.34336 14.7596C7.34336 13.2735 8.34737 12.051 9.62027 12.051C10.8932 12.051 11.9191 13.2714 11.8972 14.7596C11.8992 16.2457 10.8932 17.4661 9.62027 17.4661ZM18.0347 17.4661C16.7837 17.4661 15.7578 16.2457 15.7578 14.7596C15.7578 13.2735 16.7617 12.051 18.0347 12.051C19.3076 12.051 20.3335 13.2714 20.3116 14.7596C20.3116 16.2457 19.3076 17.4661 18.0347 17.4661Z" fill="white" />
                                                                             </svg>
-                                                                            <p className="fw-bold font-size-12 pt-2">Discord</p>
+                                                                            <p className="menu-cards-text">Discord</p>
                                                                         </div>
                                                                     </div>
                                                                 </a>
 
                                                                 :
 
-                                                                <div onClick={() => { setOpenMobileMenu(false) }}
-                                                                    className=" border-rounded-10 pt-4 pb-3 card-bg-discord input-shadow w-full ">
+                                                                <div onClick={() => { setOpenMobileMenu(false); handleDiscordGTM() }}
+                                                                    className=" border-rounded-10   menu-4-cards-bg   w-full ">
                                                                     <Link className={` ${currentPage == 'setup' && 'pointer-events-none'} w-full flex justify-center items-center`} href={route('discord.setup')}  >
 
                                                                         <div>
-                                                                            <svg className="mx-auto" width="24" height="22" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                <path d="M18.3894 1.47065C16.9842 0.783615 15.4816 0.284309 13.9107 0C13.7178 0.364474 13.4924 0.8547 13.337 1.24467C11.6671 0.982255 10.0126 0.982255 8.3734 1.24467C8.21804 0.8547 7.98753 0.364474 7.79288 0C6.2203 0.284309 4.71601 0.78545 3.31076 1.47428C0.476366 5.94994 -0.291993 10.3144 0.092187 14.6169C1.97211 16.0839 3.79398 16.9751 5.58511 17.5582C6.02734 16.9222 6.42176 16.2461 6.76154 15.5336C6.11442 15.2766 5.49461 14.9596 4.90897 14.5914C5.06434 14.4712 5.21631 14.3454 5.36314 14.216C8.93515 15.9618 12.8162 15.9618 16.3456 14.216C16.4941 14.3454 16.6461 14.4712 16.7997 14.5914C16.2124 14.9614 15.5909 15.2784 14.9437 15.5354C15.2835 16.2461 15.6763 16.924 16.1202 17.56C17.913 16.9769 19.7366 16.0858 21.6165 14.6169C22.0673 9.62923 20.8465 5.30483 18.3894 1.47065ZM7.24818 11.9709C6.1759 11.9709 5.29654 10.9249 5.29654 9.65109C5.29654 8.37728 6.15712 7.32945 7.24818 7.32945C8.33927 7.32945 9.2186 8.37545 9.19982 9.65109C9.20152 10.9249 8.33927 11.9709 7.24818 11.9709ZM14.4605 11.9709C13.3883 11.9709 12.5089 10.9249 12.5089 9.65109C12.5089 8.37728 13.3694 7.32945 14.4605 7.32945C15.5516 7.32945 16.431 8.37545 16.4122 9.65109C16.4122 10.9249 15.5516 11.9709 14.4605 11.9709Z" fill="white" />
+                                                                            <svg className="mx-auto" width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                <path d="M22.6184 5.21575C20.9789 4.41422 19.2259 3.83169 17.3932 3.5C17.1682 3.92522 16.9052 4.49715 16.7239 4.95212C14.7757 4.64596 12.8454 4.64596 10.933 4.95212C10.7518 4.49715 10.4828 3.92522 10.2558 3.5C8.42108 3.83169 6.66608 4.41636 5.02662 5.22C1.71982 10.4416 0.823404 15.5335 1.27161 20.5531C3.46486 22.2646 5.59037 23.3042 7.68002 23.9846C8.19596 23.2426 8.65612 22.4538 9.05253 21.6225C8.29755 21.3227 7.57444 20.9528 6.89119 20.5233C7.07245 20.383 7.24976 20.2363 7.42106 20.0854C11.5884 22.1221 16.1163 22.1221 20.2339 20.0854C20.4072 20.2363 20.5845 20.383 20.7638 20.5233C20.0785 20.9549 19.3534 21.3249 18.5984 21.6247C18.9948 22.4538 19.453 23.2447 19.9709 23.9867C22.0626 23.3063 24.1901 22.2667 26.3833 20.5531C26.9092 14.7341 25.4849 9.68896 22.6184 5.21575ZM9.62027 17.4661C8.36928 17.4661 7.34336 16.2457 7.34336 14.7596C7.34336 13.2735 8.34737 12.051 9.62027 12.051C10.8932 12.051 11.9191 13.2714 11.8972 14.7596C11.8992 16.2457 10.8932 17.4661 9.62027 17.4661ZM18.0347 17.4661C16.7837 17.4661 15.7578 16.2457 15.7578 14.7596C15.7578 13.2735 16.7617 12.051 18.0347 12.051C19.3076 12.051 20.3335 13.2714 20.3116 14.7596C20.3116 16.2457 19.3076 17.4661 18.0347 17.4661Z" fill="white" />
                                                                             </svg>
-                                                                            <p className="fw-bold font-size-12 pt-2">Discord</p>
+                                                                            <p className="menu-cards-text">Discord</p>
                                                                         </div>
                                                                     </Link>
                                                                 </div>
@@ -688,59 +881,28 @@ const Navbar = () => {
 
 
 
-                                                            <div onClick={() => { setOpenMobileMenu(false) }}
-                                                                className=" border-rounded-10 pt-4 pb-3 card-bg-discord input-shadow w-full ">
-                                                                <Link onClick={() => { setOpenMobileMenu(false)}} className={`  ${currentPage == 'profile' && 'pointer-events-none'} w-full flex justify-center items-center`} href={route("profile")}>
-                                                                    <div>
-                                                                        <svg className="mx-auto" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <g clip-path="url(#clip0_9431_21773)">
-                                                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.81736 0.0665255C7.4372 0.175932 7.01757 0.397229 6.71926 0.645666C6.40478 0.90751 6.03625 1.4207 5.92211 1.75562L5.84945 1.9689L5.27964 1.96918C4.96623 1.96932 4.63281 1.99084 4.53864 2.01695C4.3255 2.0762 4.04575 2.37704 4.00581 2.59009C3.9895 2.67699 3.98303 3.17921 3.99142 3.70613L4.0067 4.66421L4.15117 4.96904C4.32817 5.34254 4.64621 5.66935 5.00336 5.84467L5.27232 5.97671H8.48326H11.6942L11.9622 5.85109C12.4906 5.60345 12.8772 5.11126 12.9826 4.55237C13.0543 4.17174 13.0399 2.73442 12.9622 2.51659C12.81 2.08979 12.6171 1.99918 11.7971 1.96913L11.15 1.94546L11.0449 1.68653C10.7657 0.998447 10.1245 0.392494 9.40778 0.139182C9.03948 0.00905678 8.15711 -0.0313026 7.81736 0.0665255ZM2.06139 3.07435C1.29901 3.27545 0.620449 3.82721 0.279012 4.52359C-0.0188322 5.13099 -0.00392597 4.70949 0.0098084 12.1215L0.022324 18.8673L0.131683 19.159C0.423152 19.9367 1.06332 20.5767 1.84 20.8671L2.1317 20.9761L6.14214 20.9894L10.1525 21.0026L10.2388 20.4741C10.4497 19.1822 10.6045 18.8519 11.377 18.0456L11.9131 17.486L7.70209 17.4736L3.49107 17.4611L3.33803 17.3519C3.13412 17.2065 3.02945 16.9937 3.02851 16.7226C3.02762 16.4709 3.1247 16.3061 3.37342 16.1369L3.52839 16.0314H8.47871H13.429L15.2218 14.2382L17.0145 12.445V8.94882C17.0145 5.62056 17.0101 5.43526 16.9219 5.09059C16.7856 4.55757 16.5791 4.20099 16.1728 3.79703C15.6414 3.2687 15.0105 3.00015 14.3007 3.00015H13.9676V3.79473C13.9676 4.72951 13.9285 4.95812 13.682 5.4639C13.3713 6.10135 12.7726 6.62682 12.096 6.85581C11.7916 6.95888 11.7513 6.96024 8.64732 6.97431C5.13479 6.9902 5.13156 6.98996 4.48768 6.66784C4.04954 6.44865 3.55136 5.95632 3.33737 5.53103C3.08471 5.02885 3.03901 4.79354 3.01206 3.85562L2.98745 3.00015L2.65332 3.00324C2.46957 3.00493 2.20318 3.03695 2.06139 3.07435ZM3.43056 9.59396C2.87687 9.86682 2.88971 10.627 3.45282 10.9163C3.52665 10.9542 4.94031 10.9689 8.51532 10.9687C13.3821 10.9686 13.4783 10.9668 13.6282 10.8754C13.8739 10.7256 13.9757 10.5212 13.9562 10.2168C13.9363 9.90493 13.8312 9.74157 13.5661 9.61023C13.3787 9.51737 13.2941 9.51578 8.48017 9.51685C4.06089 9.51779 3.56982 9.52529 3.43056 9.59396ZM20.7074 11.7629C20.5858 11.8104 20.3854 11.9242 20.2621 12.0157C20.1388 12.1072 18.3158 13.9078 16.211 16.0169C13.2465 18.9875 12.373 19.8887 12.3352 20.0158C12.3083 20.106 12.166 20.8677 12.0189 21.7085C11.8348 22.7614 11.7615 23.2898 11.7834 23.4063C11.8448 23.7337 12.168 24.0002 12.5035 24.0002C12.6032 24.0002 13.3835 23.8761 14.2375 23.7244C15.3685 23.5236 15.8324 23.4224 15.9454 23.3519C16.0307 23.2987 17.8114 21.5402 19.9026 19.4441C24.2539 15.0825 23.9754 15.4136 23.9754 14.6017C23.9754 13.8887 23.9032 13.7641 22.9065 12.757C21.9658 11.8065 21.7557 11.6706 21.2333 11.6743C21.0532 11.6755 20.8381 11.7118 20.7074 11.7629ZM3.52928 12.8014C3.3235 12.8615 3.10473 13.0936 3.04511 13.3151C2.94395 13.6908 3.18203 14.1011 3.56031 14.203C3.68218 14.2358 5.34109 14.2477 8.61226 14.2393L13.4828 14.2267L13.6549 14.0954C14.0889 13.7643 14.075 13.2056 13.6244 12.8717C13.4922 12.7737 13.4844 12.7736 8.58531 12.7657C5.67015 12.761 3.61796 12.7755 3.52928 12.8014Z" fill="black" fill-opacity="0.349" />
-                                                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.0625 0.0321608C7.14206 0.186239 6.20344 0.956817 5.9287 1.78397L5.85183 2.0154H5.18288C4.56642 2.0154 4.50155 2.02369 4.35713 2.121C4.27092 2.17913 4.15706 2.3004 4.10409 2.39054C4.01456 2.54293 4.008 2.62697 4.01067 3.58571C4.01297 4.42674 4.02778 4.6538 4.09078 4.81669C4.28991 5.33124 4.7287 5.74885 5.23448 5.90508C5.52834 5.99583 5.66367 5.99977 8.47945 5.99977C11.7625 5.99977 11.7674 5.99935 12.2328 5.68219C12.3738 5.58615 12.5693 5.3926 12.6674 5.25207C12.9509 4.84585 12.9844 4.66571 12.9844 3.54615C12.9844 2.58535 12.9817 2.55816 12.8688 2.36546C12.6915 2.06297 12.5453 2.0154 11.7922 2.0154C11.225 2.0154 11.1503 2.00621 11.127 1.93336C11.1126 1.88827 11.0256 1.69411 10.9337 1.50193C10.4497 0.48938 9.1883 -0.156324 8.0625 0.0321608ZM2.07197 3.09455C1.57439 3.22491 1.19545 3.44447 0.820078 3.81985C0.438938 4.20094 0.224063 4.57622 0.0925781 5.09021C0.00253125 5.44229 0 5.63283 0 11.9998C0 18.3667 0.00253125 18.5573 0.0925781 18.9093C0.224063 19.4233 0.438938 19.7986 0.820078 20.1797C1.20117 20.5608 1.57645 20.7757 2.09044 20.9072C2.43652 20.9957 2.62181 20.9998 6.28786 20.9998H10.1232L10.1465 20.8943C10.1592 20.8363 10.2134 20.5357 10.2668 20.2263C10.4542 19.1405 10.6042 18.8394 11.332 18.0885C11.622 17.7892 11.8594 17.5308 11.8594 17.5142C11.8594 17.4977 9.98517 17.4841 7.69444 17.4841H3.5295L3.37453 17.3787C3.15019 17.226 3.0398 17.0547 3.01312 16.8181C2.98252 16.5465 3.12159 16.2671 3.36183 16.1178L3.53906 16.0076L8.48414 15.9959L13.4292 15.9842L15.2239 14.1912L17.0187 12.3982L17.004 8.83571C16.9879 4.90566 17.0041 5.1271 16.6861 4.49719C16.2585 3.64983 15.3915 3.08293 14.418 3.01425L14.0282 2.98674L14.0036 3.87216C13.9829 4.61724 13.9626 4.80586 13.8759 5.06227C13.5641 5.98411 12.8365 6.67566 11.9299 6.91182C11.5178 7.01916 5.50406 7.02005 5.08406 6.9128C4.57355 6.78249 4.2255 6.5776 3.81891 6.168C3.16678 5.5111 3.00178 5.03054 3.0007 3.78493L3 2.99977L2.70703 3.00235C2.54592 3.00375 2.26012 3.04529 2.07197 3.09455ZM3.37453 9.62086C3.15019 9.77354 3.0398 9.94482 3.01312 10.1815C2.98252 10.4531 3.12159 10.7324 3.36183 10.8818L3.53906 10.992L8.40591 11.0045C11.6301 11.0129 13.3331 11.0008 13.4516 10.9689C13.6926 10.904 13.9487 10.6168 13.9915 10.3633C14.0336 10.114 13.8745 9.77269 13.6454 9.62091L13.4861 9.51539H8.50781H3.5295L3.37453 9.62086ZM20.8259 11.7368C20.7173 11.7723 20.5274 11.8594 20.404 11.9303C20.1318 12.0866 12.5047 19.6809 12.4015 19.8984C12.3638 19.9779 12.2053 20.7676 12.0494 21.6534C11.7367 23.4294 11.7347 23.5073 11.996 23.7686C12.268 24.0406 12.3408 24.0398 14.0455 23.7452C14.8927 23.5988 15.6705 23.4487 15.774 23.4116C15.9243 23.3578 16.7434 22.5616 19.8582 19.4416C23.565 15.7287 23.7598 15.5251 23.8636 15.2576C23.9467 15.0434 23.973 14.8814 23.9738 14.5779C23.9747 14.2237 23.9577 14.143 23.8204 13.8513C23.6862 13.5661 23.5606 13.4185 22.8603 12.7223C21.9713 11.8385 21.7911 11.7188 21.3047 11.6893C21.1445 11.6796 20.9384 11.7001 20.8259 11.7368ZM3.44297 12.8157C3.00375 13.007 2.86556 13.6052 3.17545 13.9735C3.41962 14.2637 3.15047 14.2498 8.50819 14.2498C13.2917 14.2498 13.4144 14.2475 13.5909 14.1575C14.1165 13.8893 14.1165 13.1102 13.5909 12.8421C13.4143 12.752 13.2935 12.7498 8.49797 12.7516C4.52002 12.7531 3.55875 12.7653 3.44297 12.8157Z" fill="white" fill-opacity="0.988" />
-                                                                            </g>
-                                                                            <defs>
-                                                                                <clipPath id="clip0_9431_21773">
-                                                                                    <rect width="24" height="24" fill="white" />
-                                                                                </clipPath>
-                                                                            </defs>
-                                                                        </svg>
-                                                                        {/*<svg*/}
-                                                                        {/*    className="mx-auto" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
-                                                                        {/*    <path d="M10.2947 0.603774L5.59579 8.25157C5.07789 9.08176 5.68421 10.1635 6.66947 10.1635H16.0547C17.04 10.1635 17.6463 9.08176 17.1284 8.25157L12.4421 0.603774C11.9495 -0.201258 10.7874 -0.201258 10.2947 0.603774Z" fill="white" />*/}
-                                                                        {/*    <path d="M18.3158 24C21.4551 24 24 21.4658 24 18.3396C24 15.2135 21.4551 12.6792 18.3158 12.6792C15.1765 12.6792 12.6316 15.2135 12.6316 18.3396C12.6316 21.4658 15.1765 24 18.3158 24Z" fill="white" />*/}
-                                                                        {/*    <path d="M1.26316 23.3711H8.8421C9.53684 23.3711 10.1053 22.805 10.1053 22.1132V14.566C10.1053 13.8742 9.53684 13.3082 8.8421 13.3082H1.26316C0.568421 13.3082 0 13.8742 0 14.566V22.1132C0 22.805 0.568421 23.3711 1.26316 23.3711Z" fill="white" />*/}
-                                                                        {/*</svg>*/}
-                                                                        <p className="fw-bold font-size-12 pt-2">Notes</p>
-                                                                    </div>
-                                                                </Link>
-                                                            </div>
+
 
                                                         </div>
 
 
-                                                        <div className=" rounded-[20px]   mt-[42px]">
-
-
-                                                            {/* <Link onClick={() => { setOpenMobileMenu(false) }} href={route('live-training.index')}  >
-                                            <li onClick={() => {
-                                                setOpenMobileMenu(false)
-                                            }}
-                                                className="new-card-background input-shadow border-rounded-10 py-[2%] uppercase w-full text-center fs-tiny fw-bold ">
-                                                live training
-                                            </li>
-                                        </Link> */}
+                                                        <div className=" rounded-[20px]   mt-[24px]">
 
 
 
-
-
+                                                            {/* <Link onClick={() => { setOpenMobileMenu(false), setScrollToNotes(true) }} href={route('livestream.index')} >
+                                                                <li className="mb-[14px] card-bg-discord flex justify-center items-center h-[39px] input-shadow border-rounded-10   uppercase w-full text-center font-size-12 fw-bold">
+                                                                    LIVESTREAM
+                                                                </li>
+                                                            </Link> */}
 
                                                             <Link onClick={() => { setOpenMobileMenu(false), setScrollToNotes(true) }} href={route('profile')} >
-                                                                <li className="mb-[14px] card-bg-discord flex justify-center items-center h-[39px] input-shadow border-rounded-10   uppercase w-full text-center font-size-12 fw-bold">
+                                                                <li className="menu-options-dropdown">
                                                                     notes
                                                                 </li>
                                                             </Link>
                                                             <Link onClick={() => { setOpenMobileMenu(false) }} href={route('profile')} >
-                                                                <li className="mb-[14px] card-bg-discord flex justify-center items-center h-[39px]   input-shadow border-rounded-10    mt-3 uppercase w-full text-center font-size-12 fw-bold">
+                                                                <li className="menu-options-dropdown">
                                                                     favorites
                                                                 </li>
                                                             </Link>
@@ -749,20 +911,21 @@ const Navbar = () => {
 
 
                                                             <Link onClick={() => { setOpenMobileMenu(false) }} href={route('profile.personal')}  >
-                                                                <li className="mb-[14px] my-3 card-bg-discord flex justify-center items-center h-[39px] input-shadow border-rounded-10 uppercase w-full text-center font-size-12 fw-bold ">
+                                                                <li className="menu-options-dropdown">
                                                                     SETTINGS
                                                                 </li>
                                                             </Link>
 
                                                             <a onClick={() => { setOpenMobileMenu(false) }}
                                                                 href="https://capitalclub1498.zendesk.com/hc/en-us" target="_blank">
-                                                                <li className="bg-white text-black border-rounded-10 mt-20 flex justify-center items-center h-[39px] uppercase w-full text-center font-size-12 fw-bold ">
-                                                                    <p className="flex justify-center font-size-12 fw-bold" >    SUPPORT <svg className="m-1" width="13" height="12" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <li className="bg-white text-black rounded-[8px] mt-6 flex justify-center items-center h-[48px] w-full     ">
+                                                                    <p className="menu-support-button" >    SUPPORT
+                                                                        {/* <svg className="m-1" width="13" height="12" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                         <path d="M11.6667 6.12833C11.6667 2.92583 9.18174 0.75 6.41674 0.75C3.6809 0.75 1.16674 2.87917 1.16674 6.16333C0.816738 6.36167 0.583405 6.735 0.583405 7.16667V8.33333C0.583405 8.975 1.1084 9.5 1.75007 9.5H2.3334V5.94167C2.3334 3.68417 4.15924 1.85833 6.41674 1.85833C8.67424 1.85833 10.5001 3.68417 10.5001 5.94167V10.0833H5.8334V11.25H10.5001C11.1417 11.25 11.6667 10.725 11.6667 10.0833V9.37167C12.0109 9.19083 12.2501 8.835 12.2501 8.415V7.07333C12.2501 6.665 12.0109 6.30917 11.6667 6.12833Z" fill="black" />
                                                                         <path d="M4.66674 7.16667C4.9889 7.16667 5.25007 6.9055 5.25007 6.58333C5.25007 6.26117 4.9889 6 4.66674 6C4.34457 6 4.0834 6.26117 4.0834 6.58333C4.0834 6.9055 4.34457 7.16667 4.66674 7.16667Z" fill="black" />
                                                                         <path d="M8.16674 7.16667C8.4889 7.16667 8.75007 6.9055 8.75007 6.58333C8.75007 6.26117 8.4889 6 8.16674 6C7.84457 6 7.5834 6.26117 7.5834 6.58333C7.5834 6.9055 7.84457 7.16667 8.16674 7.16667Z" fill="black" />
                                                                         <path d="M9.91674 5.43417C9.63674 3.77167 8.19007 2.5 6.4459 2.5C4.6784 2.5 2.77674 3.96417 2.9284 6.2625C4.36924 5.67333 5.45424 4.39 5.7634 2.82667C6.52757 4.36083 8.09674 5.41667 9.91674 5.43417Z" fill="black" />
-                                                                    </svg>
+                                                                    </svg> */}
                                                                     </p>
                                                                 </li>
                                                             </a>
@@ -818,12 +981,12 @@ const Navbar = () => {
                                         </motion.div>}
                                 </button>
                             </div>
-                        </div>
+                        </div >
 
-                    </div>
-                </nav>
+                    </div >
+                </nav >
 
-            </div>
+            </div >
         </>
     );
 };

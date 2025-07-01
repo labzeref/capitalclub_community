@@ -1,0 +1,124 @@
+
+
+.academy-arrow{
+    top: 43.5%;
+    @include for_breakpoint(laptop) {
+        top: 41%;
+    }
+}
+
+// flex items-center max-w-[187px]
+//  bg-[#191919] rounded-[20px] fw-bold text-[12px] uppercase
+.live-switch-btn{
+  
+    height: 38px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    max-width: 187px;
+    background-color: #191919;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px;
+   
+    cursor: pointer;
+
+.up-btn{
+    text-transform: uppercase; 
+   border-radius: 8px;
+    height: 100%;
+    padding-top: 2px;
+    display: flex;
+    align-items: center;
+    padding: 2px 14px 0px 14px;
+    margin: 0 4px;
+    @include for_breakpoint(mobile) {
+        padding: 2px 28px 0px 28px;
+    }
+}
+
+
+.past-btn{
+    // rounded-full h-full pt-0.5 flex items-center px-[3.2rem] md:px-[2rem] mx-1 
+    border-radius: 8px;
+    text-transform: uppercase; 
+     height: 100%; 
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     margin: 0 4px;
+     width: 100%;
+     padding-top: 2px;
+     @include for_breakpoint(mobile) {
+        padding: 1px 28px 0px 28px;
+    }
+
+ }
+
+
+
+    @include for_breakpoint(mobile) {
+        max-width: 252px;
+    }
+}
+
+.sort-select-livestream{
+background-color: transparent !important;
+border: none; 
+box-shadow: none;
+padding: 0 3px !important;
+
+&:focus{
+    --tw-ring-shadow: 0;
+
+}
+}
+
+.live-notes{
+    position: relative;
+    width: 54px;
+    height: 80vh;
+}
+
+.live-notes-head {
+    position: absolute;
+    // border-top-left-radius: 15px;
+    width: 100%;
+    height: 77vh;
+}
+
+.live-notes-sm-h{
+    
+    @include for_breakpoint(tablet) {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 172.56198%;
+    }
+    @include for_breakpoint(mobile) {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 97.56198%;
+    }
+}
+
+.live-slider-sm-d-none{
+    display: block;
+    @include for_breakpoint(tablet) {
+    display: none !important;
+    }
+    @include for_breakpoint(mobile) {
+    display: none !important;
+    }
+}
+
+.live-slider-lg-d-none{
+    display: none !important ; 
+    @include for_breakpoint(tablet) {
+    display: block !important;
+    }
+    @include for_breakpoint(mobile) {
+    display: block !important;
+    }
+}

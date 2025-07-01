@@ -3,7 +3,7 @@
     width: 100%;
     margin: 30px auto 30px;
     // left: 50%;
-    z-index: 1000;
+    z-index: 9;
     // transform:translateX(-100%);
 
     @include for_breakpoint(tablet) {
@@ -29,21 +29,66 @@
     font-weight: 700;
     color: $primary-color !important;
     background-color: #1a1a1a;
-    border-radius: 50px;
+    border-radius: 8px;
     line-height: normal;
     // padding: 15px 39px 12px 39px;
     padding-top: 4px;
     width: 151px;
     height: 36px;
-
-
     transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3 ease-in-out;
 
+    @include for_breakpoint(laptop) {
+        width: 135px;
+    } 
+
+
+    @include for_breakpoint(mobile) {
+        font-size: 10px !important;
+        width: 121px;
+    height: 30px;
+    padding-top: 2px;
+    } 
 
     &.active {
         color: #000 !important;
+       
         background-color: white !important;
     }
+
+
+    
+    &.border-active{
+        background-color: #1a1a1a !important; 
+        font-weight: 700 !important;
+        padding: 7px 15px 5px 29px ;
+        @include for_breakpoint(mobile) {
+           
+            padding: 6px 9px 5px 19px ;
+           } 
+
+        }
+
+        &.deactive-pills{
+        color: #9E9E9E !important;
+        &:hover {
+            background: transparent !important;
+        }
+        }
+
+    &.is-marketplace-cat-button{
+        font-weight: 500;
+    width: fit-content;
+    // padding: 8px 29px 5px 29px ;
+    line-height: 24px;
+    background-color: transparent;
+    @include for_breakpoint(mobile) {
+     height: 28px; 
+     font-size: 13px !important;
+    //  padding: 8px 14px 5px 14px ;
+    } 
+
+    }
+    
     &:hover {
         background: rgba(126, 126, 126, 0.5) !important;
     }
@@ -66,4 +111,42 @@
     @include for_breakpoint(mobile) {
         margin-right: 6px;
     } 
+}
+
+.container{
+    max-width: 1517px !important;
+}
+
+ 
+// fw-bold font-size-12 pt-2
+.menu-cards-text{
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+    padding-top: 8px;
+}
+
+.menu-options-dropdown{ 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    text-transform: uppercase;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background-color: #1A1A1A;
+}
+
+.menu-support-button{ 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 17px;
 }

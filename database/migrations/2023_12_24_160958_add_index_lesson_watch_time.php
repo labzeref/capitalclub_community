@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('lesson_watch_times', function (Blueprint $table) {
             $table->index('user_id');
             $table->index('lesson_id');
-            $table->index(['user_id','lesson_id']);
+            $table->index(['user_id', 'lesson_id']);
         });
     }
 

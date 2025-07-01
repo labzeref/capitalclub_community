@@ -1,6 +1,6 @@
 .search-w {
     min-width: 270px;
-    width: 60%;
+    width: 100%;
 
     @include for_breakpoint(mobile) {
         width: 100%;
@@ -17,22 +17,67 @@
     margin-top: -80px !important;
 
     @include for_breakpoint(mobile) {
-        margin-top: -30px !important; 
+        margin-top: 15px !important; 
     }
 
     @include for_breakpoint(tablet) {
-        margin-top: -50px !important;
+        margin-top: -20px !important;
     }
 }
+    .marketplace-dots .owl-dots span{
+width: 95px !important;
+
+@include for_breakpoint(mobile) {
+    width: 42px !important;
+
+}
+    }
+
 
 .marketplace-card {
     border-radius: 20px;
-    padding: 32px 50px;
+    padding: 38px;
+
+    @include for_breakpoint(mobile) {
+        padding: 38px 28px;
+        border-radius: 10px;
+    }
+}
+
+
+.marketplace-cate-card {
+    border-radius: 20px;
+    padding: 38px 30px 44px 32px;
+
+    @include for_breakpoint(mobile) {
+        padding: 37px 28px;
+        border-radius: 10px;
+    }
+}
+
+.MK-profile-slildr-card {
+
+    border-radius: 20px;
+    padding: 38px;
+
+    @include for_breakpoint(mobile) {
+        padding: 38px 28px;
+        border-radius: 10px;
+        max-width: 353px;
+        min-width: 350px;
+
+        width: 100%;
+    }
+}
+
+.MK-feature-card{
+    border-radius: 20px;
+    padding: 34px 20px 37px 20px;
 
     @include for_breakpoint(mobile) {
         padding: 20px 30px;
         border-radius: 10px;
-    }
+    }  
 }
 
 .mk-text-color {
@@ -40,20 +85,19 @@
 }
 
 .market-profile-des {
-
     border-radius: 20px;
     background-color: #161616;
-    padding: 41px 27px 46px 70px;
+    padding: 38px 48px 37px 38px;
 
 
     @include for_breakpoint(mobile) {
-        margin-top: 16px;
+        // margin-top: 16px;
         border-radius: 10px;
-        padding: 21px 27px 20px 30px;
+        padding: 37px 20px 28px 20px;
     }
 
     @include for_breakpoint(tablet) {
-        margin-top: 16px;
+        // margin-top: 16px;
         border-radius: 10px;
     }
 
@@ -118,73 +162,89 @@
 
 .mk-desk-wrapper{
     // absolute  hide-sm-img max-w-[280px] md:max-w-[600px] w-[40%] right-[7%] md:right-[10%] top-[10%] md:top-[20%] lg:top-[25%]
-    position: absolute;
-    max-width: 280px;
-    width: 40%;
-    right: 10%;
-    top: 22%;
-    max-width: 600px ;
+       width: 100%;
+       height: 100%;
     // @include for_breakpoint(mobile) { 
     //     top :10%;
     //     right: 7%;
     //     max-width: 600px ;
     // }
-    @include for_breakpoint(tablet) { 
-        top :16%;
-        right: 10%; 
-    }
-    @include for_breakpoint(laptop) { 
-        top :20%;
-        right: 10%;
-        max-width: 600px ;
-    }
-    @include for_breakpoint(desktop) { 
-        top :25%;
-        right: 10%;
-        max-width: 600px ;
-    }
+    // @include for_breakpoint(tablet) { 
+    //     top :16%;
+    //     right: 10%; 
+    // }
+    // @include for_breakpoint(laptop) { 
+    //     top :20%;
+    //     right: 10%;
+    //     max-width: 600px ;
+    // }
+    // @include for_breakpoint(desktop) { 
+    //     top :25%;
+    //     right: 10%;
+    //     max-width: 600px ;
+    // }
 
 }
 
 .mk-desk-slide-logo{
-height: 130px !important;
-object-fit: contain !important;
+height: 131px;
+object-fit: contain;
 
+@include for_breakpoint(mobile) { 
+    height: 53px  
+}
 @include for_breakpoint(tablet) { 
-    height: 40px !important;
+    height: 70px  
 }
-@include for_breakpoint(laptop) { 
-    height: 60px !important;
-}
-@include for_breakpoint(desktop) { 
-    height: 80px !important;
-}
+ }
+
+.mk-slider-gradiant{
+    position: absolute;
+    top: 55%;
+    left: 60%;
+    transform: translate(-50%, -46%);
+    background: radial-gradient(50% 50% at 50% 50%, rgba(157, 152, 122, 0.22) 0%, rgba(5, 5, 5, 0.00) 100%);
+
+    filter: blur(30px);
+    height: 300%;
+    aspect-ratio: 1 / 1;
 }
 
+.mk-slider-shadow{
+    position: absolute;
+    bottom: 0%;
+    left: 0%; 
+    background: linear-gradient(357deg, #0D0D0D 21.29%, rgba(13, 13, 13, 0.00) 88.01%);
+    height: 100%;
+    width: 100%; 
+}
 
 .mk-desk-slide-p{ 
     font-size: 18px;
     font-weight: 400;
     text-align: center;
-    margin: 2rem auto;
+    line-height: 25px;
+    margin: 2rem auto 2.3rem auto ;
     @include for_breakpoint(mobile) { 
         font-size: 14px;
-        margin: 0.5rem auto;
+        margin: 1rem auto;
+        line-height: 20px;
     }
     @include for_breakpoint(tablet) { 
-        margin: 0.5rem auto;
+        margin: 1.5rem auto;
         font-size: 14px;
     }
     @include for_breakpoint(desktop) { 
-        margin: 1rem auto;
+        margin: 2rem auto;
     }
 }
 
 .mk-mobile-slide-logo{
+    object-fit: contain;
     position: absolute;
-    top: 15px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50% , -50%);
         height: 26px !important;
 }
 
@@ -198,10 +258,131 @@ object-fit: contain !important;
     font-size: 12px;
 }
 
-// img{ 
-// }
-// p{
-//     position: absolute;
-//     top: 100px;
-// }
+.long-desc-list-style{
+    ol{
+        margin-left: 20px;
+        list-style: decimal;
+    }
+    ul{
+        margin-left: 20px;
+        list-style: disc;
+    }
+    }
+ 
+    .xy-center{
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%,-50%);
+    }
 
+ .cursor-opacity{
+    opacity: 0.5 !important;
+    cursor: default !important;
+ }
+
+ .pill-cross{
+    // h-[7px] w-[7px] absolute right-2 top-2
+    height: 12px !important;
+    width: 12px !important;
+    position: absolute;
+    right: 11px;
+    top: 14px
+ }
+
+//  fw-bold text-[30px] md:text-[35px] leading-[40px] text-center uppercase
+
+.MK-footer-heading{
+    font-weight: 700;
+    font-size: 35px;
+    line-height: 40px;
+    text-align: center;
+    text-transform: uppercase;
+    @include for_breakpoint(mobile) { 
+        font-size: 30px; 
+    }
+}
+
+.MK-footer-text{
+    max-width: 47.75rem;
+    opacity: 0.6;
+    line-height: 27px;
+    font-weight: 400;
+    font-size: 18px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    @include for_breakpoint(mobile) { 
+        font-size: 14px; 
+        line-height: 21px;
+    }
+
+}
+
+
+.tooltip {
+    position: relative;
+  }
+  
+  .tooltip .tooltiptext {
+    font-size: 12px;
+    font-weight: 500;
+    visibility: hidden;
+    width: 80px;
+    background-color: #454545;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: 110%;
+    left: 110%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+//   .tooltip .tooltiptext::after {
+//     content: "";
+//     position: absolute;
+//     top: 100%;
+//     left: 50%;
+//     margin-left: -5px;
+//     border-width: 5px;
+//     border-style: solid;
+//     border-color: #454545 transparent transparent transparent;
+//   }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .roadmap-logo{
+position: absolute;
+    left: 50%; 
+    transform: translateX(-50%);
+
+    width: 75px;
+    height: 75px;
+   
+    @include for_breakpoint(tablet) { 
+        width: 4vw;
+        height: 4vw;
+     }
+   
+    @include for_breakpoint(mobile) { 
+       width: 5.5vw;
+       height: 5.5vw;
+    }
+
+}
+
+.description-card-view-live {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }

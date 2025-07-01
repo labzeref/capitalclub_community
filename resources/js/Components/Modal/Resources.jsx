@@ -11,12 +11,12 @@ import ReactToast from "../ReactToast";
 import AcademyButton from "../AcademyButton";
 import { AnimatePresence, motion } from "framer-motion"
 import Xmark from "../Xmark";
-export default function Resources({ files , lesson_name }) {
+export default function Resources({ files, lesson_name }) {
     const [showModal, setShowModal] = useState(false);
 
 
 
- 
+
 
 
     useEffect(() => {
@@ -71,7 +71,7 @@ export default function Resources({ files , lesson_name }) {
                                         {/*header*/}
                                         <div>
                                             <div className="flex items-center  justify-between p-2 w-full ">
-                                              <p className="fw-bold font-size-16">  Resources </p>
+                                                <p className="fw-bold font-size-16">  Resources </p>
                                                 <div onClick={() => setShowModal(false)}>
                                                     <Xmark />
                                                 </div>
@@ -82,44 +82,44 @@ export default function Resources({ files , lesson_name }) {
                                         <div className="relative p-3 md:p-6 flex-auto">
 
                                             <div className="max-w-[420px] md:max-w-[620px] lg:max-w-[830px] mx-auto paddingSectionXSmall  max-h-[25rem] overflow-auto ">
-                                                    <>
-                                                        <div className="relative overflow-x-auto border-rounded-10" >
-                                                            <table className="w-full text-sm text-left text-white ">
-                                                                <thead className="  text-xs text-white uppercase bg-[#1a1a1a]  ">
-                                                                    <tr>
-                                                                        {/* <th scope="col" className="px-6 py-3">
+                                                <>
+                                                    <div className="relative overflow-x-auto border-rounded-10" >
+                                                        <table className="w-full text-sm text-left text-white ">
+                                                            <thead className="  text-xs text-white uppercase bg-[#1a1a1a]  ">
+                                                                <tr>
+                                                                    {/* <th scope="col" className="px-6 py-3">
                                                                             File name
                                                                         </th> */}
-                                                                        <th scope="col" className=" text-center px-6 py-3">
-                                                                       {lesson_name}
-                                                                        </th>
+                                                                    <th scope="col" className=" text-center px-6 py-3">
+                                                                        {lesson_name}
+                                                                    </th>
 
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody className="max-h-[25rem] overflow-y-auto">
-                                                                    {/* {files?.map((data, index) => ( */}
-                                                                    <tr className="bg-[#121212]  ">
-                                                                        {/* <th scope="row" className="px-6 py-4 text-[10px] md:text-[14px] font-medium text-white whitespace-nowrap">
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody className="max-h-[25rem] overflow-y-auto">
+                                                                {/* {files?.map((data, index) => ( */}
+                                                                <tr className="bg-[#121212]  ">
+                                                                    {/* <th scope="row" className="px-6 py-4 text-[10px] md:text-[14px] font-medium text-white whitespace-nowrap">
                                                                             {data?.name}
                                                                         </th> */}
-                                                                        <td className="px-6 py-4 flex justify-center">
-                                                                            <a href={files} target="_blank"  >
+                                                                    <td className="px-6 py-4 flex justify-center">
+                                                                        <a href={files} target="_blank"  >
                                                                             <button className="button primary rounded-full w-full ">
                                                                                 <div className="button_container glitch uppercase text-[10px]">
 
-                                                                                   Download
+                                                                                    Download
                                                                                 </div>
                                                                             </button>
-                                                                            </a>
-                                                                        </td>
+                                                                        </a>
+                                                                    </td>
 
-                                                                    </tr>
-                                                                    {/* ))} */}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                                                                </tr>
+                                                                {/* ))} */}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
 
-                                                    </>
+                                                </>
 
 
                                             </div>

@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Maize\Markable\Markable;
-use Maize\Markable\Models\Bookmark;
+use Maize\Markable\Models\Bookmark; 
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -32,6 +32,8 @@ class Course extends Model implements HasMedia
     protected $casts = [
         'featured' => 'boolean',
         'strict' => 'boolean',
+        'exclusive' => 'boolean',
+        'is_coming_soon' => 'boolean',
         'published_at' => 'datetime',
     ];
 
@@ -39,7 +41,7 @@ class Course extends Model implements HasMedia
         Bookmark::class,
     ];
 
-    protected array $cascadeDeletes = ['lessons', 'threads', 'reviews'];
+    protected array $cascadeDeletes = ['lessons', 'reviews'];
 
     protected static function booted(): void
     {
@@ -65,7 +67,7 @@ class Course extends Model implements HasMedia
 
     public function scopeUpcoming(Builder $query): void
     {
-        $query->whereNull('published_at');
+        $query->withoutGlobalScope('published');
     }
 
     public function registerMediaCollections(): void
@@ -174,11 +176,6 @@ class Course extends Model implements HasMedia
             ->wherePivot('completed', true);
     }
 
-    public function threads(): HasMany
-    {
-        return $this->hasMany(Thread::class);
-    }
-
     public function reviews(): MorphMany
     {
         return $this->morphMany(Review::class, 'reviewable');
@@ -231,8 +228,6 @@ class Course extends Model implements HasMedia
 
     /**
      * Update the duration by sum of duration of all its lessons
-     *
-     * @return void
      */
     public function updateDuration(): void
     {

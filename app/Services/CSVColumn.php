@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Services;
+
+class CSVColumn
+{
+    const customerId = 'customerId';
+    const orderId = 'orderId';
+    const dateCreated = 'dateCreated';
+    const campaignId = 'campaignId';
+    const productId = 'productId';
+    const isActiveRecurring = 'isActiveRecurring';
+    const nextBillDate = 'nextBillDate';
+    const paySource = 'paySource';
+    const cardNumber = 'cardNumber';
+    const cardExpiryMonth = 'cardExpiryMonth';
+    const cardExpiryYear = 'cardExpiryYear';
+    const achRoutingNumber = 'achRoutingNumber';
+    const achAccountNumber = 'achAccountNumber';
+    const achAccountType = 'achAccountType';
+    const merchantId = 'merchantId';
+    const merchantTxnId = 'merchantTxnId';
+    const txnType = 'txnType';
+    const subTotal = 'subTotal';
+    const shipTotal = 'shipTotal';
+    const salesTax = 'salesTax';
+    const totalAmount = 'totalAmount';
+    const responseType = 'responseType';
+    const responseText = 'responseText';
+    const authCode = 'authCode';
+    const parentTxnId = 'parentTxnId';
+    const firstName = 'firstName';
+    const lastName = 'lastName';
+    const address1 = 'address1';
+    const address2 = 'address2';
+    const city = 'city';
+    const state = 'state';
+    const country = 'country';
+    const postalCode = 'postalCode';
+    const phoneNumber = 'phoneNumber';
+    const homePhone = 'homePhone';
+    const cellPhone = 'cellPhone';
+    const workPhone = 'workPhone';
+    const emailAddress = 'emailAddress';
+    const billShipSame = 'billShipSame';
+    const shipFirstName = 'shipFirstName';
+    const shipLastName = 'shipLastName';
+    const shipAddress1 = 'shipAddress1';
+    const shipAddress2 = 'shipAddress2';
+    const shipCity = 'shipCity';
+    const shipState = 'shipState';
+    const shipCountry = 'shipCountry';
+    const shipPostalCode = 'shipPostalCode';
+    const affId = 'affId';
+    const subAffId = 'subAffId';
+    const shipDate = 'shipDate';
+    const shipCarrier = 'shipCarrier';
+    const shipMethod = 'shipMethod';
+    const trackingNumber = 'trackingNumber';
+    const isChargedback = 'isChargedback';
+    const chargebackTotal = 'chargebackTotal';
+    const chargebackDate = 'chargebackDate';
+    const chargebackResonCode = 'chargebackResonCode';
+    const externalToken = 'externalToken';
+    const quantity = 'quantity';
+    const variantDetailId = 'variantDetailId';
+    const password = 'password';
+    const companyName = 'companyName';
+    const cancellationDate = 'cancellationDate';
+    const verifiedByNMI = 'verifiedByNMI';
+}

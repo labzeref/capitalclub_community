@@ -36,11 +36,11 @@ class RemoveDiscordRolesJob implements ShouldQueue
     {
         $user = User::find($this->userId);
 
-        if (! $user) {
+        if ($user->orders()->where('end_at','>',now())->count() > 0 || $user->life_time_membership || $user->hasActiveChargebeeSubscription()){
             return;
         }
 
-        if (! $user->discord_id) {
+        if (!$user->discord_id) {
             return;
         }
 
@@ -51,14 +51,27 @@ class RemoveDiscordRolesJob implements ShouldQueue
 
             $discordUser = $response->json();
 
-            $user->update(['discord_roles' => $discordUser['roles']]);
+            $roles = $discordUser['roles'] ?? [];
 
-            foreach ($discordUser['roles'] as $role) {
-                $this->discordService->removeGuildMemberRole(userDiscordId: $user->discord_id, roleId: $role);
+            if (count($roles) === 0) {
+                DB::rollBack();
+                return;
             }
+
+            $user->update([
+                'discord_roles' => $roles,
+            ]);
+
+            $user->update(['discord_roles' => $roles]);
+
+            foreach ($roles as $role) {
+                $response = $this->discordService->removeGuildMemberRole(userDiscordId: $user->discord_id, roleId: $role);
+            }
+
+//            dispatch(new AssignDiscordRolesJob($user->id, [config('discord.guestRoleId')]))->onQueue('discord');
+
         } catch (ThrowableAlias $throwable) {
             DB::rollBack();
-
             throw $throwable;
         }
 

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Http;
 use Maize\Markable\Markable;
 use Maize\Markable\Models\Bookmark;
 use Spatie\MediaLibrary\HasMedia;
@@ -44,7 +45,7 @@ class Lesson extends Model implements HasMedia
     {
         parent::booted();
 
-        static::addGlobalScope('published', fn (Builder $builder) => $builder->whereNotNull('published_at'));
+        static::addGlobalScope('published', fn(Builder $builder) => $builder->whereNotNull('published_at'));
     }
 
     public function registerMediaCollections(): void
@@ -171,7 +172,7 @@ class Lesson extends Model implements HasMedia
      */
     public function nextLesson(): ?Lesson
     {
-        if ($this->module_id){
+        if ($this->module_id) {
             return self::where('course_id', $this->course_id)
                 ->where(function ($query) {
                     $query->where('module_id', '>', $this->module_id)
@@ -183,7 +184,7 @@ class Lesson extends Model implements HasMedia
                 ->orderBy('module_id')
                 ->orderBy('serial_number')
                 ->first();
-        }else{
+        } else {
             return self::where('course_id', $this->course_id)
                 ->where('id', '>', $this->id)
                 ->orderBy('id')
@@ -227,8 +228,6 @@ class Lesson extends Model implements HasMedia
 
     /**
      * This will update the serial number of lesson according to its module
-     *
-     * @return void
      */
     public function updateSerialNumber(): void
     {
@@ -241,11 +240,33 @@ class Lesson extends Model implements HasMedia
             $this->update(['serial_number' => $serialNumber]);
         } else {
             $serialNumber = self::query()
-                ->whereCourseId($this->course_id)
-                ->where('id', '<', $this->id)
-                ->count() + 1;
+                    ->whereCourseId($this->course_id)
+                    ->where('id', '<', $this->id)
+                    ->count() + 1;
 
             $this->update(['serial_number' => $serialNumber]);
         }
+    }
+
+    public function getVdoCipherData(): array
+    {
+        if (!$this->vdocipher_id) {
+            return [];
+        }
+        $token = "Apisecret " . config('services.vdo_cipher.key');
+        $response = Http::withHeaders([
+            "Accept" => "application/json",
+            "Content-Type" => "application/json",
+            "Authorization" => $token,
+        ])
+            ->post("https://dev.vdocipher.com/api/videos/$this->vdocipher_id/otp", [
+                "ttl" => 300
+            ]);
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        return [];
     }
 }

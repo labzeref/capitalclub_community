@@ -30,5 +30,22 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'slack' => [
+        'notifications' => [
+            'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
+            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
+        ],
+    ],
 
+    'chargebee' => [
+        'site' => env('CHARGEBEE_SITE'),
+        'api_key' => env('CHARGEBEE_API_KEY'),
+    ],
+    'nmi' => [
+        'api_key' => env('NMI_API_KEY'),
+    ],
+
+    "vdo_cipher" => [
+      "key" => env("VDO_CIPHER_KEY"),
+    ]
 ];

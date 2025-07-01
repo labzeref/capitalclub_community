@@ -25,11 +25,11 @@ class CreateActiveCampaignContactJob implements ShouldQueue
     {
         $user = User::find($this->userId);
 
-        if (!$user) {
+        if (! $user) {
             return;
         }
 
-        $url = rtrim(config('active-campaign.base_url'), '/') . '/contact/sync';
+        $url = rtrim(config('active-campaign.base_url'), '/').'/contact/sync';
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
@@ -43,8 +43,8 @@ class CreateActiveCampaignContactJob implements ShouldQueue
                 'fieldValues' => [[
                     'field' => config('active-campaign.fields.GLITCH_NUMBER'),
                     'value' => $user->id,
-                ]]
-            ]
+                ]],
+            ],
         ]);
 
         if ($response->successful()) {
@@ -53,12 +53,12 @@ class CreateActiveCampaignContactJob implements ShouldQueue
 
             $user->update(['active_campaign_id' => $id]);
         } else {
-            $this->log("While adding tag", $user->email, $response);
+            $this->log('While adding tag', $user->email, $response);
             throw new \Exception($response->body());
         }
     }
 
-    private function log(string $message, string $identifier, ?Response $response = null): void
+    private function log(string $message, string $identifier, Response $response = null): void
     {
         Log::channel('active-campaign')->info($message);
         Log::channel('active-campaign')->info($identifier);
@@ -66,6 +66,6 @@ class CreateActiveCampaignContactJob implements ShouldQueue
             Log::channel('active-campaign')->info($response->body());
             Log::channel('active-campaign')->info($response->status());
         }
-        Log::channel('active-campaign')->info("----------------------------------------------------------------------------------------------------------");
+        Log::channel('active-campaign')->info('----------------------------------------------------------------------------------------------------------');
     }
 }

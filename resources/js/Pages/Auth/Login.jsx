@@ -9,6 +9,8 @@ import ReactToast from "@/Components/ReactToast.jsx";
 import Recaptcha from "@/Components/Recaptcha.jsx";
 import Footer from "@/Components/Nav-Footer/Footer";
 import AuthFooter from "./AuthFooter";
+import axios from "axios";
+import { GTMLogs } from "@/utils/GTMLogs";
 
 const Login = ({ recaptchaKey, recaptchaKeyV2, showSingUpBtn }) => {
     const [show, setShow] = useState(false);
@@ -27,6 +29,25 @@ const Login = ({ recaptchaKey, recaptchaKeyV2, showSingUpBtn }) => {
         event.preventDefault();
         post(route("login.store"), {
             replace: true,
+            onSuccess: () => {
+                axios.get(route('get-auth-user', { billingAddress: true }))
+                    .then((response) => {
+                        // console.log('res : ', response)
+                        const user = response?.data?.payload;
+                        GTMLogs(
+                            {
+                                'event': 'GTMevent',
+                                'event_name': 'login',
+                                'email': user?.email,
+                                'phone_number': user?.billingAddress?.phone_number,
+                                'customer_id': user?.id,
+                                'event_id': '10002',
+                                'country': user?.country_iso,
+                            }
+                        )
+                    })
+            }
+
             // onFinish: () => setRecaptchaState(previous => previous + 1)
         });
     };
@@ -68,8 +89,16 @@ const Login = ({ recaptchaKey, recaptchaKeyV2, showSingUpBtn }) => {
     const innerHeight = window.innerHeight;
 
     const handleContextMenu = (e) => {
-        e.preventDefault(); 
-      };
+        e.preventDefault();
+    };
+
+    useEffect(() => {
+        GTMLogs({
+            'event': 'GTMevent',
+            'event_name': 'login',
+            'event_id': '10001',
+        })
+    }, [])
 
     return (
 
@@ -169,12 +198,12 @@ const Login = ({ recaptchaKey, recaptchaKeyV2, showSingUpBtn }) => {
                                         } focus:shadow-none focus:ring-transparent overflow-hidden focus:border-0 `}
                                 />
 
-                                <p className="font-12 fw-semibold  uppercase leading-[0px]" style={{paddingTop:'3.6px'}}>
+                                <p className="font-12 fw-semibold  uppercase leading-[0px]" style={{ paddingTop: '3.6px' }}>
                                     Remember me
                                 </p>
                             </div>
 
-                            <button className="button isLogin primary rounded-full w-full mt-1.5">
+                            <button className="button isLogin primary border-rounded-8 w-full mt-1.5">
                                 <div className="button_container glitch uppercase">
                                     Login
                                 </div>
@@ -182,14 +211,14 @@ const Login = ({ recaptchaKey, recaptchaKeyV2, showSingUpBtn }) => {
 
 
                             <div className={`mt-18vw  gap-x-[12px] flex w-full`}>
-                                {showSingUpBtn && <Link href={route("register")} className={" button secondary  border  rounded-full w-full  pt-[0.05vw]"} >
+                                {showSingUpBtn && <a href={route("register")} className={" button isLogin secondary  border  border-rounded-8 w-full  pt-[0.05vw]"} >
                                     <button className="text-[10px]">SIGN UP</button>
-                                </Link>
+                                </a>
                                 }
 
 
 
-                                <Link href={route("password.request")} className={" button secondary  border  rounded-full w-full pt-[0.05vw]"} >
+                                <Link href={route("password.request")} className={" button secondary  isLogin border  border-rounded-8 w-full pt-[0.05vw]"} >
                                     <button className="text-[10px]">
                                         RESET PASSWORD
                                     </button>

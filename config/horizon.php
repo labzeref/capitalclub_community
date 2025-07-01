@@ -166,7 +166,7 @@ return [
     |
     */
 
-    'memory_limit' => 64,
+    'memory_limit' => 4048,
 
     /*
     |--------------------------------------------------------------------------
@@ -193,12 +193,38 @@ return [
             'timeout' => 600,
             'nice' => 0,
         ],
+        'supervisor-migration' => [
+            'connection' => 'redis',
+            'queue' => ['migration'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 5,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 1024,
+            'tries' => 1,
+            'timeout' => 600,
+            'nice' => 0,
+        ],
         'one-process' => [
             'connection' => 'redis',
-            'queue' => ['seeder', 'discord', 'active-campaign'],
+            'queue' => ['discord', 'active-campaign'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 1024,
+            'tries' => 1,
+            'timeout' => 600,
+            'nice' => 0,
+        ],
+        'ten-process' => [
+            'connection' => 'redis',
+            'queue' => ['seeder'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 30,
             'maxTime' => 0,
             'maxJobs' => 0,
             'memory' => 1024,
@@ -228,8 +254,12 @@ return [
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
-            'one-process' => [],
-            'one-process-with-tries' => [],
+            'one-process' => [
+                'maxProcesses' => 1,
+            ],
+            'one-process-with-tries' => [
+                'maxProcesses' => 5,
+            ],
         ],
 
         'local' => [
@@ -241,7 +271,9 @@ return [
             'one-process' => [
                 'maxProcesses' => 20,
             ],
-            'one-process-with-tries' => [],
+            'one-process-with-tries' => [
+                'maxProcesses' => 5,
+            ],
         ],
     ],
 ];

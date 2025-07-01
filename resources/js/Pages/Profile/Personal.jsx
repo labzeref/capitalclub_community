@@ -17,7 +17,6 @@ import 'intl-tel-input/build/css/intlTelInput.css';
 const Personal = ({ profile, countries, avatars, phoneNumber }) => {
     const [isValidPhone, setIsValidPhone] = useState(true)
     const [phoneError, setPhoneError] = useState(false)
-
     const user = usePage()?.props?.auth?.user;
 
 
@@ -47,10 +46,10 @@ const Personal = ({ profile, countries, avatars, phoneNumber }) => {
                     },
                 });
             }
-            
+
         }
     };
- 
+
     const [updateAvatar, setUpdateAvatar] = useState('')
 
     // const updateAvatar = avatars?.data?.find(avatar => avatar?.id === data?.avatar_id);
@@ -319,26 +318,26 @@ const Personal = ({ profile, countries, avatars, phoneNumber }) => {
                 </div>
 
                 {/* <div className="grid grid-cols-12 gap-4"> */}
-                    {/* <div className="col-span-2 md:col-span-2 hidden md:block ">
+                {/* <div className="col-span-2 md:col-span-2 hidden md:block ">
                         <p className="py-3 fs-regular fw-medium"> Email</p>
                     </div> */}
 
-                    {/* <div className="col-span-12 md:col-span-12 px-2 md:px-0"> */}
-                        <div className="grid grid-cols-12 mb-4">
-                            <div className="col-span-12 md:col-span-12">
-                                <span className="relative">
-                                    <input
-                                        type="email"
-                                        disabled
-                                        className="input-text w-[96%]  md:w-full mb-0 margin-0"
-                                        placeholder="Email"
-                                        name="email"
-                                        value={profile?.email}
-                                    />
-                                </span>
-                            </div>
-                        </div>
-                    {/* </div> */}
+                {/* <div className="col-span-12 md:col-span-12 px-2 md:px-0"> */}
+                <div className="grid grid-cols-12 mb-4">
+                    <div className="col-span-12 md:col-span-12">
+                        <span className="relative">
+                            <input
+                                type="email"
+                                disabled
+                                className="input-text w-[96%]  md:w-full mb-0 margin-0"
+                                placeholder="Email"
+                                name="email"
+                                value={profile?.email}
+                            />
+                        </span>
+                    </div>
+                </div>
+                {/* </div> */}
                 {/* </div> */}
 
 
@@ -407,7 +406,7 @@ const Personal = ({ profile, countries, avatars, phoneNumber }) => {
                                             disabled={showButtons}
                                             value={data?.country_iso || ''} // Use an empty string if data?.country_iso is undefined
                                             onChange={(e) => setData("country_iso", e.target.value)}
-                                            className="rounded-[20px] text-center appearance-none w-full input-shadow register-country-height  px-2 border-0  focus:border-[#ffffff] focus:shadow-none focus:ring-transparent focus:border regular text-[#FFFFFF] font-normal bg-transparent outline-none px-6"
+                                            className="border-rounded-8 text-center appearance-none w-full input-shadow register-country-height  px-2 border-0  focus:border-[#ffffff] focus:shadow-none focus:ring-transparent focus:border regular text-[#FFFFFF] font-normal bg-transparent outline-none px-6"
                                             id="frm-whatever"
                                         >
                                             <option disabled value="">
@@ -625,19 +624,19 @@ const Personal = ({ profile, countries, avatars, phoneNumber }) => {
                     <div className="col-span-12 md:col-span-12">
                         <div className="col-span-10 md:col-span-10 px-2 md:px-0">
 
-                        <div className={` ${!showButtons && 'hidden'}  w-full pt-2.5`}>
+                            <div className={` ${!showButtons && 'hidden'}  w-full pt-2.5`}>
 
 
-                              <button
-                                  onClick={() => { setShowButtons(false) }}
-                                  disabled={processing}
-                                  className={" profile-buttons  bg-[#fff] text-black button primary pt-[2px]"
-                                  }
-                              >
-                                  UPDATE PERSONAL INFO
-                              </button>
+                                <button
+                                    onClick={() => { setShowButtons(false) }}
+                                    disabled={processing}
+                                    className={" profile-buttons  bg-[#fff] text-black button primary pt-[2px]"
+                                    }
+                                >
+                                    UPDATE PERSONAL INFO
+                                </button>
 
-                          </div>
+                            </div>
 
                             <div className={` ${showButtons && 'hidden'} pt-2.5  gap-x-[12px] flex `}>
                                 <button onClick={() => setShowButtons(true)}

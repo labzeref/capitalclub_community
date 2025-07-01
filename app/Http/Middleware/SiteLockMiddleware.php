@@ -9,14 +9,10 @@ class SiteLockMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        if (
-            !config('app.check_invitation') ||
-            $request->session()->has('invitation_email') && $request->session()->has('invitation_code') ||
-            $request->user()
-        ) {
-            return $next($request);
+        if (config('app.siteLock') && !$request->session()->has('siteUnlocked')) {
+            return to_route('site-lock.index');
         }
 
-        return redirect()->away(config('app.lander_url'));
+        return $next($request);
     }
 }

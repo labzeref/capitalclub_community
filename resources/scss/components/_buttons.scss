@@ -8,7 +8,7 @@
     // font-size: 1rem;
     font-weight: 700;
     // border-radius: 10px;
-    color: $secondary-color;
+    color: #000;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -28,7 +28,7 @@
         font-size: 14px;
         font-weight: 700;
     }
-
+    
     @include for_breakpoint(laptop) {
         font-size: 14px;
         font-weight: 700;
@@ -53,18 +53,54 @@
         height: 2rem;
         font-size: 12px;
     }
-
+    
     @include for_breakpoint(vw-mobile) {
-        height: 6.2vw;
+        height: 48px;
         font-size: 2.4vw;
-    }
 
+        &.h-slider-btn{
+            height: 48px !important;
+        }
+    }
+    
     @include for_breakpoint(vw-laptop) {
-        height: 34px;
+        height: 48px;
         font-size: 12px;
+        
+    }
+    
+    &.border {
+        box-shadow: inset 0 0 0 2px $primary-color;
+    }
+    
+&.isBy-now{
+    height: 38px;
+    font-size: 20px;
+    line-height: 24px !important;
+    padding-top: 2px !important;
+    
+   
+    @include for_breakpoint(mini-laptop) { 
+        font-size: 16px !important; 
+    }
+   
+    @include for_breakpoint(mobile) { 
+        font-size: 14px;
+        height: 28px !important;
+        // line-height: 18px !important;
     }
 
-    // &.icon {
+}
+&.isMarketFooter { 
+    height: 35px !important;
+    line-height: 24px !important;
+    font-size: 20px;
+    @include for_breakpoint(mobile) {
+        height: 28px !important;
+        font-size: 14px !important;
+    }
+}
+// &.icon {
     //     .button_container {
     //         padding: 0.75rem 2rem 0.75rem 1rem;
     //     }
@@ -77,6 +113,16 @@
         height: 8.2vw;
         font-size: 2.4vw;
     }
+}
+
+
+
+&.isLive-Footer-btn{  
+    line-height: 25px;
+    font-size: 20px;
+     @include for_breakpoint(vw-mobile) { 
+       font-size: 14px;
+   }
 }
 
     &.icon_button {
@@ -94,9 +140,6 @@
         }
     }
 
-    &.border {
-        box-shadow: inset 0 0 0 2px $primary-color;
-    }
 
     .button_container {
 
@@ -107,6 +150,10 @@
         gap: 0.7rem;
         cursor: pointer;
         background: transparent;
+
+&.disable{
+    cursor: default !important;
+}
 
         @include for_breakpoint(mobile) {
             padding: 0.65rem 1.2rem 0.525rem 1.2rem !important;
@@ -126,6 +173,25 @@
                 width: 18px;
             }
         }
+        &.isLive-Footer-btn{
+            padding: 0.8rem 2.5rem 0.5rem 2.5rem !important;
+        }
+        .svg-12{
+            svg{
+                height: 12px !important;
+                width: 12px !important;
+            }
+            
+        }
+        &.gap-6{
+            column-gap: 6px !important;
+        }
+
+        &.save-notes-p{
+        padding: 0.4rem 2.5rem 0.3rem 2.5rem;
+
+        }
+
     }
 
     &.isPreview-page {
@@ -178,6 +244,7 @@
         &.disable {
             background: rgba(126, 126, 126, 0.5) !important;
             opacity: 0.5;
+            cursor: default !important;
         }
     }
 
@@ -211,6 +278,9 @@
             z-index: -1;
         }
     }
+
+
+    
 
     &.discord {
         box-shadow: inset 0 0 0 1px #7186cd1a;
@@ -277,6 +347,9 @@
             border-bottom: 2px solid #fff;
         }
     }
+    &.notes-active-btn{
+      background-color: #303030 !important;  
+    }
 
     //
     //&.icon{
@@ -313,7 +386,7 @@
     position: relative;
     padding: 0.75rem 2rem 0.688rem 2rem;
     background-color: #1D1D1F;
-    border-radius: 10px;
+    border-radius: 8px;
     color: #474747;
     font-size: 12px;
     font-weight: 700;
@@ -656,35 +729,12 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .academy-button {
     position: relative;
     height: 2.6rem;
     font-size: 0.75rem;
     font-weight: 700;
-    border-radius: 10px;
+    border-radius: 8px;
     color: $secondary-color;
     display: flex;
     justify-content: center;
@@ -946,30 +996,12 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .academy-icon-button {
     position: relative;
     height: 2.5rem;
     font-size: 0.75rem;
     font-weight: 700;
-    border-radius: 10px;
+    border-radius: 8px;
     color: $secondary-color;
     display: flex;
     justify-content: center;

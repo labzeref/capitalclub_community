@@ -163,7 +163,7 @@ class DiscordService
             'Content-Type' => 'application/json',
             'Authorization' => "Bot $this->botToken",
         ])->patch("{$this->discordBaseUrl}/guilds/{$this->serverId}/members/$userDiscordId", [
-            'nick' => $username
+            'nick' => $username,
         ]);
     }
 }

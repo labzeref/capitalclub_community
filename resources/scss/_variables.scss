@@ -85,6 +85,9 @@ $media_queries: (
     "laptop-studymood": unquote("only screen and (min-width: 1024px) and (max-width: 1500px)"),
     "desktop-studymood": unquote("only screen and (min-width: 1501px) and (max-width: 2000px)"),
 
+    "mini-laptop": unquote("only screen and (min-width: 1024px) and (max-width: 1324px)"),
+
+
 );
 .owl-stage {
     display: -webkit-box !important;

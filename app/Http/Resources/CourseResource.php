@@ -25,7 +25,7 @@ class CourseResource extends JsonResource
             'instructors' => InstructorCompactResource::collection(
                 $this->whenLoaded('instructors', fn () => $this->instructors)
             ),
-            'trailer' => new TrailerResource($this->whenLoaded('trailer')),
+            // 'trailer' => new TrailerResource($this->whenLoaded('trailer')),
             'category' => new CategoryResource($this->whenLoaded('category')),
             'thumbnail' => $this->whenLoaded(
                 'media',
@@ -78,11 +78,17 @@ class CourseResource extends JsonResource
             'progress' => $this->whenPivotLoaded('course_enrollment', fn () => $this->pivot->progress),
             'title' => $this->title,
             'summery' => $this->summery,
+            'trailer_url' => $this->trailer_url,
             'duration' => $this->duration,
             'featured' => $this->featured,
             'strict' => $this->strict,
             'published' => (bool) $this->published_at,
             'published_at' => $this->published_at?->toDateString(),
+            'is_new' => $this->whenLoaded('lessons', function () {
+                return $this->lessons->isEmpty() || $this->lessons->every(function ($lesson) {
+                        return !$lesson->progress;
+                    });
+            }),
         ];
     }
 }

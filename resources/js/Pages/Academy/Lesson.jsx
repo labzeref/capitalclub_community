@@ -44,8 +44,10 @@ import CC_LOTTIE from "@/Components/CC_LOTTIE_V01.json";
 import { Suspense } from "react";
 import Xmark from "@/Components/Xmark";
 import LessonLayout from "@/Layouts/LessonLayout";
-const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
+import { GTMLogs } from "@/utils/GTMLogs";
 
+import VdoCipherPlayer from "@/Pages/Academy/partials/VdoCipherPlayer.jsx";
+const Lesson = ({ course, lesson, takeReview, modules, showGuestName , vdoCipherData }) => {
 
 
     const textareaRef = useRef(null);
@@ -62,14 +64,8 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
 
 
     const controls = useDragControls()
-    // console.log('course')
-    // console.log(course)
-    // console.log('modules', modules)
+
     const { toggleStudyMode, setCourseId, setStudyMoodOn, studyMoodOn, isPlayPage, setIsPlayPage } = useContext(PostsContext);
-
-
-    // console.log('current lesson', lesson)
-
 
     const [openStudyNotes, setOpenStudyNotes] = useState(false)
 
@@ -122,7 +118,15 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
     const { post, processing } = useForm();
     const handleBookmarkToggle = () => {
         setLessonBookmark(!lessonBookmark)
-        axios.post(route("bookmark-toggle.lessons", lesson?.id)).then(() => {
+        axios.post(route("bookmark-toggle.lessons", lesson?.id)).then((res) => {
+            GTMLogs(
+                {
+                    'event': 'GTMevent',
+                    'event_name': 'academy_lesson_favorite',
+                    'lesson_id': lesson?.id,
+                    'event_id': '10010'
+                }
+            )
         });
 
     };
@@ -163,11 +167,17 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
     const [currentModuleID, setcurrentModuleID] = useState(
         modules.findIndex(module => module.id === lesson?.module?.id)
     );
-
     const [selectedIndex, setSelectedIndex] = useState(
         modules.findIndex(module => module.id === lesson?.module?.id)
     );
 
+
+    const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
+
+
+    useEffect(() => {
+        setCurrentModuleIndex(modules.findIndex(module => module.id === lesson?.module?.id))
+    }, [])
     // ****handle modules****
 
     const [selectedModuleId, setSelectedModuleId] = useState(lesson?.module?.id);
@@ -290,8 +300,24 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
     };
 
 
+    const [isTab, setIsTab] = useState(window.innerWidth < 1024);
 
-    return (
+    // Function to handle screen size changes
+    const handleResize = () => {
+        setIsTab(window.innerWidth < 1024);
+    };
+
+    useEffect(() => {
+        // Event listener for window resize
+        window.addEventListener("resize", handleResize);
+
+        // Cleanup function to remove the event listener when component unmounts
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
+     return (
         <>
             <Head>
                 <title>{lesson?.title}</title>
@@ -421,6 +447,8 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                         position: relative;
                                         width: 100%;
                                         height: 0;
+                                        border-radius:15px;
+                                        overflow: hidden;
                                         padding-bottom: 56.27198%;
 
                                     }
@@ -429,7 +457,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                         position: absolute;
                                         top: 0;
                                         left: 0;
-                                        border-radius:10px;
+                                        border-radius:15px;
                                         width: 100%;
                                         height: 100%;
                                     }
@@ -438,26 +466,45 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
 
                                                 <div className={'codegena'}>
 
-                                                    {lesson.vimeo_url ?
+                                                    {lesson.vdocipher_id ?
                                                         <>
+                                                            <VdoCipherPlayer
+                                                                otp={vdoCipherData.otp}
+                                                                playbackInfo={vdoCipherData.playbackInfo}
 
-                                                            <Suspense >
-                                                                <VimeoVideoPlayer progress={lesson?.duration_watched} videoId={lesson?.vimeo_url} lesson_id={lesson?.id} setVideoReady={setVideoReady} />
-                                                            </Suspense>
+                                                                progress={lesson?.duration_watched}
+                                                                lesson_id={lesson?.id}
+                                                                setVideoReady={setVideoReady}
+                                                                courseName={lesson?.course?.title}
+                                                                lessonName={lesson?.title}
+                                                            />
 
                                                             {!videoReady &&
-                                                                <img src={lesson?.thumbnail?.original?.url} className="absolute w-full h-full border-rounded-10" />
+                                                                <img src={lesson?.thumbnail?.original?.url} className="absolute w-full h-full border-rounded-10 top-0" />
                                                             }
                                                         </>
                                                         :
-                                                        <div className=" absolute top-[40%] fw-bold fs-x-large w-full flex justify-center items-center ">coming soon...</div>
-                                                    }
+                                                       <>
+                                                           <Suspense >
+                                                               <VimeoVideoPlayer
+                                                                   progress={lesson?.duration_watched}
+                                                                   videoId={lesson?.vimeo_url}
+                                                                   lesson_id={lesson?.id}
+                                                                   setVideoReady={setVideoReady}
+                                                                   courseName={lesson?.course?.title}
+                                                                   lessonName={lesson?.title}
+                                                               />
+                                                           </Suspense>
 
+                                                           {!videoReady &&
+                                                               <img src={lesson?.thumbnail?.original?.url} className="absolute w-full h-full border-rounded-10 top-0" />
+                                                           }
+                                                       </>
+                                                    }
 
                                                     <div>
                                                         <div className={`h-full study-mode-on-notes  ${(openStudyNotes) && 'active'} ${!studyMoodOn && 'hidden'} `}>
                                                             <div className={'h-full relative'} style={{ width: '440px' }}>
-
                                                                 <Notes
                                                                     openStudyNotes={openStudyNotes}
                                                                     setOpenStudyNotes={setOpenStudyNotes}
@@ -472,15 +519,9 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                             </div>
                                                         </div>
                                                     </div>
-
-
                                                 </div>
-
                                             </div>
-
                                         </div>
-
-
                                     </div>
                                     {/* **********LESSON NOTES ********** */}
                                     <div className={`col-span-3 lg:col-span-3 hidden-sm ${studyMoodOn && 'z-[1200]'} relative `}>
@@ -519,7 +560,15 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                 </p>
                                                 {showGuestName ? <p className={` leasson-description `}>GUEST : {lesson?.guest_name}</p>
                                                     :
-                                                    <p className={` leasson-description `}>{ lesson.module ? 'MODULE ' + lesson?.module?.serial_number + ' : '+ lesson?.module?.name : '' }</p>
+                                                    <p className={` leasson-description `}>
+
+                                                        {/*module id 104 in course 4 was asked by Marc to be 4B, this is special */}
+                                                        {/*module do not change until asked*/}
+
+                                                        {
+                                                            lesson.module ? 'MODULE ' + (lesson.module.id === 104 ? '4B ' : lesson?.module?.serial_number) + ' : ' + lesson?.module?.name : ''
+                                                        }
+                                                    </p>
                                                 }
                                             </div>
                                         </div>
@@ -535,7 +584,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                 <div className="button_container lesson-btn-p">FAVORITE
                                                     {lessonBookmark
                                                         ? <svg width="12" height="12" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <g clip-path="url(#clip0_9001_21340)">
+                                                            <g clipPath="url(#clip0_9001_21340)">
                                                                 <path d="M6.39721 6.29981L8.5004 1.9004L11.3047 6.29981L15.511 7.03305L12.0057 10.6992L12.7068 15.8319L8.5004 13.6322L4.29402 15.8319L4.99508 10.6992L1.48976 6.29981H6.39721Z" fill="white" />
                                                                 <path d="M16.0963 5.68976L11.2894 5.25348L9.41227 0.631041C9.07459 -0.210347 7.92251 -0.210347 7.58483 0.631041L5.70773 5.26387L0.910698 5.68976C0.0367052 5.76247 -0.320838 6.9051 0.344589 7.50757L3.98954 10.8108L2.89705 15.7137C2.69841 16.607 3.62206 17.3134 4.37687 16.8356L8.49855 14.2387L12.6202 16.8459C13.375 17.3238 14.2987 16.6174 14.1 15.7241L13.0076 10.8108L16.6525 7.50757C17.3179 6.9051 16.9703 5.76247 16.0963 5.68976ZM8.49855 12.2962L4.76421 14.6542L5.75739 10.2083L2.46005 7.21672L6.81015 6.82199L8.49855 2.63583L10.1969 6.83238L14.547 7.22711L11.2496 10.2187L12.2428 14.6646L8.49855 12.2962Z" fill="white" />
                                                             </g>
@@ -601,19 +650,25 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                             <div className="relative  card-bg-discord border-rounded-10 px-3 md:px-5 padding-about w-full">
                                                 <div className="lg:flex gap-x-2 md:gap-x-1 lg:gap-x-8 xl:gap-x-0 w-full flex-col">
                                                     <div className="flex items-center gap-x-[19px] mb-4 w-full lg:w-[100%]">
-                                                        <p className="course-about-description  ">Modules: {modules?.length < 1 ? 1 : modules?.length}</p>
-                                                        <p className="course-about-description">Lessons: {course?.lessons?.length}</p>
-                                                        <p className="course-about-description">Duration: {courseDuration(course?.duration)}hrs </p>
+                                                        <p className="course-about-description  ">
+                                                            Module: {lesson?.module ? currentModuleIndex + 1 : '1'}
+                                                            {/* {modules?.length < 1 ? 1 : modules?.length} */}
+                                                        </p>
+                                                        {/* <p className="course-about-description">Lessons: {course?.lessons?.length}</p> */}
+                                                        <p className="course-about-description">Duration: {lessonDuration(lesson?.duration)}</p>
                                                     </div>
-                                                    <textarea ref={textareaRef} className={`   text-12 fw-regular md-d-none sm-d-none `} style={{
+                                                    <div
+                                                        className={`   text-12 fw-regular md-d-none sm-d-none w-full render-html-heading-size`}
+                                                        dangerouslySetInnerHTML={{ __html: lesson?.description ? lesson?.description : course?.summery }} />
+                                                    {/* <textarea ref={textareaRef} className={`   text-12 fw-regular md-d-none sm-d-none `} style={{
                                                         background: 'transparent',
                                                         border: 'none',
                                                         outline: 'none',
                                                         resize: 'none',
                                                         width: '100%',
-                                                        height:'auto',
+                                                        height: 'auto',
                                                         overflowY: 'hidden'
-                                                    }} value={lesson?.description ? lesson?.description : course?.summery} disabled={true}>   </textarea>
+                                                    }} value={lesson?.description ? lesson?.description : course?.summery} disabled={true}>   </textarea> */}
                                                 </div>
                                             </div>
                                         </div>
@@ -669,8 +724,8 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
 
                                         {/*Notes component mobile*/}
 
-                                        <div className={`notes-container ${show ? "show" : ""}`}  >
-                                            {show && (
+                                        <div className={`notes-container ${show && isTab ? "show" : ""}`}  >
+                                            {show && isTab ? (
                                                 <div>
                                                     <Notes
                                                         setShow={setShow}
@@ -680,11 +735,11 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                         currentVideoId={currentVideoId}
                                                     />
                                                 </div>
-                                            )}
+                                            ) : null}
                                         </div>
 
-                                        <div onContextMenu={handleContextMenu} className={`modules notes-container ${!show ? "show" : ""}`}  >
-                                            {!show && (
+                                        <div onContextMenu={handleContextMenu} className={`modules notes-container ${!show || !isTab ? "show" : ""}`}  >
+                                            {!show || !isTab ? (
                                                 <div onContextMenu={handleContextMenu} className="card-background input-shadow border-rounded-10  pt-5  pb-5 lg:pb-6">
                                                     <div className="flex justify-between items-center px-3.5 lg:px-5">
 
@@ -694,7 +749,11 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                         {/* {lesson.module &&  */}
                                                         <div className="custom-dropdown ">
                                                             <button className="dropdown-button" onClick={toggleDropdown}>
-                                                                <span className="mt-[2px]">  {isOpen ? 'SELECT' : `MODULE ${selectedIndex + 1 == 0 ? 1 : selectedIndex + 1}`} </span>
+
+                                                                {/*module id 104 in course 4 was asked by Marc to be 4B, this is special */}
+                                                                {/*module do not change until asked*/}
+
+                                                                <span className="mt-[2px]">  {isOpen ? 'SELECT' : `MODULE ${course.id === 4 && (selectedIndex + 1) === 11 ? '4B' : selectedIndex + 1 == 0 ? 1 : selectedIndex + 1}`} </span>
                                                                 <svg
                                                                     width="9"
                                                                     height="6"
@@ -711,7 +770,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
 
                                                                 {isOpen && (
                                                                     <div className="absolute z-[9999] w-full ">
-                                                                        <div onScroll={handleScrollModules} className="dropdown-options ">
+                                                                        <div onScroll={handleScrollModules} className="dropdown-options " style={{ maxHeight: '210px' }}>
 
                                                                             {modules?.length > 5 && <>
                                                                                 <div className={`interests-shadow module-top ${showTopShadow ? '' : 'shadow-off'}`}></div>
@@ -719,7 +778,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                                             </>
                                                                             }
 
-                                                                            {lesson?.module == null &&
+                                                                            {modules?.length < 1 &&
                                                                                 <>
                                                                                     <div onClick={() => { setIsOpen(false) }} className="option">
                                                                                         MODULE &nbsp; {1}
@@ -730,15 +789,23 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
                                                                                     </div>
                                                                                 </>
                                                                             }
-                                                                            {modules?.map((module, index) => (
-                                                                                <div key={index + 3} onClick={() => { setSelectedIndex(index), setSelectedModuleId(module?.id), setIsOpen(false) }} className="option">
-                                                                                    MODULE &nbsp; {index + 1}
-                                                                                    <svg width="5" height="6" viewBox="0 0 5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                        <path d="M0.902344 5.77588L4.82789 3.2984L0.902343 0.820925L0.902344 5.77588Z" fill="white" />
-                                                                                    </svg>
+                                                                            {modules?.length > 0 &&
+                                                                                <>
+                                                                                    {modules?.map((module, index) => (
+                                                                                        <div key={index + 3} onClick={() => { setSelectedIndex(index), setSelectedModuleId(module?.id), setIsOpen(false) }} className="option">
+                                                                                            MODULE &nbsp; {module.id === 104 ? '4B' : index + 1}
 
-                                                                                </div>
-                                                                            ))}
+                                                                                            {/*module id 104 in course 4 was asked by Marc to be 4B, this is special */}
+                                                                                            {/*module do not change until asked*/}
+
+                                                                                            <svg width="5" height="6" viewBox="0 0 5 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                                <path d="M0.902344 5.77588L4.82789 3.2984L0.902343 0.820925L0.902344 5.77588Z" fill="white" />
+                                                                                            </svg>
+
+                                                                                        </div>
+                                                                                    ))}
+                                                                                </>
+                                                                            }
                                                                         </div>
                                                                     </div>
                                                                 )}
@@ -768,7 +835,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
 
                                                                                     <div className="w-[130%] h-[5px] bg-[#1a1a1a]">
 
-                                                                                        <div style={{ width: data?.duration_watched+'%' }} className={`h-[5px] bg-[#ffffff]  bottom-0 absolute `}></div>
+                                                                                        <div style={{ width: data?.duration_watched + '%' }} className={`h-[5px] bg-[#ffffff]  bottom-0 absolute `}></div>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2">
@@ -794,7 +861,7 @@ const Lesson = ({ course, lesson, takeReview, modules, showGuestName }) => {
 
                                                     </div>
                                                 </div>
-                                            )}
+                                            ) : null}
                                         </div>
                                     </div>
 
@@ -827,6 +894,20 @@ function courseDuration(totalSeconds) {
 
     return `${hours}.${minutes.toString().padStart(2, '0')}  `;
 }
+
+
+function lessonDuration(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours < 1) {
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+        return `${hours} : ${minutes} hours`;
+    }
+}
+
 
 
 Lesson.layout = (page) => <LessonLayout children={page} title="" />;

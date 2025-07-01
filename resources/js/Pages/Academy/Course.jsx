@@ -1,12 +1,14 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from 'react';
+import useEmblaCarousel from 'embla-carousel-react';
 import { Head, useForm } from '@inertiajs/react'
 import Layout from "@/Layouts/Layout";
+import VimeoPlayer from '@vimeo/player';
 import cross from "../../../assets/svg/cross.svg";
 import topRank from "../../../assets/svg/No-Top-Members.svg";
 import faqplus from "../../../assets/svg/faqplus.svg";
 import Lock from "../../../assets/svg/Lock.svg";
 import checkCircle from "../../../assets/svg/CheckCircle2.svg";
-import OwlCarousel from "react-owl-carousel";
+// import OwlCarousel from "react-owl-carousel";
 import { motion } from 'framer-motion'
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -33,28 +35,24 @@ import Xmark from "@/Components/Xmark";
 
 import { PostsContext } from '../../Store/PostsProvider';
 import { useContext } from "react";
+import { GTMLogs } from "@/utils/GTMLogs";
+import TrailerModal from "@/Components/Modal/TrailerModal";
+import AcademySmallSliderCard from "@/Components/Course/AcademySmallSliderCard.jsx";
 
 const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAvatar }) => {
 
-    const {setIsPlayPage } = useContext(PostsContext);
+    const { setIsPlayPage } = useContext(PostsContext);
 
-    // console.log('course')
-    // console.log(course)
 
-    // console.log('instructorAvatar')
-    // console.log(instructorAvatar)
+
 
     useEffect(() => {
         window.scrollTo(0, 0);
-      }, []);
+    }, []);
 
     const countryCode = course?.default_instructor?.country_iso ? course?.default_instructor?.country_iso : 'us';
 
-
-
     const { post, processing } = useForm();
-
-
 
     const handleBookmarkToggle = () => {
         let timeOut = setTimeout(() => {
@@ -68,9 +66,6 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
         }, 2000)
     }
 
-
-
-
     const [nowPlaying, setNowPlaying] = useState(course?.trailer?.vimeo_url || course?.trailer?.vimeo_url)
 
     useEffect(() => {
@@ -81,13 +76,11 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
         }
     }, []);
 
-
     const [activeIndex, setActiveIndex] = useState(null);
 
     const handleAccordionClick = (index) => {
         setActiveIndex((prevIndex) => (prevIndex === index ? null : index));
     };
-
 
     const [isTopShadowVisible, setIsTopShadowVisible] = useState(false);
     const [isBottomShadowVisible, setIsBottomShadowVisible] = useState(false);
@@ -120,22 +113,11 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
 
     const [showDetail, setShowDetail] = useState(false);
 
+    const [instructorData, setInstructorData] = useState({});
+
+
+
     const [imageThumbnailLoaded, setImageThumbnailLoaded] = useState(false)
-
-
-    const newLessonRef = useRef(null);
-    const [owlCourseLessons, setOwlCourseLessons] = useState({
-        options: {
-            loop: false,
-            margin: 18,
-            items: 3,
-            autoplay: false,
-            nav: false,
-            dots: false,
-            autoWidth: true,
-            slideBy: 3,
-        }
-    })
 
 
 
@@ -191,9 +173,6 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
     //     }
     // };
 
-
-
-
     const [orientation, setOrientation] = useState(
         window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape');
 
@@ -214,8 +193,6 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
     }, []);
 
 
-
-
     useEffect(() => {
         if (showDetail) {
             document.body.style.overflow = 'hidden';
@@ -229,192 +206,214 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
 
     }, [showDetail]);
 
+    // Google GTM
     useEffect(() => {
-        window.scrollTo(0, 0)
+        GTMLogs({
+            'event': 'GTMevent',
+            'event_name': 'academy_course_preview',
+            'event_id': '10006',
+            'course_id': course?.id,
+        })
     }, [])
+
+    const handleGTMcourse = () => {
+        if (hasEnrolledInCourse) {
+            GTMLogs({
+                'event': 'GTMevent',
+                'event_name': 'academy_course_play',
+                'event_id': '10008',
+                'course_id': course?.id,
+            })
+        } else {
+            GTMLogs({
+                'event': 'GTMevent',
+                'event_name': 'academy_course_enroll',
+                'event_id': '10007',
+                'course_id': course?.id,
+            })
+        }
+    }
+
+    const [isPlaying, setIsPlaying] = useState(false);
+    const playerRef = useRef(null);
+
+    useEffect(() => {
+        if (playerRef?.current) {
+
+            const player = new VimeoPlayer(playerRef.current, {
+                url: `https://vimeo.com/${course?.trailer_url}`,
+                autoplay: false, // Autoplay is set to false initially
+                controls: true
+            });
+
+            // Add event listeners for play and pause
+            player.on('play', () => setIsPlaying(true));
+            player.on('pause', () => setIsPlaying(false));
+
+            return () => {
+                player.destroy();
+            };
+        }
+    }, []);
+
+    const [lessonsRef, lessonsApi] = useEmblaCarousel({
+        loop: true,
+        slidesToScroll: 1,
+        duration: 50,
+        align: 'start',
+
+        // containScroll: 'trim',
+        // dragFree: true,
+    });
+    const LessonPrev = useCallback(() => lessonsApi && lessonsApi.scrollPrev(), [lessonsApi]);
+    const LessonNext = useCallback(() => lessonsApi && lessonsApi.scrollNext(), [lessonsApi]);
+
+
     return (
         <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-    >
-        <div>
-            <Head>
-                <title>{course?.title}</title>
-            </Head>
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+        >
+            <div>
+                <Head>
+                    <title>{course?.title}</title>
+                </Head>
+
+                <div className=" container mx-auto  px-4 lg:px-3">
 
 
-            <div className=" container mx-auto  px-4 lg:px-3">
 
-                <CoursePreviewHeader
-                    className={"course-preview-header-card feature-card  "}
-                    title={course?.title}
-                    instructor={course?.default_instructor?.full_name}
-                    duration={"5 hr 40 min"}
-                    lessons={course?.lessons_count}
-                    desktop_image={course?.thumbnail}
-                    mobile_image={course?.mobile_thumbnail}
-                    badge={"primary"}
-                    badge_text={""}
-                    live={false} />
+                    <CoursePreviewHeader
+                        className={"course-preview-header-card feature-card  "}
+                        title={course?.title}
+                        instructor={course?.default_instructor?.full_name}
+                        duration={"5 hr 40 min"}
+                        lessons={course?.lessons_count}
+                        desktop_image={course?.poster}
+                        mobile_image={course?.mobile_thumbnail}
+                        badge={"primary"}
+                        badge_text={""}
+                        live={false} />
 
-                <div className="container mx-auto px-5 lg:px-0  md:-mt-[5rem] -mt-[3.5rem] relative">
+                    <div className="container mx-auto px-5 lg:px-0  md:-mt-[6.4rem] -mt-[3.5rem] relative">
 
-                    <div className="max-w-2xl mx-auto">
-                        <div className="grid grid-cols-12">
-                            <div className="col-span-12  z-50">
-                                <div className="flex justify-center items-center gap-2 lg:gap-4 ">
-                                    <Link preserveScroll onClick={()=>{setIsPlayPage(true)}} className="max-w-[390px] w-[100%]" href={hasEnrolledInCourse
-                                        ? route('courses.play', course?.id)
-                                        : route('courses.enrol', course.id)}>
-                                        <button className="button isPreview-page primary border-rounded-10 w-full">
-                                            <div className="button_container glitch uppercase">
-                                                {hasEnrolledInCourse ? 'Play' : 'START PROGRAM'}
-                                            </div>
-                                        </button>
-                                    </Link>
-
-                                    {/* <a href="#lessons">
-                                        <button className="button secondary">
-                                            <div className="button_container glitch uppercase">
-
-                                                Trailer
-                                            </div>
-                                        </button>
-                                    </a> */}
-
-                                    {/* <IconButton
-                                        onClick={handleBookmarkToggle}
-                                        disabled={processing}
-                                        icon={<BookMark />}
-                                        className={` ${course?.bookmarked ? ' primary' : 'secondary'}  icon_button`}
-                                    ></IconButton> */}
-
-                                </div>
+                        <div className="max-w-2xl mx-auto">
 
 
+                            <div className="flex flex-col justify-center items-center gap-2 lg:gap-4 max-w-[390px] w-[100%] mx-auto">
+                                {course?.trailer_url &&
+                                    <TrailerModal url={course?.trailer_url} />
+                                }
+                                <Link preserveScroll onClick={() => { setIsPlayPage(true); handleGTMcourse() }} className="max-w-[390px] w-[100%]" href={hasEnrolledInCourse
+                                    ? route('courses.play', course?.id)
+                                    : route('courses.enrol', course.id)}>
+                                    <button className="button isPreview-page primary border-rounded-8 w-full">
+                                        <div className="button_container glitch uppercase">
+                                            {hasEnrolledInCourse ? 'Play' : 'START PROGRAM'}
+                                        </div>
+                                    </button>
+                                </Link>
                             </div>
                         </div>
+
                     </div>
                 </div>
-            </div>
 
 
 
-            {/* ***************** NEW COURSE AND INSTRUCTOR ABOUT CARDS STARTS***************** */}
+                {/* ***************** NEW COURSE AND INSTRUCTOR ABOUT CARDS STARTS***************** */}
+
+                <div className={`${course?.trailer_url ? 'mt-[1.17rem] md:mt-[3.5rem]' : 'mt-[1.4rem] md:mt-[3.5rem]'} relative  `}>
+
+                    <div className={` instructor-card ${showDetail && 'show'} z-[9999999]  absolute w-full left-0 md:top-[6rem] `}>
+
+                        <div className="container mx-auto flex  border-rounded-15 p-3 -mt-[1rem] md:-mt-[6rem] relative">
 
 
-            <div className="relative mt-[2.17rem] md:mt-[3.5rem] ">
+                            <div className="absolute right-3.5 top-14 md:top-5 lg:top-0 card-outside-bg top-padding   w-[100%] md:w-[80%] lg:w-[65%] xl:w-[52%] sm-d-none">
+                                <div onClick={() => { setShowDetail(false) }} className="z-[999] absolute right-5 lg:right-5 top-5 md:top-3 lg:top-3 w-fit container mx-auto cursor-pointer   flex justify-center">
+                                    <Xmark />
+                                </div>
 
-
-
-                <div className={` instructor-card ${showDetail && 'show'} z-[9999999]  absolute w-full left-0 md:top-[6rem] `}>
-
-                    <div className="container mx-auto flex  border-rounded-15 p-3 -mt-[1rem] md:-mt-[6rem] relative">
-
-
-                        <div className="absolute right-3.5 top-14 md:top-5 lg:top-0 card-outside-bg top-padding   w-[100%] md:w-[80%] lg:w-[65%] xl:w-[52%]">
-                        <div onClick={() => { setShowDetail(false) }} className="z-[999] absolute right-5 lg:right-5 top-5 md:top-3 lg:top-3 w-fit container mx-auto cursor-pointer   flex justify-center">
-                                 <Xmark />
-                            </div>
-
-                            <div className="inner-card-bg border-rounded-10  px-3 lg:px-4 pt-3 lg:pt-5 pb-3 lg:pb-5">
-                                <div className="flex gap-x-4 ">
-                                    <div className="img  w-[40%]  ">
-                                        <img src={course?.default_instructor?.dp?.original?.url} alt="dp" className="insturctor-img border-rounded-10 object-cover  " />
-                                    </div>
-                                    <div className="w-[60%] ">
-                                        <div className="intro card-bg border-rounded-10 pt-4 pb-4 px-4">
-                                            <p className="insturctor-name leading-[3rem]">{course?.default_instructor?.full_name}</p>
-                                            <p className="insturctor-about pt-1.5 pb-0 lg:pb-1.5">{course.default_instructor?.title}</p>
-
+                                <div className="inner-card-bg border-rounded-10  px-3 lg:px-4 pt-3 lg:pt-5 pb-3 lg:pb-5">
+                                    <div className="flex gap-x-4 ">
+                                        <div className="img  w-[40%]  ">
+                                            <img src={instructorData?.dp?.original?.url} alt="dp" className="insturctor-img border-rounded-10 object-cover  " />
                                         </div>
-
-                                        <div className="w-full gap-x-4 flex mt-2 lg:mt-4">
-                                            <div className="intro card-bg border-rounded-10 py-3 lg:py-5 px-3 lg:px-5 w-[50%]">
-                                                <div className="flex justify-center w-full">
-                                                    <div className=" flag-wrapper">
-                                                        <span className={`fi fi-${course?.default_instructor?.country?.iso.toLowerCase()} flag-icon `}></span>
-                                                        {/* <ReactCountryFlag
-                                                    className=""
-                                                    countryCode={course.default_instructor.country_iso}
-                                                    svg
-                                                    style={{
-                                                        width: '30px',
-                                                        height: '30px',
-                                                        objectFit: 'cover'
-                                                    }}
-                                                    aria-label="United States"
-                                                /> */}
-                                                        {/* <img
-                                                            src={flagIcon}
-                                                            className="w-5 h-5 "
-                                                        /> */}
-
-                                                    </div>
-                                                </div>
-
-                                                <p className="insturctor-about-logo text-center pt-[8px] lg:pt-3 leading-[2rem]">{course?.default_instructor?.country?.name && course?.default_instructor?.country?.name}</p>
+                                        <div className="w-[60%] ">
+                                            <div className="intro card-bg border-rounded-10 pt-4 pb-4 px-4">
+                                                <p className="insturctor-name leading-[3rem]">{instructorData?.full_name}</p>
+                                                <p className="insturctor-about pt-1.5 pb-0 lg:pb-1.5">{instructorData?.title}</p>
 
                                             </div>
-                                            <div className="intro card-bg border-rounded-10 py-3 lg:py-5 px-3 lg:px-5 w-[50%]">
-                                                <div className="flex justify-center w-full">
-                                                    {instructorAvatar &&
-                                                        <img
-                                                            src={instructorAvatar && instructorAvatar}
-                                                            className="  h-8 w-8  object-contain rounded-full "
-                                                        />
-                                                    }
-                                                    {/* <img
+
+                                            <div className="w-full gap-x-4 flex mt-2 lg:mt-4">
+                                                <div className="intro card-bg border-rounded-10 py-3 lg:py-5 px-3 lg:px-5 w-[50%]">
+                                                    <div className="flex justify-center w-full">
+                                                        <div className=" flag-wrapper">
+                                                            <span className={`fi fi-${instructorData?.country?.iso.toLowerCase()} flag-icon `}></span>
+
+
+                                                        </div>
+                                                    </div>
+
+
+                                                    <p className="insturctor-about-logo text-center pt-[8px] lg:pt-3 leading-[2rem]">{instructorData?.country?.name && instructorData?.country?.name}</p>
+
+                                                </div>
+                                                <div className="intro card-bg border-rounded-10 py-3 lg:py-5 px-3 lg:px-5 w-[50%]">
+                                                    <div className="flex justify-center w-full">
+                                                        {instructorAvatar &&
+                                                            <img
+                                                                src={instructorAvatar}
+                                                                className="  h-8 w-8  object-contain rounded-full "
+                                                            />
+                                                        }
+                                                        {/* <img
                                                             src={instructorUser?.dp?.original?.url}
                                                             className="  h-[14px] w-[14px]  lg:h-[18px] lg:w-[18px] object-contain rounded-full "
                                                         /> */}
 
+                                                    </div>
+
+                                                    {instructorAvatar && <p className="insturctor-about-logo text-center pt-[5px] lg:pt-3 leading-[2rem]">GLITCH #{instructorData?.glitch_id ? instructorData?.glitch_id.toString().padStart(4, '0') : 'xxxx'}</p>
+                                                    }
                                                 </div>
 
-                                                {instructorAvatar && <p className="insturctor-about-logo text-center pt-[5px] lg:pt-3 leading-[2rem]">GLITCH #{course.default_instructor?.glitch_id ? course.default_instructor?.glitch_id.toString().padStart(4, '0') : ' xxxx '}</p>
-                                                }
+
                                             </div>
-
-
                                         </div>
                                     </div>
-                                </div>
-                                <div className="intro card-bg border-rounded-5 py-5 px-5  mt-4">
-                                    <p className="fw-regular text-[12px]    ">
-                                     {course.default_instructor?.about}</p>
+                                    <div className="intro card-bg border-rounded-5 py-5 px-5  mt-4">
+                                        <p className="fw-regular text-[12px]    ">
+                                            {instructorData?.about}</p>
 
+                                    </div>
                                 </div>
+
                             </div>
-
                         </div>
                     </div>
-                </div>
 
+                    <div className="container mx-auto  px-4 lg:px-3 ">
+                        <div className={` ${showDetail ? '-z-[999999]' : ''}  grid grid-cols-1 relative    lg:grid-cols-2 card-bg border-rounded-15 py-2.5 md:py-[18px] px-1.5 md:px-5 gap-x-5 gap-y-3 `}>
+                            <div className="relative card-bg-discord border-rounded-10 px-3 md:px-[26px] padding-about w-full">
 
+                                <div className="lg:flex gap-x-2 md:gap-x-1 lg:gap-x-8 xl:gap-x-0 w-full">
+                                    <p className="course-about-heading w-full lg:w-[30%] mb-2">ABOUT THE <br className="sm-d-none md-d-none" /> PROGRAM</p>
+                                    <div className="flex lg:block items-center gap-x-4 mb-2 md:mb-5 lg:mb-0 w-full lg:w-[70%]">
+                                        <p className="course-about-description  ">Modules: {courseModulesCount} </p>
+                                        <p className="course-about-description">Lessons: {course?.lessons?.length}</p>
+                                        <p className="course-about-description mb-0 lg:mb-5">Duration: {courseDuration(course?.duration)}hrs </p>
 
+                                        <div dangerouslySetInnerHTML={{ __html: course?.summery }} className={`   text-12 fw-regular md-d-none sm-d-none render-html-heading-size`} />
+                                    </div>
 
-
-
-
-
-                <div className="container mx-auto  px-4 lg:px-3 ">
-                    <div className={` ${showDetail ? '-z-[999999]' : ''}  grid grid-cols-1 relative    lg:grid-cols-2 card-bg border-rounded-15 py-2.5 md:py-[18px] px-1.5 md:px-5 gap-x-5 gap-y-3 `}>
-                        <div className="relative card-bg-discord border-rounded-10 px-3 md:px-[26px] padding-about w-full">
-
-                            <div className="lg:flex gap-x-2 md:gap-x-1 lg:gap-x-8 xl:gap-x-0 w-full">
-                                <p className="course-about-heading w-full lg:w-[30%] mb-2">ABOUT THE <br className="sm-d-none md-d-none" /> PROGRAM</p>
-                                <div className="flex lg:block items-center gap-x-4 mb-2 md:mb-5 lg:mb-0 w-full lg:w-[70%]">
-                                    <p className="course-about-description  ">Modules: {courseModulesCount} </p>
-                                    <p className="course-about-description">Lessons: {course?.lessons?.length}</p>
-                                    <p className="course-about-description mb-0 lg:mb-5">Duration: {courseDuration(course?.duration)}hrs </p>
-                                    <p className={`   text-12 fw-regular md-d-none sm-d-none `}> {course?.summery} </p>
                                 </div>
+                                <div dangerouslySetInnerHTML={{ __html: course?.summery }} className="text-[12.5px] fw-regular lg-d-none render-html-heading-size" />
 
-                            </div>
-                            <p className="text-[12.5px] fw-regular lg-d-none">  {course?.summery}  </p>
-
-                            {/* <div className=" flex justify-end">
+                                {/* <div className=" flex justify-end">
                                 <IconButton
                                     onClick={handleBookmarkToggle}
                                     disabled={processing}
@@ -422,54 +421,66 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
                                     className={` ${course?.bookmarked ? ' primary' : 'secondary'}  icon_button`}
                                 ></IconButton>
                             </div> */}
-                        </div>
-                        <div className="relative card-bg-discord border-rounded-10 padding-about-data w-full sm-d-none">
-
-                            {/* instructor detail popup card  */}
-
-                            {/* instructor detail popup card  */}
-                            <div className="flex items-start gap-x-3 md:gap-x-5">
-
-                                <div className="img">
-                                    <img src={course?.default_instructor?.dp?.original?.url} alt="dp" className="h-[160px] w-[160px] md:h-[160px] md:w-[160px] rounded-full object-cover  " />
-                                </div>
-                                <div className="intro mt-2 md:mt-4">
-                                    <p className="course-about-heading">{course?.default_instructor?.full_name}</p>
-                                    <p className="course-about-description">{course.default_instructor?.title}</p>
-                                </div>
                             </div>
 
-                            <div onClick={() => { setShowDetail(true) }} className=" cursor-pointer right-4  bottom-4 flex justify-end absolute">
-                                <svg className="h-6 w-6 md:w-[43px] md:h-[43px]" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M39.4154 21.5002C39.4154 11.6102 31.3887 3.5835 21.4987 3.5835C11.6087 3.5835 3.58203 11.6102 3.58203 21.5002C3.58203 31.3902 11.6087 39.4168 21.4987 39.4168C31.3887 39.4168 39.4154 31.3902 39.4154 21.5002ZM21.4987 26.4989V23.2918H16.1237C15.1383 23.2918 14.332 22.4856 14.332 21.5002C14.332 20.5147 15.1383 19.7085 16.1237 19.7085H21.4987V16.5014C21.4987 15.6952 22.4662 15.301 23.0216 15.8743L28.0204 20.8731C28.3787 21.2314 28.3787 21.7868 28.0204 22.1452L23.0216 27.1439C22.4662 27.6993 21.4987 27.3052 21.4987 26.4989Z" fill="#EBEBEB" />
-                                </svg>
 
-                            </div>
-                        </div>
-                    </div>
+                            <div className={` ${course?.instructors?.length < 2 ? 'grid-cols-1' : 'grid-cols-2'} grid  relative card-bg-discord border-rounded-10 padding-about-data w-full sm-d-none  `}>
 
-                    {/* *************instructor detail card ********** */}
-                    {/* mobile */}
 
-                    <div className="grid grid-cols-1 instructor-card-mobile mt-[7px]">
-                        <div className="card-outside-bg padding-mobile-profile">
-                            <div className=" border-rounded-10">
-                                <div className="flex gap-x-3 h-full" style={{ alignItems: 'flex-start' }}>
-                                    <div className="img w-[40%]">
-                                        <img src={course?.default_instructor?.dp?.original?.url} alt="dp" className={`filter-drop insturctor-img-mobile   border-rounded-10 object-cover`} />
-                                    </div>
-                                    <div className="w-[60%]">
-                                        <div className="intro card-bg  profile-card-bg px-[13px] py-[15px]">
-                                            <p className="insturctor-name">{course?.default_instructor?.full_name}</p>
-                                            <p className="insturctor-about pt-1">{course.default_instructor?.title}</p>
 
+                                {course?.instructors?.map((data, index) => (<div className='relative'>
+                                    <div className="flex items-start gap-x-3 md:gap-x-5 relative">
+
+                                        <div className="img">
+                                            <img src={data?.dp?.original?.url} alt="dp" className="h-[130px] w-[130px] md:h-[130px] md:w-[130px] rounded-full object-cover  " />
                                         </div>
-                                        <div className="w-full gap-x-3 flex mt-3 lg:mt-4">
-                                            <div className="intro card-bg profile-card-bg py-2.5 px-2.5 w-[50%]">
-                                                <div className="flex justify-center w-full">
-                                                    <div className=" flag-wrapper">
-                                                        <span className={`fi fi-${course?.default_instructor?.country?.iso.toLowerCase()} flag-icon `}></span>
-                                                        {/* <ReactCountryFlag
+                                        <div className="intro mt-2 md:mt-4">
+                                            <p className="course-about-heading">{data?.full_name}</p>
+                                            <p className="course-about-description">{data?.title}</p>
+                                        </div>
+                                    </div>
+
+                                    <div onClick={() => { setShowDetail(true); setInstructorData(data) }} className=" cursor-pointer right-4  bottom-4 flex justify-end absolute">
+                                        <svg className="h-6 w-6 md:w-[43px] md:h-[43px]" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M39.4154 21.5002C39.4154 11.6102 31.3887 3.5835 21.4987 3.5835C11.6087 3.5835 3.58203 11.6102 3.58203 21.5002C3.58203 31.3902 11.6087 39.4168 21.4987 39.4168C31.3887 39.4168 39.4154 31.3902 39.4154 21.5002ZM21.4987 26.4989V23.2918H16.1237C15.1383 23.2918 14.332 22.4856 14.332 21.5002C14.332 20.5147 15.1383 19.7085 16.1237 19.7085H21.4987V16.5014C21.4987 15.6952 22.4662 15.301 23.0216 15.8743L28.0204 20.8731C28.3787 21.2314 28.3787 21.7868 28.0204 22.1452L23.0216 27.1439C22.4662 27.6993 21.4987 27.3052 21.4987 26.4989Z" fill="#EBEBEB" />
+                                        </svg>
+
+                                    </div>
+                                </div>
+
+                                ))}
+
+
+
+
+
+                            </div>
+
+
+                        </div>
+
+                        {/* *************instructor detail card ********** */}
+                        {/* mobile */}
+                        {course?.instructors?.map((data, index) => (
+                            <div className="grid grid-cols-1 instructor-card-mobile mt-[7px]">
+                                <div className="card-outside-bg padding-mobile-profile">
+                                    <div className=" border-rounded-10">
+                                        <div className="flex gap-x-3 h-full" style={{ alignItems: 'flex-start' }}>
+                                            <div className="img w-[40%]">
+                                                <img src={data?.dp?.original?.url} alt="dp" className={`filter-drop insturctor-img-mobile   border-rounded-10 object-cover`} />
+                                            </div>
+                                            <div className="w-[60%]">
+                                                <div className="intro card-bg  profile-card-bg px-[13px] py-[15px]">
+                                                    <p className="insturctor-name">{data?.full_name}</p>
+                                                    <p className="insturctor-about pt-1">{data?.title}</p>
+
+                                                </div>
+                                                <div className="w-full gap-x-3 flex mt-3 lg:mt-4">
+                                                    <div className="intro card-bg profile-card-bg py-2.5 px-2.5 w-[50%]">
+                                                        <div className="flex justify-center w-full">
+                                                            <div className=" flag-wrapper">
+                                                                <span className={`fi fi-${data?.country?.iso.toLowerCase()} flag-icon `}></span>
+                                                                {/* <ReactCountryFlag
                                                             className=""
                                                             countryCode={course.default_instructor.country_iso}
                                                             svg
@@ -480,8 +491,8 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
                                                             }}
                                                             aria-label="United States"
                                                         /> */}
-                                                    </div>
-                                                    {/* <svg className="w-[26px] h-[26px]" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            </div>
+                                                            {/* <svg className="w-[26px] h-[26px]" viewBox="0 0 17 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <g clipPath="url(#clip0_6136_3555)">
                                                             <path d="M8.53653 17.0369C13.1184 17.0369 16.8328 13.3225 16.8328 8.74063C16.8328 4.15871 13.1184 0.444336 8.53653 0.444336C3.95461 0.444336 0.240234 4.15871 0.240234 8.74063C0.240234 13.3225 3.95461 17.0369 8.53653 17.0369Z" fill="#F0F0F0" />
                                                             <path d="M8.53613 0.444336C4.96902 0.444336 1.92807 2.69574 0.755859 5.85498H16.3164C15.1442 2.69574 12.1032 0.444336 8.53613 0.444336Z" fill="#A2001D" />
@@ -493,120 +504,129 @@ const Course = ({ course, hasEnrolledInCourse, courseModulesCount, instructorAva
                                                             </clipPath>
                                                         </defs>
                                                     </svg> */}
+                                                        </div>
+                                                        <p className="insturctor-about-logo text-center pt-[10px] lg:pt-3">{data?.country?.name}</p>
+                                                    </div>
+                                                    <div className="intro card-bg profile-card-bg py-2.5 px-2.5 w-[50%]">
+                                                        <div className="flex justify-center w-full">
+                                                            {instructorAvatar &&
+                                                                <img
+                                                                    src={instructorAvatar}
+                                                                    className="  h-[18px] w-[18px]  object-contain rounded-full "
+                                                                />
+                                                            }
+                                                        </div>
+                                                        {instructorAvatar &&
+                                                            <p className="insturctor-about-logo text-center pt-[10px] lg:pt-3">GLITCH #{data?.glitch_id ? data?.glitch_id.toString().padStart(4, '0') : 'xxxx'}</p>
+                                                        }
+                                                    </div>
                                                 </div>
-                                                <p className="insturctor-about-logo text-center pt-[10px] lg:pt-3">{course?.default_instructor?.country?.name}</p>
                                             </div>
-                                            <div className="intro card-bg profile-card-bg py-2.5 px-2.5 w-[50%]">
-                                                <div className="flex justify-center w-full">
-                                                {instructorAvatar &&
-                                                    <img
-                                                        src={instructorAvatar && instructorAvatar}
-                                                        className="  h-[18px] w-[18px]  object-contain rounded-full "
-                                                    />
-                                                }
-                                                </div>
-                                                {instructorAvatar &&
-                                                <p className="insturctor-about-logo text-center pt-[10px] lg:pt-3">GLITCH #{course.default_instructor?.glitch_id ? course.default_instructor?.glitch_id.toString().padStart(4, '0') : 'xxxx'}</p>
-                                                }
-                                                </div>
+                                        </div>
+                                        <div className="intro card-bg profile-card-bg py-4 px-2.5  mt-3">
+                                            <p className="fw-regular text-[12.5px]">
+                                                {data?.about}</p>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        ))}
+
+                        {/* *************instructor detail card ********** */}
+
+                        {/* *************instructor detail card ********** */}
+
+                        <div className="my-[14px] md:mt-[22px]  container mx-auto  px-4 lg:px-3">
+                            <p className="fw-bold fs-small"> EXPLORE ALL {course?.title == 'MONEY TALKS' || course?.title == 'DATA SETS' ? course?.title : 'EPISODES'} </p>
+
+                            <div className="grid grid-cols-12 mt-[8px] md:mt-[24px]">
+                                <div className="col-span-12 relative"  >
+
+
+
+                                    <div className="embla">
+                                        <div className="marquee-shadow left "></div>
+                                        <div className="marquee-shadow right -top-[1px]"></div>
+                                        <div className="embla__viewport" ref={lessonsRef}>
+                                            <div className="embla__container">
+                                                {course?.lessons.map((data, index) => (
+                                                    <div className="embla__slide" key={index}>
+                                                        <AcademySmallSliderCard
+                                                            IsMoneyTalk={true}
+                                                            imgHeight={' h-[130px] md:h-[150px] lg:h-[180px] rounded-[10px]'}
+                                                            title={data?.title}
+                                                            desktop_image={data?.thumbnail}
+                                                            mobile_image={data?.mobile_thumbnail}
+                                                            isNew={data?.is_new}
+                                                            routeToPlay={route('lessons.play', data?.id)}
+                                                            lessonProgress={data?.duration_watched}
+                                                        />
+                                                        <p className="lesson-title pt-1 md:pt-5">{index + 1} . {data?.title}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                    {/* <div className="marquee-shadow left h-80"></div>
+                                    <div className="marquee-shadow right -top-[1px] h-80"></div> */}
+
+                                    {/*
+                                    <OwlCarousel  {...owlCourseLessons?.options}
+                                        ref={newLessonRef}
+                                        className="owl-theme relative" >
+                                        {course?.lessons?.map((data, index) => (
+                                            <div key={index + 3} className={"academy-small-card isCoursepage new-course-card "}>
+                                                <AcademySmallSliderCard
+                                                    IsMoneyTalk={true}
+                                                    imgHeight={' h-[130px] md:h-[150px] lg:h-[180px] rounded-[10px]'}
+                                                    title={data?.title}
+                                                    desktop_image={data?.thumbnail}
+                                                    mobile_image={data?.mobile_thumbnail}
+                                                    isNew={data?.is_new}
+                                                    routeToPlay={route('lessons.play', data?.id)}
+                                                    lessonProgress={data?.duration_watched}
+                                                />
+                                                <p className="lesson-title pt-1 md:pt-5">{index + 1} . {data?.title}</p>
+                                            </div>
+                                        ))}
+                                    </OwlCarousel> */}
+
+                                    <div className="hidden lg:block">
+                                        <div className="absolute mx-auto cursor-pointer top-[35%] z-[999] px-4">
+                                            <div onClick={LessonPrev}>
+                                                <SlideArrows />
+
+                                            </div>
+                                        </div>
+                                        <div className="absolute mx-auto right-1 top-[35%] z-[999] px-4">
+                                            <div className="rotate-180 cursor-pointer" onClick={LessonNext}>
+                                                <SlideArrows />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="intro card-bg profile-card-bg py-4 px-2.5  mt-3">
-                                    <p className="fw-regular text-[12.5px]">
-                                      {course.default_instructor?.about}</p>
-
-                                </div>
                             </div>
 
-                        </div>
-                    </div>
 
-
-
-
-                    {/* *************instructor detail card ********** */}
-
-
-
-
-
-
-                    {/* *************instructor detail card ********** */}
-
-
-                    <div className="my-[14px] md:mt-[22px]  container mx-auto  px-4 lg:px-3">
-                        <p className="fw-bold fs-small"> EXPLORE ALL {course?.title=='MONEY TALKS'  ||  course?.title=='DATA SETS'  ? course?.title : 'EPISODES'  } </p>
-
-
-
-                        <div className="grid grid-cols-12 mt-[8px] md:mt-[24px]">
-                            <div  className="col-span-12 relative"  >
-
-                            <div className="marquee-shadow left h-80"></div>
-                        <div className="marquee-shadow right -top-[1px] h-80"></div>
-
-
-                                <OwlCarousel  {...owlCourseLessons?.options}
-                                    ref={newLessonRef}
-                                    className="owl-theme relative" >
-                                    {course?.lessons?.map((data, index) => (
-                                        <div key={index + 3}  className={"academy-small-card new-course-card "}>
-                                            <AcademyLargeCard
-
-                                                title={data?.title}
-                                                instructor={data?.default_instructor?.full_name}
-                                                duration={"5 hr 40 min"}
-                                                lessons={data?.lessons_count}
-                                                 desktop_image={data?.thumbnail}
-                                                mobile_image={data?.thumbnail}
-                                                badge={"primary"}
-                                                badge_text={""}
-                                                live={false}
-                                                routeToPlay={route('lessons.play', data?.id)}
-                                                lessonProgress={data?.duration_watched} />
-                                            <p className="lesson-title pt-1 md:pt-5">{index + 1} . {data?.title}</p>
-                                        </div>
-                                    ))}
-                                </OwlCarousel>
-
-                                <div className="hidden lg:block">
-                                <div className="absolute mx-auto  top-[35%] z-[999] px-4">
-                                    <div onClick={() => {
-                                        handleSliderPrev(newLessonRef)
-                                    }}>
-                                        <SlideArrows />
-
-                                    </div>
-                                </div>
-                                <div className="absolute mx-auto right-1 top-[35%] z-[999] px-4">
-                                    <div className="rotate-180" onClick={() => {
-                                        handleSliderNext(newLessonRef)
-                                    }}>
-                                        <SlideArrows />
-                                    </div>
-                                </div>
-                            </div>
-                            </div>
                         </div>
 
 
-
                     </div>
-
-
-
-
 
                 </div>
 
+                {showDetail && <div onClick={() => { setShowDetail(false) }} className="bg-sm-black backdrop-blur-[2px] bg-black/10 fixed mx-auto inset-0 z-[9999]  sm-d-none "></div>}
+
+
+
             </div>
-
-                {showDetail && <div onClick={() => { setShowDetail(false) }} className="bg-sm-black backdrop-blur-[2px] bg-black/10 fixed mx-auto inset-0 z-[9999]   "></div>}
-
-
-
-        </div>
         </motion.div>
     );
 };

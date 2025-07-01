@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use Spatie\ResponseCache\Hasher\DefaultHasher;
 use Illuminate\Http\Request;
+use Spatie\ResponseCache\Hasher\DefaultHasher;
+
 class InertiaHasher extends DefaultHasher
 {
     public function getHashFor(Request $request): string
@@ -14,5 +15,4 @@ class InertiaHasher extends DefaultHasher
 
         return "{$baseHash}-{$contentType}";
     }
-
 }

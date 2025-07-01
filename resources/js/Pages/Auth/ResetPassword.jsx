@@ -4,6 +4,8 @@ import logo from "../../../assets/svg/logo.svg";
 import { Link, useForm } from "@inertiajs/react";
 import { ToastContainer, toast } from "react-toastify";
 import Toast from "@/Components/Toast/Toast.jsx";
+import axios from "axios";
+import { GTMLogs } from "@/utils/GTMLogs";
 const ResetPassword = ({ token, email }) => {
     const [show, setShow] = useState(false);
     const { data, setData, post, processing, errors } = useForm({
@@ -17,12 +19,31 @@ const ResetPassword = ({ token, email }) => {
         event.preventDefault();
 
 
-        post(route('password.store'));
+        post(route('password.store'),
+
+            {
+                onSuccess: () => {
+                    axios.get(route('get-auth-user', { billingAddress: true }))
+                        .then((response) => {
+                            // console.log('res : ', response)
+                            const user = response?.data?.payload;
+                            GTMLogs(
+                                {
+                                    'event': 'GTMevent',
+                                    'event_name': 'reset_password_success',
+                                    'email': data?.email,
+                                    'event_id': '10004',
+                                }
+                            )
+                        })
+                }
+            }
+        );
     }
 
     const handleContextMenu = (e) => {
         e.preventDefault();
-      };
+    };
 
     return (
         <div onContextMenu={handleContextMenu}>
@@ -49,13 +70,13 @@ const ResetPassword = ({ token, email }) => {
                                     <h3 className="mb-4 text-center w-full">Reset Password?</h3>
                                     <div className="pr-5 w-full">
                                         <div className="relative w-full mt-[1rem]">
-                                            <input type= "email"
+                                            <input type="email"
 
-                                                   className="input-text   w-full "
-                                                   placeholder="Your Email"
-                                                   name="email"
-                                                   value={data.email}
-                                                   onChange={e => setData('email', e.target.value)} />
+                                                className="input-text   w-full "
+                                                placeholder="Your Email"
+                                                name="email"
+                                                value={data.email}
+                                                onChange={e => setData('email', e.target.value)} />
                                             {errors?.email && (
                                                 <p className="fs-tiny fw-regular mt-3 ml-5 text-center danger-color ">
                                                     {errors?.email}{" "}
@@ -64,13 +85,13 @@ const ResetPassword = ({ token, email }) => {
 
                                         </div>
                                         <div className="relative w-full mt-[1rem]">
-                                            <input type= "password"
+                                            <input type="password"
 
-                                                   className="input-text   w-full "
-                                                   placeholder="New Password"
-                                                   name="password"
-                                                   value={data.password}
-                                                   onChange={e => setData('password', e.target.value)} />
+                                                className="input-text   w-full "
+                                                placeholder="New Password"
+                                                name="password"
+                                                value={data.password}
+                                                onChange={e => setData('password', e.target.value)} />
                                             {errors?.password && (
                                                 <p className="fs-tiny fw-regular mt-3 ml-5 text-center danger-color ">
                                                     {errors?.password}{" "}

@@ -9,12 +9,12 @@ use App\Http\Resources\AvatarResource;
 use App\Http\Resources\IndustryResource;
 use App\Jobs\ActiveCampaign\UpdateActiveCampaignContactJob;
 use App\Jobs\AttachAvatarToUserJob;
+use App\Jobs\Klaviyo\SendOnBoardingDataToKlaviyoJob;
 use App\Models\Asset\Category;
 use App\Models\Avatar;
 use App\Models\Industry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -85,8 +85,11 @@ class PreferenceController extends Controller
 
         DB::commit();
 
+        $user->refresh();
+
         AttachAvatarToUserJob::dispatchSync(userId: _user()->id, avatarId: $request->avatar_id);
-        UpdateActiveCampaignContactJob::dispatch(userId: $user->id);
+        // UpdateActiveCampaignContactJob::dispatch(userId: $user->id);
+        SendOnBoardingDataToKlaviyoJob::dispatch(user: $user);
 
         return to_route('preference.transition');
     }
@@ -120,18 +123,5 @@ class PreferenceController extends Controller
         _user()->update(['profile_completed' => true]);
 
         return inertia('Preference/Transition', compact('videoAsset'));
-    }
-
-    /**
-     * Show lock academy page of game
-     *
-     * @return Response|ResponseFactory
-     */
-    public function game()
-    {
-        $academyOpeningDate = Carbon::parse(config('app.academy_opening'));
-        $timeDifferenceInSeconds = now()->diffInSeconds($academyOpeningDate);
-
-        return inertia('Preference/GamePlay', compact('academyOpeningDate'));
     }
 }

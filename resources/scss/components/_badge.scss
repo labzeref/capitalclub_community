@@ -1,15 +1,23 @@
 .badge{
-    font-size: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 11px;
     color: $primary-color;
-    height: 19px;
+    width: 108px;
+    height: 36px;
     display: flex;
     justify-content: center;
     align-items: center;
     background: $secondary-color;
     border: none;
     outline: none;
-    border-radius: 24px;
-    padding: 5px 8px 5px 8px;
+    border-radius: 24px; 
+
+    @include for_breakpoint(mobile) {
+        font-size: 10px;
+        width: 56px;
+        height: 21px;
+    }
 
     &.primary{
         background: $primary-color;
@@ -22,8 +30,8 @@
     }
 
     &.danger{
-        background: $btn-danger-bg;
-        color: $danger-color;
+        background: #FF0000;
+        color: #fff;
     }
 
     &.success{

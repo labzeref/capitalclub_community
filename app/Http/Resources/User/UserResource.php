@@ -10,7 +10,6 @@ use App\Http\Resources\Media\MediaResource;
 use App\Http\Resources\Media\MediumMediaResource;
 use App\Http\Resources\Media\SmallMediaResource;
 use App\Http\Resources\SocialMediaResource;
-use App\Models\BillingAddress;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -36,10 +35,6 @@ class UserResource extends JsonResource
             'business_owner' => $this->business_owner,
             'annual_revenue' => $this->annual_revenue,
             'objective' => $this->objective,
-            'has_followed' => $this->whenLoaded(
-                'followingUsers',
-                fn () => _user()->followingUsers->contains('id', $this->id)
-            ),
             'dp' => $this->whenLoaded(
                 'media',
                 fn () => [

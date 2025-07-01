@@ -11,11 +11,6 @@ class CreatingSubscriptionEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * @param int $userId
-     * @param string $success
-     * @param array $message
-     */
     public function __construct(
         private readonly int $userId,
         private readonly string $success,

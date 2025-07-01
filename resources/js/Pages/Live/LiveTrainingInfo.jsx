@@ -67,7 +67,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuct
 
 
     const handleLiveStreamBookmarkToggle = () => {
-        post(route('bookmark-toggle.live-stream', liveStream?.id), {
+        post(route('bookmark-toggle.livestream', liveStream?.id), {
             preserveScroll: true
         });
     }
@@ -102,7 +102,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuct
     const [styleState, setStyleState] = useState({
         options: {
             loop: true,
-            margin: 24, 
+            margin: 24,
             autoplay: true,
             autoplayHoverPause: true,
             autoplayTimeout: 2500,
@@ -131,7 +131,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuct
 
 
     const handleContextMenu = (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
       };
 
     return (
@@ -143,7 +143,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuct
             <div className="container mx-auto mt-[5rem] md:mt-[6rem] px-5 md:px-3">
                 <Link
                     href={route(
-                        "live-stream.play",
+                        "livestream.play",
                         liveStream?.id
                     )}
                 >
@@ -165,7 +165,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuct
                         <div className="grid grid-cols-12">
                             <div className="col-span-12  z-50">
                                 <div className="flex items-center gap-2 lg:gap-4  justify-center">
-                                    <Link href={route("live-stream.play", liveStream?.id)}>
+                                    <Link href={route("livestream.play", liveStream?.id)}>
                                         <button className="button primary">
                                             <div className="button_container glitch uppercase">
                                                 {liveStream?.status == 'was-live' ? 'watch video' : ' WATCH LIVE'}
@@ -230,7 +230,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuct
                                                 </svg>
 
                                                 <p className="danger-color px-2 ">
-                                                     
+
                                                     Live
                                                 </p>
                                             </div>
@@ -264,7 +264,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuct
                                             <button className="button primary">
                                                 <Link
 
-                                                    href={liveTraining ? route("live-training.play", liveTraining?.id) : route("live-stream.play", liveStream?.id)}
+                                                    href={liveTraining ? route("live-training.play", liveTraining?.id) : route("livestream.play", liveStream?.id)}
                                                 >
                                                     <div className="button_container glitch uppercase">
 
@@ -374,7 +374,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuct
                                     {/* <h5 className="mb-1 font-normal">
                                         <span className="opacity-50">
                                             Class Length:
-                                        </span> 
+                                        </span>
                                         35 video lessons (8 hours 1 minute)
                                     </h5> */}
                                     {liveStream?.live_series?.default_instructor?.category?.name && <h5 className="mb-1 font-normal">
@@ -532,7 +532,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuct
                                                     <React.Fragment key={index + 3}>
 
                                                         <AcademySmallCard
-                                                            // href={ route("live-stream.play", data?.id)}
+                                                            // href={ route("livestream.play", data?.id)}
                                                             className={"academy-small-card isSlider feature-card"}
                                                             title={data?.sub_title}
                                                             instructor={data?.live_series?.default_instructor?.full_name}
@@ -540,7 +540,7 @@ const LiveTrainingInfo = ({ liveTraining, liveStream, randomLives, randomInstuct
                                                             lessons={3}
                                                             desktop_image={liveStream.live_series?.mobile_thumbnail}
                                                             mobile_image={liveStream.live_series?.mobile_thumbnail}
-                                                            routeToPlay={route('live-stream.play', { course: data?.id })}
+                                                            routeToPlay={route('livestream.play', { course: data?.id })}
                                                             badge={"primary"}
                                                             badge_text={""}
                                                             live={true}

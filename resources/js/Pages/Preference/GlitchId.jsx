@@ -195,41 +195,42 @@ const GlitchId = ({ videoAsset }) => {
     };
 
     const [orientation, setOrientation] = useState(
-        window.matchMedia('(orientation: portrait)').matches ? 'portrait':'landscape');
-    
-      useEffect(() => {
+        window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape');
+
+    useEffect(() => {
         const handleOrientationChange = () => {
-          setOrientation(
-            window.matchMedia('(orientation: portrait)').matches
-              ? 'portrait' : 'landscape' );};
-    
+            setOrientation(
+                window.matchMedia('(orientation: portrait)').matches
+                    ? 'portrait' : 'landscape');
+        };
+
         // Add an event listener for changes in orientation
         window.addEventListener('resize', handleOrientationChange);
-    
+
         // Clean up the event listener when the component unmounts
         return () => {
-          window.removeEventListener('resize', handleOrientationChange);
+            window.removeEventListener('resize', handleOrientationChange);
         };
-      }, []);
+    }, []);
 
-      const handleContextMenu = (e) => {
-        e.preventDefault(); 
-      };
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+    };
 
     return (
         <div onContextMenu={handleContextMenu}>
 
             {/* ***********GLITCH ID ********** */}
 
-            <div  className={` ${hideGlitchPage && 'hidden'} flex flex-col h-[100vh] fixed w-full`} style={{ maxHeight: '-webkit-fill-available', justifyContent: 'space-between', overflowY: 'hidden' }}>
+            <div className={` ${hideGlitchPage && 'hidden'} flex flex-col h-[100vh] fixed w-full`} style={{ maxHeight: '-webkit-fill-available', justifyContent: 'space-between', overflowY: 'hidden' }}>
                 <div className={` relative flex flex-col items-center justify-between  w-full  glitch-id-container`}>
 
 
 
                     {/* {nextjoinButtonDelay && */}
-                     <div className={` ${nextjoinButtonDelay && 'glitch-id-page-fade-in'} glitch-id-page-fade-in  z-70   prefrerence-layout-mt  w-full flex justify-center`}>
+                    <div className={` ${nextjoinButtonDelay && 'glitch-id-page-fade-in'} glitch-id-page-fade-in  z-70   prefrerence-layout-mt  w-full flex justify-center`}>
                         <Link href={route('welcome')}>     <img
-                            className={` ${orientation=='landscape' ? 'onboarding-logo-landscap' : 'onboarding-logo' }   `}
+                            className={` ${orientation == 'landscape' ? 'onboarding-logo-landscap' : 'onboarding-logo'}   `}
                             src={logo}
                             alt=""
                         />
@@ -251,16 +252,16 @@ const GlitchId = ({ videoAsset }) => {
                                         YOU ARE NOW
                                     </h1>
                                     <div className="text-[#FFFFFF] text-[35px] md:text-[45px] uppercase font-bold  text-center h-[35px] md:h-[45px]">
-                                        <p className={`text-[#FFFFFF] ${orientation=='landscape' ? 'text-[28px]' : 'text-[35px]' }  md:text-[45px] uppercase font-bold  text-center `}>Glitch</p>
+                                        <p className={`text-[#FFFFFF] ${orientation == 'landscape' ? 'text-[28px]' : 'text-[35px]'}  md:text-[45px] uppercase font-bold  text-center `}>Glitch</p>
                                     </div>
-                                    <div className={`text-[#FFFFFF] ${orientation=='landscape' ? 'text-[28px]' : 'text-[35px]' }  md:text-[45px] uppercase font-bold  text-center `}>
+                                    <div className={`text-[#FFFFFF] ${orientation == 'landscape' ? 'text-[28px]' : 'text-[35px]'}  md:text-[45px] uppercase font-bold  text-center `}>
                                         {showId &&
                                             <div className={'flex justify-center mx-[10px]'}>
-                                                <svg className={` ${orientation=='landscape' ? 'w-[20px] h-[20px] mt-[8px]' : 'w-[23px] h-[23px]' }   md:w-[31px] md:h-[31px] lg:w-[31px] lg:h-[31px] mt-[10px] md:mt-[13px] lg:mt-[14px] `}  viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M12.3089 0.161621H16.7522V19.8788H12.3089V0.161621Z" fill="white"/>
-                                                    <path d="M3.42232 0.161621H7.86563V19.8788H3.42232V0.161621Z" fill="white"/>
-                                                    <path d="M19.807 11.8253V15.4355L0.0898438 15.4355L0.0898439 11.8253L19.807 11.8253Z" fill="white"/>
-                                                    <path d="M19.807 4.04951V7.6597L0.0898438 7.6597L0.0898439 4.04951L19.807 4.04951Z" fill="white"/>
+                                                <svg className={` ${orientation == 'landscape' ? 'w-[20px] h-[20px] mt-[8px]' : 'w-[23px] h-[23px]'}   md:w-[31px] md:h-[31px] lg:w-[31px] lg:h-[31px] mt-[10px] md:mt-[13px] lg:mt-[14px] `} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M12.3089 0.161621H16.7522V19.8788H12.3089V0.161621Z" fill="white" />
+                                                    <path d="M3.42232 0.161621H7.86563V19.8788H3.42232V0.161621Z" fill="white" />
+                                                    <path d="M19.807 11.8253V15.4355L0.0898438 15.4355L0.0898439 11.8253L19.807 11.8253Z" fill="white" />
+                                                    <path d="M19.807 4.04951V7.6597L0.0898438 7.6597L0.0898439 4.04951L19.807 4.04951Z" fill="white" />
                                                 </svg>
                                                 {auth?.user.id.toString().padStart(4, '0')}
                                             </div>
@@ -279,16 +280,16 @@ const GlitchId = ({ videoAsset }) => {
                             <div className="container mx-auto  ">
                                 <div className="flex justify-center mb-[5vh] md:mb-[9vh] cursor-pointer ">
 
-
-                                    <svg
-                                        className={" mb-[5vh] md:mb-[9vh] cursor-pointer w-[28px] md:w-[34px] "}
-                                        onClick={() => { startTrackingProgress(), playVideo(), setHideGlitchPage(true) }}
-                                        viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="14" cy="14" r="14" fill="white" />
-                                        <path d="M7 13.75H21.5" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M14.25 6.5L21.5 13.75L14.25 21" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-
+                                    <Link href={route('preference.index')}>
+                                        <svg
+                                            className={" mb-[5vh] md:mb-[9vh] cursor-pointer w-[28px] md:w-[34px] "}
+                                            // onClick={() => { startTrackingProgress(), playVideo(), setHideGlitchPage(true) }}
+                                            viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="14" cy="14" r="14" fill="white" />
+                                            <path d="M7 13.75H21.5" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M14.25 6.5L21.5 13.75L14.25 21" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </Link>
                                 </div>
                             </div> </div> </div>
 
@@ -311,7 +312,7 @@ const GlitchId = ({ videoAsset }) => {
                     <div style={{ width: '100vw', height: '100vh', position: 'relative', maxHeight: '-webkit-fill-available' }}>
                         <div className=" absolute w-full z-[999999] mt-5 flex justify-center">
                             <div className='w-full absolute  z-70 flex justify-center'>
-                                <Link href={route('welcome')}>     <img
+                                <Link href={route('preference.index')}>     <img
                                     className="max-h-[30px] lg:max-h-[40px]"
                                     src={logo}
                                     alt=""
@@ -411,10 +412,10 @@ const GlitchId = ({ videoAsset }) => {
                         </div>
                         :
                         <div className={` ${orientation == 'landscape' ? 'video-progress-landscap' : 'bottom-[10vh] '}  absolute z-[9999] flex justify-center w-full `}>
-                        <div className={` ${orientation == 'landscape' ? 'video-progress-landscap-h' : 'h-[21px]'}  horizantal-progress-w mx-auto bg-[#333333] rounded-full overflow-hidden `}>
-                            <div className={`bg-[#fff] ${orientation == 'landscape' ? 'video-progress-landscap-h' : 'h-[21px]'} rounded-full`} style={{ width: `${videoProgress}%` }}></div>
+                            <div className={` ${orientation == 'landscape' ? 'video-progress-landscap-h' : 'h-[21px]'}  horizantal-progress-w mx-auto bg-[#333333] rounded-full overflow-hidden `}>
+                                <div className={`bg-[#fff] ${orientation == 'landscape' ? 'video-progress-landscap-h' : 'h-[21px]'} rounded-full`} style={{ width: `${videoProgress}%` }}></div>
+                            </div>
                         </div>
-                    </div>
                         // <div className='absolute z-[99] bottom-[10vh] flex justify-center w-full'>
                         //     <div className=" horizantal-progress-w mx-auto bg-[#333333] rounded-full h-[21px] overflow-hidden">
                         //         <div className="bg-[#fff] h-[21px] rounded-full" style={{ width: `${videoProgress}%` }}></div>

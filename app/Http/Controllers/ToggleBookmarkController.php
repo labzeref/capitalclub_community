@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Lesson;
-use App\Models\LiveStream;
+use App\Models\LiveStream\LiveStream;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Maize\Markable\Models\Bookmark;
@@ -35,7 +35,6 @@ class ToggleBookmarkController extends Controller
     /**
      * Toggle the bookmark of lesson
      *
-     * @param Lesson $lesson
      * @return JsonResponse
      */
     public function lesson(Lesson $lesson)
@@ -55,22 +54,20 @@ class ToggleBookmarkController extends Controller
     }
 
     /**
-     * Toggle the bookmark of live training
+     * Toggle the bookmark of live stream
      *
-     * @return RedirectResponse
+     * @return JsonResponse
      */
     public function liveStream(LiveStream $liveStream)
     {
         Bookmark::toggle($liveStream, _user());
 
         if (_user()->bookmarkedLiveStream->contains($liveStream->id)) {
-            $message = 'Live training is added to bookmark list.';
+            $message = 'Live stream is added to bookmark list.';
         } else {
-            $message = 'Live training removed from bookmark list.';
+            $message = 'Live stream removed from bookmark list.';
         }
 
-        // return $this->sendResponse([], __($message));
-        return back()->with('success', __($message));
-
+        return $this->sendResponse([], __($message));
     }
 }

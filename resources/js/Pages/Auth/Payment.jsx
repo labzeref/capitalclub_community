@@ -8,7 +8,7 @@ import TermAndCondition from "@/Components/Modal/TermAndCondition";
 import ReactToast from "@/Components/ReactToast.jsx";
 import Timer from "@/Components/Timer";
 import Toast from "@/Components/Toast/Toast.jsx";
-import { CardCVV, CardComponent, CardExpiry, CardNumber } from "@chargebee/chargebee-js-react-wrapper";
+// import { CardCVV, CardComponent, CardExpiry, CardNumber } from "@chargebee/chargebee-js-react-wrapper";
 import { debounce } from "lodash";
 import { Inertia } from "@inertiajs/inertia";
 import axios from "axios";
@@ -389,7 +389,7 @@ const Payment = ({
         e.preventDefault();
       };
 
-      
+
     return (
         <>
 
@@ -448,246 +448,246 @@ const Payment = ({
                                     transition={{ duration: 1 }}
                                 >
                                     <div>
-                                        <form className=" flex flex-col justify-between " >
-                                            <div className="card-bg border-rounded-15 card-padding">
-                                                {/* address */}
+  {/*                                      <form className=" flex flex-col justify-between " >*/}
+  {/*                                          <div className="card-bg border-rounded-15 card-padding">*/}
+  {/*                                              /!* address *!/*/}
 
-                                                <div className="flex items-center justify-center flex-wrap">
-                                                    <p className="register-input-heading-2">  SECURE PAYMENT</p>
-                                                </div>
-                                                {/* payments */}
-                                                {/* {!isCoupn ? */}
-                                                <div className="">
-                                                    <CardComponent
-                                                        // icon={false}
-                                                        style={{ color: '#fff', fontSize: `${chargebeeFontSize.current}`, fill: '#909090 !important' }}
-                                                        ref={CardRef}
-                                                        styles={{
-                                                            base: {
-                                                                color: '#fff',
-                                                                fontWeight: 600,
-                                                                fontFamily: 'Quicksand, Open Sans, Segoe UI, sans-serif',
-                                                                fontSize: `${chargebeeFontSize.current}`,
-                                                                textAlign: 'center',
-                                                                fontSmoothing: 'antialiased',
+  {/*                                              <div className="flex items-center justify-center flex-wrap">*/}
+  {/*                                                  <p className="register-input-heading-2">  SECURE PAYMENT</p>*/}
+  {/*                                              </div>*/}
+  {/*                                              /!* payments *!/*/}
+  {/*                                              /!* {!isCoupn ? *!/*/}
+  {/*                                              <div className="">*/}
+  {/*                                                  <CardComponent*/}
+  {/*                                                      // icon={false}*/}
+  {/*                                                      style={{ color: '#fff', fontSize: `${chargebeeFontSize.current}`, fill: '#909090 !important' }}*/}
+  {/*                                                      ref={CardRef}*/}
+  {/*                                                      styles={{*/}
+  {/*                                                          base: {*/}
+  {/*                                                              color: '#fff',*/}
+  {/*                                                              fontWeight: 600,*/}
+  {/*                                                              fontFamily: 'Quicksand, Open Sans, Segoe UI, sans-serif',*/}
+  {/*                                                              fontSize: `${chargebeeFontSize.current}`,*/}
+  {/*                                                              textAlign: 'center',*/}
+  {/*                                                              fontSmoothing: 'antialiased',*/}
 
-                                                                ':focus': {
-                                                                    color: '#fff',
-                                                                },
+  {/*                                                              ':focus': {*/}
+  {/*                                                                  color: '#fff',*/}
+  {/*                                                              },*/}
 
-                                                                '::placeholder': {
-                                                                    color: '#909090',
-                                                                },
+  {/*                                                              '::placeholder': {*/}
+  {/*                                                                  color: '#909090',*/}
+  {/*                                                              },*/}
 
-                                                                ':focus::placeholder': {
-                                                                    color: '#909090',
-                                                                },
-                                                            },
-                                                            invalid: {
-                                                                color: '#fff',
-                                                                ':focus': {
-                                                                    color: '#FA755A',
-                                                                },
-                                                                '::placeholder': {
-                                                                    color: '#FFCCA5',
-                                                                },
-                                                            }
-                                                        }}
-                                                        className="text-[#fff]"
-                                                    >
+  {/*                                                              ':focus::placeholder': {*/}
+  {/*                                                                  color: '#909090',*/}
+  {/*                                                              },*/}
+  {/*                                                          },*/}
+  {/*                                                          invalid: {*/}
+  {/*                                                              color: '#fff',*/}
+  {/*                                                              ':focus': {*/}
+  {/*                                                                  color: '#FA755A',*/}
+  {/*                                                              },*/}
+  {/*                                                              '::placeholder': {*/}
+  {/*                                                                  color: '#FFCCA5',*/}
+  {/*                                                              },*/}
+  {/*                                                          }*/}
+  {/*                                                      }}*/}
+  {/*                                                      className="text-[#fff]"*/}
+  {/*                                                  >*/}
 
-                                                        <div className="grid grid-cols-12">
+  {/*                                                      <div className="grid grid-cols-12">*/}
 
-                                                            <div className="col-span-12 lg:col-span-12  ">
-                                                                <div className="relative ">
+  {/*                                                          <div className="col-span-12 lg:col-span-12  ">*/}
+  {/*                                                              <div className="relative ">*/}
 
-                                                                    <CardNumber className="input-text text-[#fff] flex items-center w-full pl-8 pr-4" />
+  {/*                                                                  <CardNumber className="input-text text-[#fff] flex items-center w-full pl-8 pr-4" />*/}
 
-                                                                </div>
-                                                            </div>
+  {/*                                                              </div>*/}
+  {/*                                                          </div>*/}
 
-                                                            <div className="col-span-6 lg:col-span-6 mr-[0.5vw] md:mr-[5px]">
+  {/*                                                          <div className="col-span-6 lg:col-span-6 mr-[0.5vw] md:mr-[5px]">*/}
 
-                                                                <CardExpiry
-                                                                    className="input-text text-[#fff]  flex items-center  w-full" />
-                                                            </div>
+  {/*                                                              <CardExpiry*/}
+  {/*                                                                  className="input-text text-[#fff]  flex items-center  w-full" />*/}
+  {/*                                                          </div>*/}
 
-                                                            <div className="col-span-6 lg:col-span-6 ml-[0.5vw] md:ml-[5px]">
+  {/*                                                          <div className="col-span-6 lg:col-span-6 ml-[0.5vw] md:ml-[5px]">*/}
 
-                                                                <CardCVV
-                                                                    className="input-text text-[#fff]   flex items-center  w-full" />
-                                                            </div>
-                                                        </div>
-                                                    </CardComponent>
-                                                </div>
-
-
-                                                {isCoupn &&
-                                                <div className="justify-between w-full  gap-x-1  mt-4 ">
-                                                    <div className="flex  gap-x-2   w-full ">
-
-                                                        <input type="text" style={{marginBottom:'auto  !important', marginTop:'auto  !important'}}
-                                                            className="input-text    my-auto w-full "
-                                                            placeholder="COUPON CODE" value={couponCodeValue}
-                                                            onChange={(e) => setCouponCodeValue(e.target.value)} />
+  {/*                                                              <CardCVV*/}
+  {/*                                                                  className="input-text text-[#fff]   flex items-center  w-full" />*/}
+  {/*                                                          </div>*/}
+  {/*                                                      </div>*/}
+  {/*                                                  </CardComponent>*/}
+  {/*                                              </div>*/}
 
 
-                                                    </div>
-                                                    <p className="font-12 fw-regular   text-center danger-color ">
-                                                        {errorcouponCode && 'Please enter coupon code'}
-                                                    </p>
+  {/*                                              {isCoupn &&*/}
+  {/*                                              <div className="justify-between w-full  gap-x-1  mt-4 ">*/}
+  {/*                                                  <div className="flex  gap-x-2   w-full ">*/}
 
-                                                    <button disabled={couponApplied || couponCodeValue== ''} onClick={(e) => { handlePaymentIntent(e) }}
-                                                    className={`button  primary ${(couponApplied || couponCodeValue== '') && 'disable'} mt-1  rounded-full  pt-[2px] h-[9vw] md:h-[35px]    w-[100%] `}>
-                                                        APPLY COUPON</button>
-
-                                                </div>
-  }
-
-                                                {/* // } */}
-                                            </div>
-                                            <div className="padding-payout">
-                                                {!isCoupn &&
-                                                    <p className="fw-medium text-center  timer-subheading-2  mb-[1.5vw] md:mb-[8px]">This exclusive $369 membership discount will NEVER be repeated.</p>
-                                                }
-
-                                                <div className="col-span-12 mt-[5px]">
-                                                    <div className="flex  items-center justify-between payment-price-h border-rounded-5 bg-[#1a1a1a] px-4 flex-wrap">
-                                                        <p className="yearly-member  ">
-                                                            CC YEARLY MEMBERSHIP
-                                                        </p>
-                                                        <div className="flex">
-
-                                                            <div className="relative">
-                                                                {price !== customPriceState && <div className="absolute top-3 w-full h-[2px] bg-[#C50A0A] -rotate-12 "></div>}
-                                                                <p className="font-14 fw-bold pt-[3px]">${price}</p>
-                                                            </div>
-                                                            {price!= customPriceState && <p className="font-14 fw-bold pt-[3px] pl-2">${customPriceState}   </p>}
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div onClick={() => showTACWarning()} className="col-span-12  mt-2 md:mt-[0.875rem]  ">
-                                                    <button disabled={paymentProcessing || !couponApplied} onClick={(e) => { handleSubmit(e) }}
-                                                        type="submit"
-                                                        className={` ${paymentProcessing && 'disable'} rounded-full button primary w-full fw-bold fw-bold register-button`}>
-                                                        <div className="button_container glitch uppercase ">
-
-                                                            <div className="flex items-center gap-x-2">
-                                                                {paymentProcessing &&
-                                                                    //  <div className="spinner-5 -mt-[3px] md:-mt-[5px]"></div>
-
-                                                                    <div class="loader" id="loader-6">
-                                                                        <span></span>
-                                                                        <span></span>
-                                                                        <span></span>
-                                                                        <span></span>
-                                                                    </div>
-
-                                                                }
-                                                                <span className="-mt-[2px]"> {paymentProcessing ? 'Please Wait' : 'PAY NOW'} </span>
-                                                            </div>
+  {/*                                                      <input type="text" style={{marginBottom:'auto  !important', marginTop:'auto  !important'}}*/}
+  {/*                                                          className="input-text    my-auto w-full "*/}
+  {/*                                                          placeholder="COUPON CODE" value={couponCodeValue}*/}
+  {/*                                                          onChange={(e) => setCouponCodeValue(e.target.value)} />*/}
 
 
-                                                        </div>
-                                                    </button>
+  {/*                                                  </div>*/}
+  {/*                                                  <p className="font-12 fw-regular   text-center danger-color ">*/}
+  {/*                                                      {errorcouponCode && 'Please enter coupon code'}*/}
+  {/*                                                  </p>*/}
 
-                                                </div>
+  {/*                                                  <button disabled={couponApplied || couponCodeValue== ''} onClick={(e) => { handlePaymentIntent(e) }}*/}
+  {/*                                                  className={`button  primary ${(couponApplied || couponCodeValue== '') && 'disable'} mt-1  rounded-full  pt-[2px] h-[9vw] md:h-[35px]    w-[100%] `}>*/}
+  {/*                                                      APPLY COUPON</button>*/}
 
-                                                <div className="col-span-12  flex justify-center md:justify-center items-center md:order-rst  mt-2 ">
-                                                    <span className="danger-color mr-1">*</span>
-                                                    <input
-                                                        id="default-checkbox"
-                                                        type="checkbox"
-                                                        checked={termAndCondition}
-                                                        value={termAndCondition}
-                                                        onChange={(e) => setTermAndCondition(e.target.checked)}
-                                                        className={`w-4 md:w-5 h-4 md:h-5 rounded-[2px] border-[2px] border-[#ffffff]  focus:outline-transparent   text-[#000] bg-[#000] ${termAndCondition
-                                                            ? "border-[2px] border-[#ffffff] ring-[2px] ring-[#ffffff] focus:outline-none"
-                                                            : "border-[2px] border-[#999999] ring-transparent focus:outline-transparent"
-                                                            } focus:shadow-none focus:ring-transparent overflow-hidden focus:border-0 `}
-                                                    />
+  {/*                                              </div>*/}
+  {/*}*/}
+
+  {/*                                              /!* // } *!/*/}
+  {/*                                          </div>*/}
+  {/*                                          <div className="padding-payout">*/}
+  {/*                                              {!isCoupn &&*/}
+  {/*                                                  <p className="fw-medium text-center  timer-subheading-2  mb-[1.5vw] md:mb-[8px]">This exclusive $369 membership discount will NEVER be repeated.</p>*/}
+  {/*                                              }*/}
+
+  {/*                                              <div className="col-span-12 mt-[5px]">*/}
+  {/*                                                  <div className="flex  items-center justify-between payment-price-h border-rounded-5 bg-[#1a1a1a] px-4 flex-wrap">*/}
+  {/*                                                      <p className="yearly-member  ">*/}
+  {/*                                                          CC YEARLY MEMBERSHIP*/}
+  {/*                                                      </p>*/}
+  {/*                                                      <div className="flex">*/}
+
+  {/*                                                          <div className="relative">*/}
+  {/*                                                              {price !== customPriceState && <div className="absolute top-3 w-full h-[2px] bg-[#C50A0A] -rotate-12 "></div>}*/}
+  {/*                                                              <p className="font-14 fw-bold pt-[3px]">${price}</p>*/}
+  {/*                                                          </div>*/}
+  {/*                                                          {price!= customPriceState && <p className="font-14 fw-bold pt-[3px] pl-2">${customPriceState}   </p>}*/}
+  {/*                                                      </div>*/}
+  {/*                                                  </div>*/}
+  {/*                                              </div>*/}
+
+  {/*                                              <div onClick={() => showTACWarning()} className="col-span-12  mt-2 md:mt-[0.875rem]  ">*/}
+  {/*                                                  <button disabled={paymentProcessing || !couponApplied} onClick={(e) => { handleSubmit(e) }}*/}
+  {/*                                                      type="submit"*/}
+  {/*                                                      className={` ${paymentProcessing && 'disable'} rounded-full button primary w-full fw-bold fw-bold register-button`}>*/}
+  {/*                                                      <div className="button_container glitch uppercase ">*/}
+
+  {/*                                                          <div className="flex items-center gap-x-2">*/}
+  {/*                                                              {paymentProcessing &&*/}
+  {/*                                                                  //  <div className="spinner-5 -mt-[3px] md:-mt-[5px]"></div>*/}
+
+  {/*                                                                  <div class="loader" id="loader-6">*/}
+  {/*                                                                      <span></span>*/}
+  {/*                                                                      <span></span>*/}
+  {/*                                                                      <span></span>*/}
+  {/*                                                                      <span></span>*/}
+  {/*                                                                  </div>*/}
+
+  {/*                                                              }*/}
+  {/*                                                              <span className="-mt-[2px]"> {paymentProcessing ? 'Please Wait' : 'PAY NOW'} </span>*/}
+  {/*                                                          </div>*/}
 
 
-                                                    <div className="flex items-center ml-2 pt-[1px] md:pt-[3px] ">
-                                                        <p className="payment-TAC ">
-                                                            I have read and agreed to the
-                                                        </p>
-                                                        <a
-                                                            href={'https://capital.club/terms-of-service'}
-                                                            target="_blank" // Add this attribute to open in a new tab
-                                                            className="payment-TAC   px-1 underline"
-                                                        >
-                                                            Terms Of Service
-                                                        </a>
-                                                    </div>
+  {/*                                                      </div>*/}
+  {/*                                                  </button>*/}
 
-                                                </div>
+  {/*                                              </div>*/}
 
-                                                {/* <div className="col-span-12  flex justify-center md:justify-start items-center md:order-rst   mt-[0.7rem] ">
-                                    <Recaptcha
-                                        className={'mt-4'}
-                                        recaptchaKey={recaptchaKey}
-                                        recaptchaKeyV2={recaptchaKeyV2}
-                                        state={recaptchaState}
-                                        setData={setData}
-                                        recaptchaVersion={data?.recaptcha_version}
-                                        recaptchaError={recaptchaError}
-                                />
-                                </div> */}
+  {/*                                              <div className="col-span-12  flex justify-center md:justify-center items-center md:order-rst  mt-2 ">*/}
+  {/*                                                  <span className="danger-color mr-1">*</span>*/}
+  {/*                                                  <input*/}
+  {/*                                                      id="default-checkbox"*/}
+  {/*                                                      type="checkbox"*/}
+  {/*                                                      checked={termAndCondition}*/}
+  {/*                                                      value={termAndCondition}*/}
+  {/*                                                      onChange={(e) => setTermAndCondition(e.target.checked)}*/}
+  {/*                                                      className={`w-4 md:w-5 h-4 md:h-5 rounded-[2px] border-[2px] border-[#ffffff]  focus:outline-transparent   text-[#000] bg-[#000] ${termAndCondition*/}
+  {/*                                                          ? "border-[2px] border-[#ffffff] ring-[2px] ring-[#ffffff] focus:outline-none"*/}
+  {/*                                                          : "border-[2px] border-[#999999] ring-transparent focus:outline-transparent"*/}
+  {/*                                                          } focus:shadow-none focus:ring-transparent overflow-hidden focus:border-0 `}*/}
+  {/*                                                  />*/}
 
 
+  {/*                                                  <div className="flex items-center ml-2 pt-[1px] md:pt-[3px] ">*/}
+  {/*                                                      <p className="payment-TAC ">*/}
+  {/*                                                          I have read and agreed to the*/}
+  {/*                                                      </p>*/}
+  {/*                                                      <a*/}
+  {/*                                                          href={'https://capital.club/terms-of-service'}*/}
+  {/*                                                          target="_blank" // Add this attribute to open in a new tab*/}
+  {/*                                                          className="payment-TAC   px-1 underline"*/}
+  {/*                                                      >*/}
+  {/*                                                          Terms Of Service*/}
+  {/*                                                      </a>*/}
+  {/*                                                  </div>*/}
 
+  {/*                                              </div>*/}
 
-                                                {/* bottom cards  */}
-                                                <div className="flex justify-center gap-x-2 payment-bottom-icon-mt ">
-                                                    <div className="rounded-[10px]  w-full   bg-[#1a1a1a] flex py-1.5 md:py-2   justify-center  ">
-
-                                                        <div className="h-auto">
-
-                                                            <svg className="refund-gurentee-icon mx-auto" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M24.7838 12.2798L22.259 9.47286L22.6108 5.76044L18.8754 4.93546L16.9198 1.72607L13.4017 3.19494L9.88354 1.72607L7.92789 4.93546L4.19248 5.75038L4.54429 9.47286L2.01953 12.2798L4.54429 15.0868L4.19248 18.8092L7.92789 19.6342L9.88354 22.8537L13.4017 21.3747L16.9198 22.8436L18.8754 19.6342L22.6108 18.8092L22.259 15.0968L24.7838 12.2798ZM20.6966 13.7688L20.1171 14.4227L20.1999 15.2779L20.3861 17.2398L17.551 17.8635L17.0957 18.608L16.0713 20.2982L14.2294 19.5236L13.4017 19.1815L12.5842 19.5236L10.7424 20.2982L9.71798 18.6181L9.2627 17.8736L6.42752 17.2498L6.61377 15.2779L6.69655 14.4227L6.1171 13.7688L4.78228 12.2899L6.1171 10.8009L6.69655 10.1469L6.60342 9.2817L6.41717 7.32992L9.25235 6.70615L9.70764 5.96165L10.732 4.27145L12.5739 5.04612L13.4017 5.38819L14.2191 5.04612L16.0609 4.27145L17.0853 5.96165L17.5406 6.70615L20.3758 7.32992L20.1895 9.29176L20.1068 10.1469L20.6862 10.8009L22.021 12.2798L20.6966 13.7688Z" fill="white" />
-                                                                <path d="M11.4253 14.0505L9.02471 11.7063L7.4933 13.2054L11.4253 17.0385L19.0203 9.63383L17.4889 8.13478L11.4253 14.0505Z" fill="white" />
-                                                            </svg>
+  {/*                                              /!* <div className="col-span-12  flex justify-center md:justify-start items-center md:order-rst   mt-[0.7rem] ">*/}
+  {/*                                  <Recaptcha*/}
+  {/*                                      className={'mt-4'}*/}
+  {/*                                      recaptchaKey={recaptchaKey}*/}
+  {/*                                      recaptchaKeyV2={recaptchaKeyV2}*/}
+  {/*                                      state={recaptchaState}*/}
+  {/*                                      setData={setData}*/}
+  {/*                                      recaptchaVersion={data?.recaptcha_version}*/}
+  {/*                                      recaptchaError={recaptchaError}*/}
+  {/*                              />*/}
+  {/*                              </div> *!/*/}
 
 
 
-                                                            {/* <svg className="refund-gurentee-icon mx-auto" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M16.6478 8.35756L14.947 6.41277L15.184 3.84062L12.6676 3.26903L11.3502 1.04541L8.98016 2.06312L6.61015 1.04541L5.29271 3.26903L2.77632 3.83365L3.01333 6.41277L1.3125 8.35756L3.01333 10.3024L2.77632 12.8815L5.29271 13.4531L6.61015 15.6837L8.98016 14.659L11.3502 15.6767L12.6676 13.4531L15.184 12.8815L14.947 10.3093L16.6478 8.35756ZM13.8944 9.38921L13.5041 9.8423L13.5598 10.4348L13.6853 11.7941L11.7754 12.2262L11.4687 12.7421L10.7786 13.9131L9.5378 13.3764L8.98016 13.1394L8.42948 13.3764L7.18871 13.9131L6.49862 12.749L6.19192 12.2332L4.28197 11.801L4.40744 10.4348L4.46321 9.8423L4.07286 9.38921L3.17365 8.36453L4.07286 7.33289L4.46321 6.8798L4.40047 6.28033L4.275 4.92803L6.18495 4.49585L6.49165 3.98003L7.18174 2.80897L8.42251 3.34571L8.98016 3.58271L9.53083 3.34571L10.7716 2.80897L11.4617 3.98003L11.7684 4.49585L13.6783 4.92803L13.5529 6.2873L13.4971 6.8798L13.8875 7.33289L14.7867 8.35756L13.8944 9.38921Z" fill="white" />
-                                                            <path d="M7.64877 9.58439L6.03159 7.96024L4.99995 8.99886L7.64877 11.6547L12.7652 6.5243L11.7335 5.48568L7.64877 9.58439Z" fill="white" />
-                                                        </svg> */}
+
+  {/*                                              /!* bottom cards  *!/*/}
+  {/*                                              <div className="flex justify-center gap-x-2 payment-bottom-icon-mt ">*/}
+  {/*                                                  <div className="rounded-[10px]  w-full   bg-[#1a1a1a] flex py-1.5 md:py-2   justify-center  ">*/}
+
+  {/*                                                      <div className="h-auto">*/}
+
+  {/*                                                          <svg className="refund-gurentee-icon mx-auto" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
+  {/*                                                              <path d="M24.7838 12.2798L22.259 9.47286L22.6108 5.76044L18.8754 4.93546L16.9198 1.72607L13.4017 3.19494L9.88354 1.72607L7.92789 4.93546L4.19248 5.75038L4.54429 9.47286L2.01953 12.2798L4.54429 15.0868L4.19248 18.8092L7.92789 19.6342L9.88354 22.8537L13.4017 21.3747L16.9198 22.8436L18.8754 19.6342L22.6108 18.8092L22.259 15.0968L24.7838 12.2798ZM20.6966 13.7688L20.1171 14.4227L20.1999 15.2779L20.3861 17.2398L17.551 17.8635L17.0957 18.608L16.0713 20.2982L14.2294 19.5236L13.4017 19.1815L12.5842 19.5236L10.7424 20.2982L9.71798 18.6181L9.2627 17.8736L6.42752 17.2498L6.61377 15.2779L6.69655 14.4227L6.1171 13.7688L4.78228 12.2899L6.1171 10.8009L6.69655 10.1469L6.60342 9.2817L6.41717 7.32992L9.25235 6.70615L9.70764 5.96165L10.732 4.27145L12.5739 5.04612L13.4017 5.38819L14.2191 5.04612L16.0609 4.27145L17.0853 5.96165L17.5406 6.70615L20.3758 7.32992L20.1895 9.29176L20.1068 10.1469L20.6862 10.8009L22.021 12.2798L20.6966 13.7688Z" fill="white" />*/}
+  {/*                                                              <path d="M11.4253 14.0505L9.02471 11.7063L7.4933 13.2054L11.4253 17.0385L19.0203 9.63383L17.4889 8.13478L11.4253 14.0505Z" fill="white" />*/}
+  {/*                                                          </svg>*/}
 
 
 
-                                                            <p className="font-12 fw-semibold  text-center   pt-[2px] md:pt-1.5 ">14 DAY  REFUND <br />
-                                                                GUARANTEED</p>
-                                                        </div>
+  {/*                                                          /!* <svg className="refund-gurentee-icon mx-auto" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
+  {/*                                                          <path d="M16.6478 8.35756L14.947 6.41277L15.184 3.84062L12.6676 3.26903L11.3502 1.04541L8.98016 2.06312L6.61015 1.04541L5.29271 3.26903L2.77632 3.83365L3.01333 6.41277L1.3125 8.35756L3.01333 10.3024L2.77632 12.8815L5.29271 13.4531L6.61015 15.6837L8.98016 14.659L11.3502 15.6767L12.6676 13.4531L15.184 12.8815L14.947 10.3093L16.6478 8.35756ZM13.8944 9.38921L13.5041 9.8423L13.5598 10.4348L13.6853 11.7941L11.7754 12.2262L11.4687 12.7421L10.7786 13.9131L9.5378 13.3764L8.98016 13.1394L8.42948 13.3764L7.18871 13.9131L6.49862 12.749L6.19192 12.2332L4.28197 11.801L4.40744 10.4348L4.46321 9.8423L4.07286 9.38921L3.17365 8.36453L4.07286 7.33289L4.46321 6.8798L4.40047 6.28033L4.275 4.92803L6.18495 4.49585L6.49165 3.98003L7.18174 2.80897L8.42251 3.34571L8.98016 3.58271L9.53083 3.34571L10.7716 2.80897L11.4617 3.98003L11.7684 4.49585L13.6783 4.92803L13.5529 6.2873L13.4971 6.8798L13.8875 7.33289L14.7867 8.35756L13.8944 9.38921Z" fill="white" />*/}
+  {/*                                                          <path d="M7.64877 9.58439L6.03159 7.96024L4.99995 8.99886L7.64877 11.6547L12.7652 6.5243L11.7335 5.48568L7.64877 9.58439Z" fill="white" />*/}
+  {/*                                                      </svg> *!/*/}
 
 
-                                                    </div>
-                                                    <div className="rounded-[10px] w-full   bg-[#1a1a1a] flex py-1.5 md:py-2   justify-center ">
-                                                        <div className="h-auto">
 
-                                                            <svg className="secure-ssl-icon mx-auto" viewBox="0 0 18 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M15.547 7.23835H14.4691V5.31004C14.4691 2.64897 12.0547 0.489258 9.07985 0.489258C6.10498 0.489258 3.69059 2.64897 3.69059 5.31004V7.23835H2.61274C1.4271 7.23835 0.457031 8.10609 0.457031 9.16666V18.8082C0.457031 19.8688 1.4271 20.7365 2.61274 20.7365H15.547C16.7326 20.7365 17.7027 19.8688 17.7027 18.8082V9.16666C17.7027 8.10609 16.7326 7.23835 15.547 7.23835ZM5.84629 5.31004C5.84629 3.70954 7.29062 2.41757 9.07985 2.41757C10.8691 2.41757 12.3134 3.70954 12.3134 5.31004V7.23835H5.84629V5.31004ZM15.547 18.8082H2.61274V9.16666H15.547V18.8082ZM9.07985 15.9158C10.2655 15.9158 11.2356 15.048 11.2356 13.9874C11.2356 12.9269 10.2655 12.0591 9.07985 12.0591C7.89421 12.0591 6.92415 12.9269 6.92415 13.9874C6.92415 15.048 7.89421 15.9158 9.07985 15.9158Z" fill="white" />
-                                                            </svg>
+  {/*                                                          <p className="font-12 fw-semibold  text-center   pt-[2px] md:pt-1.5 ">14 DAY  REFUND <br />*/}
+  {/*                                                              GUARANTEED</p>*/}
+  {/*                                                      </div>*/}
 
 
-                                                            {/* <svg className="secure-ssl-icon mx-auto" viewBox="0 0 13 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M10.6147 5.55746H9.88857V4.22142C9.88857 2.3777 8.26209 0.881348 6.25805 0.881348C4.254 0.881348 2.62753 2.3777 2.62753 4.22142V5.55746H1.90143C1.10271 5.55746 0.449219 6.15867 0.449219 6.89349V13.5736C0.449219 14.3085 1.10271 14.9097 1.90143 14.9097H10.6147C11.4134 14.9097 12.0669 14.3085 12.0669 13.5736V6.89349C12.0669 6.15867 11.4134 5.55746 10.6147 5.55746ZM4.07974 4.22142C4.07974 3.11252 5.05272 2.21738 6.25805 2.21738C7.46338 2.21738 8.43636 3.11252 8.43636 4.22142V5.55746H4.07974V4.22142ZM10.6147 13.5736H1.90143V6.89349H10.6147V13.5736ZM6.25805 11.5696C7.05676 11.5696 7.71026 10.9684 7.71026 10.2336C7.71026 9.49875 7.05676 8.89753 6.25805 8.89753C5.45933 8.89753 4.80584 9.49875 4.80584 10.2336C4.80584 10.9684 5.45933 11.5696 6.25805 11.5696Z" fill="white" />
-                                                        </svg> */}
+  {/*                                                  </div>*/}
+  {/*                                                  <div className="rounded-[10px] w-full   bg-[#1a1a1a] flex py-1.5 md:py-2   justify-center ">*/}
+  {/*                                                      <div className="h-auto">*/}
 
-                                                            <p className="font-12 fw-semibold text-center   pt-1 md:pt-1.5">SECURED <br />
-                                                                WITH SSL</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
+  {/*                                                          <svg className="secure-ssl-icon mx-auto" viewBox="0 0 18 21" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
+  {/*                                                              <path d="M15.547 7.23835H14.4691V5.31004C14.4691 2.64897 12.0547 0.489258 9.07985 0.489258C6.10498 0.489258 3.69059 2.64897 3.69059 5.31004V7.23835H2.61274C1.4271 7.23835 0.457031 8.10609 0.457031 9.16666V18.8082C0.457031 19.8688 1.4271 20.7365 2.61274 20.7365H15.547C16.7326 20.7365 17.7027 19.8688 17.7027 18.8082V9.16666C17.7027 8.10609 16.7326 7.23835 15.547 7.23835ZM5.84629 5.31004C5.84629 3.70954 7.29062 2.41757 9.07985 2.41757C10.8691 2.41757 12.3134 3.70954 12.3134 5.31004V7.23835H5.84629V5.31004ZM15.547 18.8082H2.61274V9.16666H15.547V18.8082ZM9.07985 15.9158C10.2655 15.9158 11.2356 15.048 11.2356 13.9874C11.2356 12.9269 10.2655 12.0591 9.07985 12.0591C7.89421 12.0591 6.92415 12.9269 6.92415 13.9874C6.92415 15.048 7.89421 15.9158 9.07985 15.9158Z" fill="white" />*/}
+  {/*                                                          </svg>*/}
 
-                                                <p className="money-back-text  my-2.5 ">*Capital Club offers a 14-day money back guarantee, if you don’t love the Yearly Membership.</p>
 
-                                            </div>
+  {/*                                                          /!* <svg className="secure-ssl-icon mx-auto" viewBox="0 0 13 15" fill="none" xmlns="http://www.w3.org/2000/svg">*/}
+  {/*                                                          <path d="M10.6147 5.55746H9.88857V4.22142C9.88857 2.3777 8.26209 0.881348 6.25805 0.881348C4.254 0.881348 2.62753 2.3777 2.62753 4.22142V5.55746H1.90143C1.10271 5.55746 0.449219 6.15867 0.449219 6.89349V13.5736C0.449219 14.3085 1.10271 14.9097 1.90143 14.9097H10.6147C11.4134 14.9097 12.0669 14.3085 12.0669 13.5736V6.89349C12.0669 6.15867 11.4134 5.55746 10.6147 5.55746ZM4.07974 4.22142C4.07974 3.11252 5.05272 2.21738 6.25805 2.21738C7.46338 2.21738 8.43636 3.11252 8.43636 4.22142V5.55746H4.07974V4.22142ZM10.6147 13.5736H1.90143V6.89349H10.6147V13.5736ZM6.25805 11.5696C7.05676 11.5696 7.71026 10.9684 7.71026 10.2336C7.71026 9.49875 7.05676 8.89753 6.25805 8.89753C5.45933 8.89753 4.80584 9.49875 4.80584 10.2336C4.80584 10.9684 5.45933 11.5696 6.25805 11.5696Z" fill="white" />*/}
+  {/*                                                      </svg> *!/*/}
 
-                                        </form>
+  {/*                                                          <p className="font-12 fw-semibold text-center   pt-1 md:pt-1.5">SECURED <br />*/}
+  {/*                                                              WITH SSL</p>*/}
+  {/*                                                      </div>*/}
+  {/*                                                  </div>*/}
+  {/*                                              </div>*/}
+
+  {/*                                              <p className="money-back-text  my-2.5 ">*Capital Club offers a 14-day money back guarantee, if you don’t love the Yearly Membership.</p>*/}
+
+  {/*                                          </div>*/}
+
+  {/*                                      </form>*/}
                                     </div>
                                 </motion.div>
                             </div>

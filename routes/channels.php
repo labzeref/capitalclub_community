@@ -11,15 +11,6 @@ Broadcast::channel('discord.{id}', function (User $user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-/**
- *------------------------
- *  liveStreaming ( multiple stream )
- * -----------------------
- */
-//Broadcast::channel('live-stream.{id}', function (User $user, $id) {
-//    return [
-//        'id' => $user->id,
-//        'full_name' => $user->full_name,
-//        'dp' => ['original' => $user->dp()],
-//    ];
-//});
+Broadcast::channel('LiveStream', function ($user) {
+    return (int) $user->id;
+});

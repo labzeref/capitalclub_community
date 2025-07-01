@@ -12,6 +12,7 @@ use Illuminate\Queue\SerializesModels;
 class AddSpatieMediaJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     public function __construct(
         private readonly mixed $source,
         private readonly Model $model,

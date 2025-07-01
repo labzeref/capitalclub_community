@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Events\ConnectToDiscordEvent;
 use App\Jobs\ActiveCampaign\UpdateDiscordIdActiveCampaignContactJob;
 use App\Models\User;
 use App\Services\DiscordService;
@@ -42,19 +41,20 @@ class ConnectToDiscordJob implements ShouldQueue
             return;
         }
 
-
         DB::beginTransaction();
 
         try {
 
             $response = $this->discordService->exchangeToken(code: $user->discord_code);
 
-            if (! in_array($response->status(), [200,204, 201])) {
+            if (! in_array($response->status(), [200, 204, 201])) {
                 Log::channel('discord')->info('While exchanging token');
                 Log::channel('discord')->info($user->email);
+                Log::channel('discord')->info('headers', $response->headers());
                 Log::channel('discord')->info($response->status());
                 Log::channel('discord')->info($response->body());
                 Log::channel('discord')->info('--------------------------------------------------------------');
+
                 return;
             }
 
@@ -69,12 +69,13 @@ class ConnectToDiscordJob implements ShouldQueue
 
             $response = $this->discordService->getUser(accessToken: $user->getDiscordAccessToken());
 
-            if (! in_array($response->status(), [200,204, 201])) {
+            if (! in_array($response->status(), [200, 204, 201])) {
                 Log::channel('discord')->info('While getting user');
                 Log::channel('discord')->info($user->email);
                 Log::channel('discord')->info($response->status());
                 Log::channel('discord')->info($response->body());
                 Log::channel('discord')->info('--------------------------------------------------------------');
+
                 return;
             }
 
@@ -94,12 +95,13 @@ class ConnectToDiscordJob implements ShouldQueue
                 accessToken: $user->getDiscordAccessToken()
             );
 
-            if (! in_array($response->status(), [200,204, 201])) {
+            if (! in_array($response->status(), [200, 204, 201])) {
                 Log::channel('discord')->info('While adding to server with role');
                 Log::channel('discord')->info($user->email);
                 Log::channel('discord')->info($response->status());
                 Log::channel('discord')->info($response->body());
                 Log::channel('discord')->info('--------------------------------------------------------------');
+
                 return;
             }
 
@@ -108,12 +110,13 @@ class ConnectToDiscordJob implements ShouldQueue
                 roleId: config('discord.defaultRoleId'),
             );
 
-            if (! in_array($response->status(), [200,204, 201])) {
+            if (! in_array($response->status(), [200, 204, 201])) {
                 Log::channel('discord')->info('adding default role to server');
                 Log::channel('discord')->info($user->email);
                 Log::channel('discord')->info($response->status());
                 Log::channel('discord')->info($response->body());
                 Log::channel('discord')->info('--------------------------------------------------------------');
+
                 return;
             }
 
@@ -122,7 +125,7 @@ class ConnectToDiscordJob implements ShouldQueue
                 username: $user->getDiscordFormatNameId()
             );
 
-            if (! in_array($response->status(), [200,204, 201])) {
+            if (! in_array($response->status(), [200, 204, 201])) {
                 Log::channel('discord')->info('While updating nick name');
                 Log::channel('discord')->info($user->email);
                 Log::channel('discord')->info($response->status());
@@ -151,8 +154,7 @@ class ConnectToDiscordJob implements ShouldQueue
                 Log::channel('discord')->info('--------------------------------------------------------------');
             }
 
-
-            UpdateDiscordIdActiveCampaignContactJob::dispatch(userId: $user->id);
+//            UpdateDiscordIdActiveCampaignContactJob::dispatch(userId: $user->id);
         } catch (\Throwable $throwable) {
 
             Log::channel('discord')->info('overall roles exception');
@@ -163,7 +165,6 @@ class ConnectToDiscordJob implements ShouldQueue
         }
 
         DB::commit();
-
 
     }
 }

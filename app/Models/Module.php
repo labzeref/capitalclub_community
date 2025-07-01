@@ -13,8 +13,6 @@ class Module extends Model
 
     /**
      * Update the serial number according to its course
-     *
-     * @return void
      */
     public function updateSerialNumber(): void
     {

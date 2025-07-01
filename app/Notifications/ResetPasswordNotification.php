@@ -38,8 +38,8 @@ class ResetPasswordNotification extends Notification
         return (new MailMessage)
             ->subject('Reset Your Password')
             ->view(
-            'emails.reset-password', ['user' => $this->user, 'url' => $this->url]
-        );
+                'emails.reset-password', ['user' => $this->user, 'url' => $this->url]
+            );
     }
 
     /**

@@ -13,12 +13,9 @@ class AdminSecurity extends Model
     protected $guarded = ['id'];
 
     protected $hidden = [
-        'google2fa_secret'
+        'google2fa_secret',
     ];
 
-    /**
-     * @return BelongsTo
-     */
     public function member(): BelongsTo
     {
         return $this->belongsTo(User::class);

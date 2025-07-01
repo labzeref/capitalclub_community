@@ -27,10 +27,7 @@ class UserCompactResource extends JsonResource
             'full_name' => $this->full_name,
             'country_iso' => $this->country_iso,
             'about' => $this->about,
-            'has_followed' => $this->when(
-                $authUser->relationLoaded('followingUsers'),
-                fn () => $authUser->followingUsers->contains('id', $this->id)
-            ),
+            'checkout_champ_id' => $this->checkout_champ_id,
             'dp' => $this->whenLoaded(
                 'media',
                 fn () => [

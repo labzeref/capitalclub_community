@@ -76,11 +76,6 @@ class Instructor extends Model implements HasMedia
         return $this->morphedByMany(Course::class, 'instructorable');
     }
 
-    public function liveSeries(): MorphToMany
-    {
-        return $this->morphedByMany(LiveSeries::class, 'instructorable');
-    }
-
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);

@@ -26,14 +26,14 @@ class TestActiveCampaignCommand extends Command
             'Update user login time in active campaign.',
             'Add tag of yearly member in active campaign.',
             'Remove tag of yearly member and assign cancel tag in active campaign.',
-            'Do the all respectively.'
+            'Do the all respectively.',
         ];
 
         $selectedOption = $this->choice('What do you want to do?', $options);
 
-        $userId = $this->ask("Please enter the user id or leave blank for first user in database.");
+        $userId = $this->ask('Please enter the user id or leave blank for first user in database.');
 
-        if (!$userId) {
+        if (! $userId) {
             $user = User::first();
         } else {
             $user = User::find($userId);
@@ -42,38 +42,44 @@ class TestActiveCampaignCommand extends Command
         if ($selectedOption == $options[0]) {
             CreateActiveCampaignContactJob::dispatchSync(userId: $user->id);
         } elseif ($selectedOption == $options[1]) {
-            if (!$user->active_campaign_id) {
-                $this->error("User does not has active campaign id.");
+            if (! $user->active_campaign_id) {
+                $this->error('User does not has active campaign id.');
+
                 return;
             }
             UpdateActiveCampaignContactJob::dispatchSync(userId: $user->id);
         } elseif ($selectedOption == $options[2]) {
-            if (!$user->discord_integrated) {
-                $this->error("User does not integrated the discord.");
+            if (! $user->discord_integrated) {
+                $this->error('User does not integrated the discord.');
+
                 return;
             }
             UpdateDiscordIdActiveCampaignContactJob::dispatchSync(userId: $user->id);
         } elseif ($selectedOption == $options[3]) {
-            if (!$user->active_campaign_id) {
-                $this->error("User does not has active campaign id.");
+            if (! $user->active_campaign_id) {
+                $this->error('User does not has active campaign id.');
+
                 return;
             }
             UpdateLoginTimeActiveCampaignContactJob::dispatchSync(userId: $user->id, date: now()->format('m/d/Y'));
         } elseif ($selectedOption == $options[4]) {
-            if (!$user->active_campaign_id) {
-                $this->error("User does not has active campaign id.");
+            if (! $user->active_campaign_id) {
+                $this->error('User does not has active campaign id.');
+
                 return;
             }
             AddTagToActiveCampaignContactJob::dispatchSync(userId: $user->id);
         } elseif ($selectedOption == $options[5]) {
-            if (!$user->active_campaign_id) {
-                $this->error("User does not has active campaign id.");
+            if (! $user->active_campaign_id) {
+                $this->error('User does not has active campaign id.');
+
                 return;
             }
             RemoveTagFromActiveCampaignContactJob::dispatchSync(userId: $user->id);
         } else {
-            if (!$user->discord_integrated) {
-                $this->error("User does not integrated the discord.");
+            if (! $user->discord_integrated) {
+                $this->error('User does not integrated the discord.');
+
                 return;
             }
             CreateActiveCampaignContactJob::dispatchSync(userId: $user->id);
@@ -83,6 +89,6 @@ class TestActiveCampaignCommand extends Command
             AddTagToActiveCampaignContactJob::dispatchSync(userId: $user->id);
         }
 
-        $this->info("Job dispatches successfully");
+        $this->info('Job dispatches successfully');
     }
 }

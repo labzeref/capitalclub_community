@@ -4,10 +4,10 @@ import "plyr/dist/plyr.css";
 import { useState } from "react";
 
 const PlyrComponent = ({ source, thumbnail }) => {
- 
+
     const videoRef = useRef(null);
     const [currentTime, setCurrentTime] = useState(0);
- 
+
     useEffect(() => {
         const player = new Plyr(videoRef.current, {
             controls: [
@@ -28,7 +28,7 @@ const PlyrComponent = ({ source, thumbnail }) => {
         player.on('timeupdate', (event) => {
             const newTime = event.detail.plyr.currentTime;
             setCurrentTime(newTime);
-          });
+        });
 
 
 

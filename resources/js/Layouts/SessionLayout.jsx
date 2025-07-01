@@ -8,18 +8,37 @@ import 'aos/dist/aos.css';
 import AppLayout from "./AppLayout";
 import ToastNotification from "@/Components/ToastNotification";
 import Layout from "./Layout";
+import axios from "axios";
+import { GTMLogs } from "@/utils/GTMLogs";
 const SessionLayout = ({ children, courseId }) => {
     useEffect(() => {
         AOS.init();
     }, [])
 
     const handleContextMenu = (e) => {
-        e.preventDefault(); 
-      };
+        e.preventDefault();
+    };
+
+    // google GTM 
+    useEffect(() => {
+        axios.get(route('get-auth-user'))
+            .then((response) => {
+                const user = response?.data?.payload;
+                GTMLogs(
+                    {
+                        'email': user?.email,
+                        'phone_number': user?.phone_number,
+                        'customer_id': user?.id,
+                        'country': user?.country_iso,
+                    }
+                )
+            })
+    }, [])
+
     return (
         <div onContextMenu={handleContextMenu} >
             <Toast />
-            <ToastNotification  />
+            <ToastNotification />
             {/* <div className="academy-bg">
 
                 <img src={bg} className="light-spot" />

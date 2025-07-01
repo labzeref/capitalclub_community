@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ConnectToDiscordJob;
+use App\Jobs\Klaviyo\UpdateDiscordDataToKlaviyoJob;
 use App\Services\DiscordService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,7 +36,6 @@ class DiscordController extends Controller
     public function handleRedirect(Request $request)
     {
         if ($request->error) {
-            dump($request->error);
             return to_route('discord.setup');
         }
 
@@ -47,7 +47,14 @@ class DiscordController extends Controller
 
         $user->update(['discord_code' => $request->code]);
 
+        /**
+         * When we just dispatch and run in queue it not working don't know why.
+         */
         ConnectToDiscordJob::dispatchSync($user->id);
+
+        $user->refresh();
+
+        UpdateDiscordDataToKlaviyoJob::dispatch(user: $user);
 
         return to_route('discord.setup');
     }

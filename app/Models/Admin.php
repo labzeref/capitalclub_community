@@ -26,6 +26,7 @@ class Admin extends Authenticatable implements HasMedia
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'password_reset_at' => 'datetime'
     ];
 
     protected $with = ['media'];

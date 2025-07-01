@@ -1,56 +1,76 @@
+import { GTMLogs } from '@/utils/GTMLogs'
 import { Link } from '@inertiajs/react'
 import React from 'react'
+import {AsyncImage} from "loadable-image";
+import {Blur} from "transitions-kit";
 
-const MarketplaceSlide = ({ className = '', routeToPlay = '', lessonProgress = 0, desktop_image, mobile_image, logo, ...props }) => {
+const MarketplaceSlide = ({ profile_id, category, linkId = '', shortDecs = '', desktop_image, mobile_image, logo, ...props }) => {
+
+    // const handleGTMPartnerprofile = () => {
+    //     GTMLogs({
+    //         'event': 'GTMevent',
+    //         'event_name': 'partner_marketplace_profile',
+    //         'category_name': category,
+    //         'partner_name': linkId,
+    //         'marketplace_profile_id': profile_id,
+    //         'event_id': '6248223',
+    //     })
+    // }
 
     return (
-        <div>
-            <Link preserveScroll href={routeToPlay}>
-                <div className={className + "coming-soon-linear  large-card-hover-div object-cover  relative   "}  >
+        <div className='h-[100%] block overflow-hidden'>
 
-                    {/* For Desktop  */}
-                    <img src={desktop_image?.original?.url} className="h-[100%] w-full hide-sm-img header-image input-shadow" />
-                    <div className='   hide-sm-img  mk-desk-wrapper '>
-                        <img src={logo} alt='company logo' className='mk-desk-slide-logo ' />
-                        <p className='mk-desk-slide-p '>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            Nunc vulp utate libero et velit  adipiscing elit. Nun Worem ipsum
-                        </p>
-                        <div className='flex justify-center my-[10px] md:my-[20px] '>
-                        <Link href={route("marketplace-profile")} className={" button secondary  border  rounded-full max-w-[299px] w-[20vw] pt-[0.05vw]"} >
-                            <button className="text-[12px] fw-bold">
+            <div className={"mk-slide-bg relative overflow-hidden min-h-[500px] lg:min-h-[709px] large-card-hover-div flex "}  >
+
+                {/* For Desktop  */}
+
+                <div className='mk-slider-gradiant'>  </div>
+                <div className='mk-slider-shadow'></div>
+                {/* <img src={desktop_image} className="h-[100%] w-full hide-sm-img header-image input-shadow" /> */}
+                <div className='    px-[51px]   w-full  my-auto -translate-y-6 '>
+                    <Link href={route("marketplace.profile", linkId)} >
+
+                        <div className="mk-desk-slide-logo">
+                            <AsyncImage
+                                src={logo}
+                                style={{ width: "auto", height: "100%",maxHeight:131, aspectRatio:50 / 11, marginLeft:"auto", marginRight:"auto",objectFit:"contain" }}
+                                Transition={props => <Blur radius={10} {...props}/>}
+                                loader={<div style={{ background: 'transparent' }}/>}
+                                error={<div style={{ background: 'transparent' }}/>}/>
+                        </div>
+                    </Link>
+                    <p className='mk-desk-slide-p max-w-[427px] h-[75px] '>
+                        {shortDecs?.length > 115 ? shortDecs.slice(0, 115) + '...' : shortDecs}
+                    </p>
+                    <div className='flex justify-center
+                    '>
+                        <Link href={route("marketplace.profile", linkId)} className={" button secondary  border  border-rounded-8 min-h-[28px] md:min-h-[38px] w-[225px] lg:w-[303px]  pt-[2px]"} >
+                            <button className="text-[14px] lg:text-[20px] leading-[25px] fw-bold">
                                 LEARN MORE
                             </button>
                         </Link>
-                        </div>
-                        </div>
-
-                    {/* For Mobile  */}
-                    <img src={mobile_image?.original?.url} className="h-[100%] w-full hide-md-img header-image input-shadow" />
-                    <div className='hide-md-img'>
-                        <img src={logo} alt='company logo' className='mk-mobile-slide-logo' />
                     </div>
-                    <p className='hide-md-img text-[12px] text-center mk-mobile-slide-p'>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Nunc vulp utate libero et velit  adipiscing elit. Nun Worem ipsum
-                    </p>
-
-                    <div className='hide-md-img absolute bottom-10 -translate-x-1/2 left-1/2  '>
-                    <Link href={route("marketplace-profile")} className="button isLogin primary rounded-full w-[144px]">
-                            <div className="button_container glitch uppercase text-[12px] fw-bold">
-                                LEAN MORE
-                            </div>
-                        </Link>
-                    </div>
-
-                    {/* **** Lesson progress bar ****   */}
-                    {lessonProgress > 0 &&
-                        <div className="w-[130%] h-[10px] bg-[#1a1a1a] bottom-0 absolute">
-                            <div style={{ width: lessonProgress + '%' }} className={`h-[10px] bg-[#ffffff]`}></div>
-                        </div>
-                    }
                 </div>
-                {/* <div className='academy-new-shadow bottom -mt-[10rem]  md:-mt-[15rem] lg:-mt-[14rem] static -z-[9999]'></div> */}
-            </Link>
+
+                {/* For Mobile  */}
+                {/* <img src={mobile_image} className="h-[100%] w-full hide-md-img header-image input-shadow" />
+                <div className='hide-md-img'>
+                    <img src={logo} alt='company logo' className='mk-mobile-slide-logo' />
+                </div>
+                <p className='hide-md-img text-[12px] text-center mk-mobile-slide-p'>
+                    {shortDecs}
+                </p> */}
+
+                {/* <div className='hide-md-img absolute bottom-10 -translate-x-1/2 left-1/2  '>
+                    <Link href={route("marketplace.profile", linkId)} className="button isLogin primary rounded-full w-[144px]">
+                        <div className="button_container glitch uppercase text-[12px] fw-bold">
+                            LEAN MORE
+                        </div>
+                    </Link>
+                </div> */}
+            </div>
+            {/* <div className='academy-new-shadow bottom -mt-[10rem]  md:-mt-[15rem] lg:-mt-[14rem] static -z-[9999]'></div> */}
+
         </div>
     )
 }

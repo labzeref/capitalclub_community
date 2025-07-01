@@ -42,5 +42,5 @@ return [
         'CC-Cancellations-Refunded' => env('ACTIVE_CAMPAIGN_MODE') == 'live'
             ? 73
             : 2,
-    ]
+    ],
 ];

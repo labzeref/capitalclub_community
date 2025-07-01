@@ -11,7 +11,6 @@ use App\Http\Resources\ModuleResource;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /** @mixin Lesson */
 class LessonResource extends JsonResource
@@ -102,6 +101,8 @@ class LessonResource extends JsonResource
                 $this->relationLoaded('progress'),
                 fn () => (float) $this->progress?->progress
             ),
+            'is_new' => !$this->progress,
+            'vdocipher_id' => $this->vdocipher_id,
         ];
     }
 }

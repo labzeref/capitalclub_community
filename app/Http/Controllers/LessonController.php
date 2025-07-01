@@ -11,13 +11,13 @@ use App\Http\Resources\Lesson\LessonResource;
 use App\Http\Resources\ModuleResource;
 use App\Http\Resources\QuizResource;
 use App\Models\Lesson;
+use App\Models\LessonNote;
 use App\Models\LessonWatchTime;
 use App\Models\Module;
 use App\Models\Quiz;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -35,9 +35,9 @@ class LessonController extends Controller
         $user->load('enrolledLessons');
 
         $course = $lesson->course()->with([
-            'lessons' => fn($query) => $query->orderBy('serial_number')->with([
+            'lessons' => fn ($query) => $query->orderBy('serial_number')->with([
                 'enrolledUsers',
-                'progress' => fn ($progress) => $progress->where('user_id', $user->id)
+                'progress' => fn ($progress) => $progress->where('user_id', $user->id),
             ]),
         ])->first();
 
@@ -47,11 +47,11 @@ class LessonController extends Controller
 
         $showGuestName = $course->title == 'MONEY TALKS';
 
-        if (!$course->strict) {
+        if (! $course->strict) {
             $user->updateLastVisitLessonData(courseId: $course->id, lessonId: $lesson->id);
         }
 
-        $modules = ModuleResource::collection($course->modules);
+        $modules = ModuleResource::collection(Module::where('course_id', $course->id)->orderBy('serial_number')->get());
 
         $currentLesson = $course
             ->lessons
@@ -62,10 +62,11 @@ class LessonController extends Controller
 
         $lesson = new LessonResource($currentLesson);
         $course = new CourseResource($course);
+        $vdoCipherData = $currentLesson->getVdoCipherData();
 
-        $takeReview = $user->hasCompletedCourse($course->id) && !$course->hasReviewForUser($user->id);
+        $takeReview = $user->hasCompletedCourse($course->id) && ! $course->hasReviewForUser($user->id);
 
-        return inertia('Academy/Lesson', compact(['course', 'lesson', 'takeReview', 'modules', 'showGuestName']));
+        return inertia('Academy/Lesson', compact(['course', 'lesson', 'takeReview', 'modules', 'showGuestName', 'vdoCipherData']));
     }
 
     /**
@@ -79,8 +80,24 @@ class LessonController extends Controller
             'user_id' => _user()->id,
         ], $request->validated());
 
-        return $this->sendResponse([]);
+        return $this->sendResponse([], __('Notes saved.'));
     }
+
+    public function updateNotes(StoreLessonNoteRequest $request)
+    {
+        $notes = $request->input('notes');
+
+        foreach ($notes as $noteData) {
+            // Assuming 'id' is the identifier for the note and 'content' is the new content
+            LessonNote::updateOrCreate(
+                ['lesson_id' => $noteData['id'], 'user_id' => _user()->id],
+                ['content' => $noteData['content']]
+            );
+        }
+
+        return $this->sendResponse([], __('Notes saved.'));
+    }
+
 
     /**
      * Completing the lesson if quiz is not exist
@@ -93,7 +110,7 @@ class LessonController extends Controller
         $user = _user();
         $nextLesson = $lesson->nextLesson();
 
-        if (!$lesson->course->strict) {
+        if (! $lesson->course->strict) {
             if ($nextLesson) {
                 return to_route('lessons.play', $nextLesson->id);
             } else {
@@ -101,7 +118,7 @@ class LessonController extends Controller
             }
         }
 
-        if (!$nextLesson && $lesson->quizzes()->doesntExist()) {
+        if (! $nextLesson && $lesson->quizzes()->doesntExist()) {
             $lesson->complete($user->id);
             $lesson->course()->setEagerLoads([])->first()->updateProgressForUser($user);
 
@@ -135,7 +152,7 @@ class LessonController extends Controller
         $course = $lesson->course()->setEagerLoads([])->first();
         $nextLesson = $lesson->nextLesson();
 
-        if (!$lesson->quiz_skipable) {
+        if (! $lesson->quiz_skipable) {
             return back()->with('info', __('Quiz is not skip able.'));
         }
 
@@ -276,7 +293,7 @@ class LessonController extends Controller
          */
         $data = session('quizResult');
 
-        if (!$data) {
+        if (! $data) {
             abort(404);
         }
 
@@ -307,7 +324,7 @@ class LessonController extends Controller
             'user_id' => $user->id,
             'lesson_id' => $lesson->id,
         ], [
-            'progress' => $request->progress
+            'progress' => $request->progress,
         ]);
 
         return $this->sendResponse();
@@ -316,7 +333,7 @@ class LessonController extends Controller
     public function getNote(Lesson $lesson)
     {
         $note = $lesson->notes()->whereUserId(_user()->id)->first();
-        $content = $note?->content ?? "";
+        $content = $note?->content ?? '';
         $response = compact('content');
 
         return $this->sendResponse($response);

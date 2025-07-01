@@ -35,23 +35,37 @@ class AssignStoredDiscordRolesJob implements ShouldQueue
     {
         $user = User::find($this->userId);
 
-        if (! $user) {
+        if (!$user) {
             return;
         }
 
-        if (! $user->discord_integrated) {
+        if (!$user->discord_integrated) {
             return;
         }
 
-        if (! $user->discord_roles) {
-            return;
-        }
+//        if (! $user->discord_roles) {
+//            return;
+//        }
 
         DB::beginTransaction();
 
         try {
-            foreach ($user->discord_roles as $role) {
-                $this->discordService->addGuildMemberRole(userDiscordId: $user->discord_id, roleId: $role);
+            $roles = $user->discord_roles ?? [];
+
+            if ($user->orders()->where('end_at', '>', now())->count() > 0 || $user->life_time_membership || $user->hasActiveChargebeeSubscription()) {
+                if ($user->subscriptions()->count() > 0 && $user->orders()->count() >= 2) {
+                    if (!in_array(config('discord.recurringRoleId'), $roles)) {
+                        $roles[] = config('discord.recurringRoleId');
+                    }
+                }
+
+                if (!in_array(config('discord.defaultRoleId'), $roles)) {
+                    $roles[] = config('discord.defaultRoleId');
+                }
+
+                foreach ($roles as $role) {
+                    $this->discordService->addGuildMemberRole(userDiscordId: $user->discord_id, roleId: $role);
+                }
             }
         } catch (ThrowableAlias $throwable) {
             DB::rollBack();

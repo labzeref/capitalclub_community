@@ -6,12 +6,13 @@ use App\Enums\UserStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Jobs\ActiveCampaign\UpdateLoginTimeActiveCampaignContactJob;
+use App\Jobs\Klaviyo\UpdateDiscordDataToKlaviyoJob;
+use App\Jobs\Klaviyo\UpdateLastLoginToKlaviyoJob;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Response;
@@ -42,16 +43,6 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $user = _user();
 
-//        if (config('app.check_invitation')) {
-//            $invitation = Invitation::whereEmail($user->email)->first();
-//
-//            if ($invitation && $invitation->start_at < now() && $invitation->end_at > now()) {
-//                $request->session()->put('invitation_email', $user->email);
-//                $request->session()->put('invitation_code', $invitation->code);
-//                $request->session()->put('invitation_expiry', $invitation->end_at->format('Y-m-d H:i:s'));
-//            }
-//        }
-
         /**
          * This will log out the user if blocked and show the error
          */
@@ -65,17 +56,15 @@ class AuthenticatedSessionController extends Controller
 
         Auth::logoutOtherDevices($request->password);
 
-        UpdateLoginTimeActiveCampaignContactJob::dispatch(userId: $user->id, date: now()->format('m/d/Y'));
-
-        $request->session()->put('invitation_email', $user->email);
-        $request->session()->put('invitation_code', 'MANUAL');
-        $request->session()->put('invitation_expiry', now()->addYear());
+        // UpdateLoginTimeActiveCampaignContactJob::dispatch(userId: $user->id, date: now()->format('m/d/Y'));
+        UpdateLastLoginToKlaviyoJob::dispatchSync(user: $user, date: now()->toDateString());
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
     /**
      * This is a login function for tech and support
+     *
      * @return string
      */
     public function master_login($signature, Request $request)
@@ -84,34 +73,31 @@ class AuthenticatedSessionController extends Controller
         try {
             $signature = decrypt($signature);
 
-            $email = explode('++==',$signature)[0];
-            $date = explode('++==',$signature)[1];
+            $email = explode('++==', $signature)[0];
+            $date = explode('++==', $signature)[1];
 
-            if ($date > now()){
+            if ($date > now()) {
 
-                $user = User::where('email',$email)->first();
+                $user = User::where('email', $email)->first();
 
-                if (!$user){
+                if (! $user) {
                     return 'User not found';
-                }else{
+                } else {
 
                     Auth::logout();
                     Auth::login($user);
-
-                    $request->session()->put('invitation_email', $user->email);
-                    $request->session()->put('invitation_code', 'MANUAL');
-                    $request->session()->put('invitation_expiry', now()->addYear());
 
                     return redirect()->intended(RouteServiceProvider::HOME);
 
                 }
 
-            }else{
+            } else {
                 return 'Signature expired';
             }
 
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             dd($exception);
+
             return 'invalid signature';
         }
 

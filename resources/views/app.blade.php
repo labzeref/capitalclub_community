@@ -11,8 +11,58 @@
 
     <title inertia>{{ config('app.name', 'Capital Club') }}</title>
 
+</script>
 
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/favicon.png') }}">
+    <!-- <link rel="icon" type="image/x-icon" href="{{ asset('assets/favicon.png') }}"> -->
+
+
+<!-- default favicon -->
+<link rel="icon" type="image/png" href="https://uploads-ssl.webflow.com/6564d2b395032d01b17ccdb1/660295ac1ceb2b3c229cf8f9_favicon-dark.png?v=6">
+
+<!-- Light mode favicon -->
+<link rel="icon" type="image/png" href="https://uploads-ssl.webflow.com/6564d2b395032d01b17ccdb1/660295ac1ceb2b3c229cf8f9_favicon-dark.png?v=6" media="(prefers-color-scheme: light)">
+
+<!-- Dark mode favicon -->
+<link rel="icon" type="image/png" href="https://uploads-ssl.webflow.com/6564d2b395032d01b17ccdb1/660295ac7bdde9cb5f69c56a_favicon-light.png?v=6" media="(prefers-color-scheme: dark)">
+
+<script>
+    var darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    handleDarkmode(darkModeMediaQuery);
+
+    darkModeMediaQuery.addEventListener('change', function(e) {
+        handleDarkmode(e);
+    });
+
+    function handleDarkmode(e) {
+        var darkModeOn = e.matches; // true if dark mode is enabled
+        // console.log("Dark mode enabled: ", darkModeOn);
+
+        var favicon = document.querySelector('link[rel="icon"]'); // get favicon element
+
+        // console.log("Favicon:", favicon);
+
+        if (!favicon) {
+            console.error("Favicon element not found!");
+            return;
+        }
+
+        // replace favicon with dark/light theme as appropriate
+        if (darkModeOn) {
+            favicon.href = 'https://uploads-ssl.webflow.com/6564d2b395032d01b17ccdb1/660295ac7bdde9cb5f69c56a_favicon-light.png';
+        } else {
+            favicon.href = 'https://uploads-ssl.webflow.com/6564d2b395032d01b17ccdb1/660295ac7bdde9cb5f69c56a_favicon-dark.png';
+        }
+    }
+</script>
+
+
+
+
+
+
+
+
+
 
 {{--    <script src="https://www.google.com/recaptcha/enterprise.js?render={{config('recaptcha.key')}}"></script>--}}
 {{--    <script src="https://www.google.com/recaptcha/enterprise.js?&render=explicit"></script>--}}
@@ -38,14 +88,19 @@
             f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-MP2C6FH');</script>
     <!-- End Google Tag Manager -->
+
+
+
+
+
 {{--    <link--}}
 {{--            rel="stylesheet"--}}
 {{--            href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"--}}
 {{--    />--}}
 {{--    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>--}}
-<script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="{{ asset('js/lottie-player.js') }}"></script>
 
-<style>
+<!-- <style>
         .preloader{
             height: 100vh;
             width: 100vw;
@@ -56,40 +111,39 @@
             justify-content: center;
             align-items: center;
         }
-    </style>
+    </style> -->
 
 </head>
 <body class="font-sans antialiased" style="margin: 0;">
 
-<div id="preloader" class="preloader">
-    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
-    <dotlottie-player id="preloader_lottie" src="/welcome.json" background="transparent" speed="1" style="width: 350px; height: 350px" direction="1" mode="normal" autoplay></dotlottie-player>
-</div>
+<!-- <div id="preloader" class="preloader">
+    <lottie-player id="preloader_lottie" src="{{ asset('welcome.json') }}" background="transparent" speed="1" style="width: 350px; height: 350px" direction="1" mode="normal" autoplay></lottie-player>
+</div> -->
 
 @inertia
 
 <script>
 
- let animation_preloader = document.getElementById("preloader_lottie");
+//  let animation_preloader = document.getElementById("preloader_lottie");
 
-animation_preloader.addEventListener("complete", () => {
-    // console.log('Lottie animation completed');
+// animation_preloader.addEventListener("complete", () => {
+//     // console.log('Lottie animation completed');
 
-    if(document.readyState === 'complete'){
-        // console.log('loading via document')
-        setTimeout(() => {
-            $('#preloader').fadeOut();
-        }, 500);
-    }else{
-        // console.log('loading via window')
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                $('#preloader').fadeOut();
-            }, 500);
-        });
-    }
+//     if(document.readyState === 'complete'){
+//         // console.log('loading via document')
+//         setTimeout(() => {
+//             $('#preloader').fadeOut();
+//         }, 500);
+//     }else{
+//         // console.log('loading via window')
+//         window.addEventListener('load', function() {
+//             setTimeout(() => {
+//                 $('#preloader').fadeOut();
+//             }, 500);
+//         });
+//     }
 
-});
+// });
 
 </script>
 

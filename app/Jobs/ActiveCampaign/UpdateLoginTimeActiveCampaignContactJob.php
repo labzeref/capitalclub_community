@@ -25,21 +25,21 @@ class UpdateLoginTimeActiveCampaignContactJob implements ShouldQueue
     {
         $user = User::find($this->userId);
 
-        if (!$user) {
+        if (! $user) {
             return;
         }
 
-        if (!$user->active_campaign_id) {
+        if (! $user->active_campaign_id) {
             CreateActiveCampaignContactJob::dispatchSync(userId: $user->id);
         }
 
-        $url = rtrim(config('active-campaign.base_url'), '/') . "/contacts/$user->active_campaign_id";
+        $url = rtrim(config('active-campaign.base_url'), '/')."/contacts/$user->active_campaign_id";
 
         $fieldValues = [
             [
                 'field' => config('active-campaign.fields.LAST_LOGIN_TIMING'),
                 'value' => $this->date,
-            ]
+            ],
         ];
 
         $response = Http::withHeaders([
@@ -47,17 +47,17 @@ class UpdateLoginTimeActiveCampaignContactJob implements ShouldQueue
             'Api-Token' => config('active-campaign.token'),
         ])->put($url, [
             'contact' => [
-                'fieldValues' => $fieldValues
-            ]
+                'fieldValues' => $fieldValues,
+            ],
         ]);
 
         if (! $response->successful()) {
-            $this->log("While updating login time", $user->email, $response);
+            $this->log('While updating login time', $user->email, $response);
             throw new \Exception($response->body());
         }
     }
 
-    private function log(string $message, string $identifier, ?Response $response = null): void
+    private function log(string $message, string $identifier, Response $response = null): void
     {
         Log::channel('active-campaign')->info($message);
         Log::channel('active-campaign')->info($identifier);
@@ -65,6 +65,6 @@ class UpdateLoginTimeActiveCampaignContactJob implements ShouldQueue
             Log::channel('active-campaign')->info($response->body());
             Log::channel('active-campaign')->info($response->status());
         }
-        Log::channel('active-campaign')->info("----------------------------------------------------------------------------------------------------------");
+        Log::channel('active-campaign')->info('----------------------------------------------------------------------------------------------------------');
     }
 }

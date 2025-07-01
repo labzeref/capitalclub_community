@@ -101,6 +101,11 @@ class LessonCompactResource extends JsonResource
                 $this->relationLoaded('progress'),
                 fn () => (float) $this->progress?->progress
             ),
+            'is_new' => $this->whenLoaded('lessons', function () {
+                return $this->lessons->isEmpty() || $this->lessons->every(function ($lesson) {
+                        return !$lesson->progress;
+                    });
+            }),
         ];
     }
 }
